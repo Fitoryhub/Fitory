@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -18,11 +18,33 @@
 
         body {
             background-color: #f9fafb;
-            padding: 60px 20px;
+            padding: 40px 20px;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
             min-height: 100vh;
+        }
+
+        .user-info {
+            background-color: #e0f2fe;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 40px;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .user-info h2 {
+            font-size: 24px;
+            color: #0369a1;
+            margin-bottom: 20px;
+        }
+
+        .user-info p {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #1e3a8a;
         }
 
         .filter-box {
@@ -82,10 +104,18 @@
 </head>
 <body>
 
+<!-- ✅ 유저 정보 섹션 -->
+<div class="user-info" th:if="${user != null}">
+    <h2 th:text="'환영합니다, ' + ${user.name} + '님!'"></h2>
+    <p><strong>나이:</strong> <span th:text="${user.birth}">30</span></p>
+    <p><strong>몸무게:</strong> <span th:text="${user.weight_kg}"></span>kg</p>
+    <p><strong>이메일:</strong> <span th:text="${user.height_cm}"></span>cm</p>
+</div>
+
+<!-- ✅ 운동 필터 폼 -->
 <div class="filter-box">
     <h2>운동 필터</h2>
     <form action="/search" method="get">
-
         <div class="form-group">
             <label for="exerciseTime">운동 시간 선택</label>
             <select name="time" id="exerciseTime">

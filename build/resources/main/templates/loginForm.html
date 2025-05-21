@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fitory 로그인</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background-color: #f9fafb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-container {
+            background-color: white;
+            padding: 48px;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            width: 480px;
+            max-width: 95%;
+        }
+
+        .login-title {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .login-title h2 {
+            font-size: 32px;
+            color: #10b981;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .login-form label {
+            margin-bottom: 6px;
+            color: #374151;
+            font-weight: 500;
+            font-size: 15px;
+        }
+
+        .login-form input {
+            padding: 14px;
+            margin-bottom: 20px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 17px;
+        }
+
+        .login-form input:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+        }
+
+        .login-form button {
+            background-color: #10b981;
+            color: white;
+            border: none;
+            padding: 16px;
+            font-size: 17px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .login-form button:hover {
+            background-color: #059669;
+        }
+
+        .signup-link {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        .signup-link a {
+            color: #10b981;
+            text-decoration: none;
+        }
+
+        .signup-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<div class="login-container">
+    <div class="login-title">
+        <h2>Fitory 로그인</h2>
+    </div>
+    <form class="login-form" action="/login" method="post">
+        <label for="user_id">아이디</label>
+        <input type="text" id="user_id" name="user_id" required />
+
+        <label for="password">비밀번호</label>
+        <input type="password" id="password" name="password" required />
+
+        <button type="submit">로그인</button>
+    </form>
+    <div class="signup-link">
+        아직 계정이 없으신가요? <a href="/joinForm">회원가입</a>
+    </div>
+</div>
+</body>
+</html>
