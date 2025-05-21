@@ -18,7 +18,9 @@ public class Exercise {
     private String e_name;
 
     private String intensity;
-    private float met_rank;
+
+    @Column(name = "met_rank")
+    private int metrank;
     private String is_anaerobic;
     private String requires_equipment;
 }
