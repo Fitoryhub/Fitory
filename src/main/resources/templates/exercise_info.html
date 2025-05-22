@@ -19,19 +19,37 @@
         body {
             background-color: #f9fafb;
             padding: 40px 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            display: flex;
+            gap: 40px;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .left-panel {
+            flex: 1;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
+            gap: 30px;
+        }
+
+        .right-panel {
+            flex: 2;
+            background-color: #ffffff;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
         }
 
         .user-info {
             background-color: #e0f2fe;
             border-radius: 16px;
             padding: 30px;
-            margin-bottom: 40px;
-            width: 100%;
-            max-width: 600px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
 
@@ -51,9 +69,7 @@
             background-color: white;
             border-radius: 16px;
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
-            padding: 40px 30px;
-            width: 100%;
-            max-width: 420px;
+            padding: 30px;
         }
 
         .filter-box h2 {
@@ -100,67 +116,101 @@
         button:hover {
             background-color: #059669;
         }
+
+        .recommendation-results h3 {
+            font-size: 22px;
+            color: #1f2937;
+            margin-bottom: 16px;
+        }
+
+        .recommendation-item {
+            padding: 12px;
+            margin-bottom: 12px;
+            border-radius: 10px;
+            background-color: #f3f4f6;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+        }
+
     </style>
 </head>
+
 <body>
+<div class="container">
 
-<!-- ✅ 유저 정보 섹션 -->
-<div class="user-info" th:if="${user != null}">
-    <h2 th:text="'환영합니다, ' + ${user.name} + '님!'"></h2>
-    <p><strong>나이:</strong> <span th:text="${user.birth}">30</span></p>
-    <p><strong>몸무게:</strong> <span th:text="${user.weight_kg}"></span>kg</p>
-    <p><strong>이메일:</strong> <span th:text="${user.height_cm}"></span>cm</p>
+    <!-- 좌측: 유저 정보 + 필터 폼 -->
+    <div class="left-panel">
+
+        <!-- 유저 정보 -->
+        <div class="user-info" th:if="${user != null}">
+            <h2 th:text="'환영합니다, ' + ${user.userName} + '님!'"></h2>
+            <p><strong>나이:</strong> <span th:text="${user.birth}"></span>세</p>
+            <p><strong>몸무게:</strong> <span th:text="${user.weightKg}"></span>kg</p>
+            <p><strong>신장:</strong> <span th:text="${user.heightCm}"></span>cm</p>
+        </div>
+
+        <div class="user-info" th:if="${user == null}">
+            <h2>환영합니다, Guest 님!</h2>
+        </div>
+
+        <!-- 운동 필터 -->
+        <div class="filter-box">
+            <h2>운동 필터</h2>
+            <form action="/set" method="post">
+                <div class="form-group">
+                    <label for="exerciseTime">운동 시간 선택</label>
+                    <select name="time" id="exerciseTime">
+                        <option value="">전체</option>
+                        <script>
+                            for (let i = 30; i <= 120; i += 30) {
+                                document.write(`<option value="${i}">${i}분</option>`);
+                            }
+                        </script>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="calories">목표 칼로리</label>
+                    <select name="cal" id="calories">
+                        <option value="">전체</option>
+                        <script>
+                            for (let i = 50; i <= 600; i += 50) {
+                                document.write(`<option value="${i}">${i} kcal</option>`);
+                            }
+                        </script>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="isAnaerobic">유산소</label>
+                    <select name="is_anaerobic" id="isAnaerobic">
+                        <option value="">전체</option>
+                        <option value="Y">Y</option>
+                        <option value="N">N</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="requiresEquipment">도구 사용 여부</label>
+                    <select name="requires_equipment" id="requiresEquipment">
+                        <option value="">전체</option>
+                        <option value="Y">Y</option>
+                        <option value="N">N</option>
+                    </select>
+                </div>
+
+                <button type="submit">검색</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 우측: 운동 추천 결과 공간 -->
+    <div class="right-panel">
+        <div class="recommendation-results">
+            <h3>추천 운동 목록</h3>
+            <!-- 여기에 추천된 운동들이 반복 렌더링됨 -->
+           
+        </div>
+    </div>
 </div>
-
-<!-- ✅ 운동 필터 폼 -->
-<div class="filter-box">
-    <h2>운동 필터</h2>
-    <form action="/search" method="get">
-        <div class="form-group">
-            <label for="exerciseTime">운동 시간 선택</label>
-            <select name="time" id="exerciseTime">
-                <option value="">전체</option>
-                <script>
-                    for (let i = 30; i <= 120; i += 30) {
-                        document.write(`<option value="${i}">${i}분</option>`);
-                    }
-                </script>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="calories">목표 칼로리</label>
-            <select name="cal" id="calories">
-                <option value="">전체</option>
-                <script>
-                    for (let i = 50; i <= 600; i += 50) {
-                        document.write(`<option value="${i}">${i} kcal</option>`);
-                    }
-                </script>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="isAnaerobic">유산소</label>
-            <select name="is_anaerobic" id="isAnaerobic">
-                <option value="">전체</option>
-                <option value="Y">Y</option>
-                <option value="N">N</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="requiresEquipment">도구 사용 여부</label>
-            <select name="requires_equipment" id="requiresEquipment">
-                <option value="">전체</option>
-                <option value="Y">Y</option>
-                <option value="N">N</option>
-            </select>
-        </div>
-
-        <button type="submit">검색</button>
-    </form>
-</div>
-
 </body>
 </html>

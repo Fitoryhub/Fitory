@@ -1,7 +1,7 @@
 package com.Fitory.fitory.service;
 
 import com.Fitory.fitory.entity.User;
-import com.Fitory.fitory.repository.IF_userRepository;
+import com.Fitory.fitory.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,10 +10,10 @@ import java.util.Optional;
 
 
 @Service
-public class UserServiceImpl implements IF_UserService{
+public class UserServiceImpl implements UserService {
 
     @Autowired
-    IF_userRepository userRepo;
+    UserRepository userRepo;
 
     @Override
     public Optional<User> findById(String id) {

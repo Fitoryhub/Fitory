@@ -1,7 +1,7 @@
 package com.Fitory.fitory.service;
 
-import com.Fitory.fitory.entity.Exercise;
-import com.Fitory.fitory.repository.IF_exerciseRepository;
+import com.Fitory.fitory.entity.Exercises;
+import com.Fitory.fitory.repository.ExerciseRepository;
 import jakarta.annotation.PostConstruct;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -12,13 +12,14 @@ import org.springframework.stereotype.Service;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.List;
 
 @Service
-public class exerciseServiceImpl implements IF_exerciseService {
+public class ExerciseServiceImpl implements ExerciseService {
 
 
     @Autowired
-    public IF_exerciseRepository repository;
+    public ExerciseRepository ERepo;
 
 
     @PostConstruct
@@ -34,7 +35,7 @@ public class exerciseServiceImpl implements IF_exerciseService {
 
 
     public void saveJsonToDb(String jsonFilePath) throws IOException, JSONException {
-        if(repository.count()>0){
+        if(ERepo.count()>0){
             System.out.println("이미 데이터가 있습니다.");
             return;
         }
@@ -52,16 +53,21 @@ public class exerciseServiceImpl implements IF_exerciseService {
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject json = jsonArray.getJSONObject(i);
 
-            Exercise exercise = new Exercise();
-            exercise.setExercise_id(json.getInt("exercise_id"));
-            exercise.setE_name(json.getString("name"));
-            exercise.setMetrank(json.getInt("met_rank"));
-            exercise.setIntensity(json.getString("intensity"));
-            exercise.setIs_anaerobic(json.getString("is_anaerobic"));
-            exercise.setRequires_equipment(json.getString("requires_equipment"));
+            Exercises exercises = new Exercises();
+            exercises.setExercise_id(json.getInt("exercise_id"));
+            exercises.setE_name(json.getString("name"));
+            exercises.setMetrank(json.getInt("met_rank"));
+            exercises.setIntensity(json.getString("intensity"));
+            exercises.setIsAnaerobic(json.getString("is_anaerobic"));
+            exercises.setRequiresEquipment(json.getString("requires_equipment"));
 
-            repository.save(exercise);
+            ERepo.save(exercises);
         }
     }
 
+
+    @Override
+    public List<Exercises> getMatchingExercises(int met, String requiresEquipment, String isAnaerobic) {
+        return ERepo.findByMatchingExercise(met, requiresEquipment, isAnaerobic);
+    }
 }

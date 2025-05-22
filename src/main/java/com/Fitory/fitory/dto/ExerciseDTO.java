@@ -1,13 +1,11 @@
 package com.Fitory.fitory.dto;
 
-import com.Fitory.fitory.entity.Exercise;
-import jakarta.persistence.Column;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class exerciseDTO {
+public class ExerciseDTO {
 
     private Integer exercise_id;
     private String name;
@@ -16,6 +14,5 @@ public class exerciseDTO {
     private String is_anaerobic;
     private String requires_equipment;
 
-    public exerciseDTO(Exercise e) {
-    }
+
 }

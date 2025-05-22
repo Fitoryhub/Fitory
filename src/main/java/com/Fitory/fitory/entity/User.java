@@ -16,15 +16,18 @@ public class User {
     private String user_id;
 
     @Column(name="username")
-    private String user_name;
+    private String userName;
 
     @Column(name ="password")
-    private String user_password;
+    private String userPassword;
 
     private String email;
     private String gender;
     @Column(name ="birth_date")
     private LocalDate birth;
-    private int height_cm;
-    private int weight_kg;
+
+    @Column(name="height_cm")
+    private int heightCm;
+    @Column(name="weight_kg")
+    private int weightKg;
 }

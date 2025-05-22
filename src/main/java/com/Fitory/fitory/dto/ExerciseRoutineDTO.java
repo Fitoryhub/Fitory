@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class exerciseRoutineDTO {
+public class ExerciseRoutineDTO {
     private int routine_id;
     private String user_id;
     private String routine_name;

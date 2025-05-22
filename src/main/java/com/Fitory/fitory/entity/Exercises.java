@@ -6,10 +6,10 @@ import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity(name="exercises")
+@Entity
 @Getter
 @Setter
-public class Exercise {
+public class Exercises {
 
     @Id
     private Integer exercise_id;
@@ -21,6 +21,8 @@ public class Exercise {
 
     @Column(name = "met_rank")
     private int metrank;
-    private String is_anaerobic;
-    private String requires_equipment;
+    @Column(name ="is_anaerobic")
+    private String isAnaerobic;
+    @Column(name ="requires_equipment")
+    private String requiresEquipment;
 }

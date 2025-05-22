@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class userSetDTO {
+public class UserSetDTO {
     private int time;
     private int cal;
     private String is_anaerobic;
