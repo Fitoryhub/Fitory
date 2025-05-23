@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitory - 게시판</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+
+        body {
+            min-width: 1200px;
+            background-color: #f9fafb;
+            color: #333;
+        }
+
+        header {
+            height: 80px;
+            background-color: #10b981;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        #logo img {
+            height: 60px;
+        }
+
+        nav.headMenu {
+            display: flex;
+            gap: 25px;
+        }
+
+        nav.headMenu a {
+            color: white;
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 18px;
+            transition: color 0.2s;
+        }
+
+        nav.headMenu a:hover {
+            color: #d1fae5;
+        }
+
+        #board-section {
+            padding: 60px 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: #fff;
+        }
+
+        #board-section h2 {
+            font-size: 32px;
+            margin-bottom: 30px;
+            text-align: center;
+            color: #111827;
+        }
+
+        #board-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        #board-controls select,
+        #board-controls input {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+        }
+
+        #board-controls button {
+            padding: 10px 20px;
+            background-color: #10b981;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        #board-controls button:hover {
+            background-color: #059669;
+        }
+
+        #board-list {
+            border-collapse: collapse;
+            width: 100%;
+            background-color: #fff;
+        }
+
+        #board-list th,
+        #board-list td {
+            border: 1px solid #e5e7eb;
+            padding: 12px;
+            text-align: center;
+        }
+
+        #board-list td:nth-child(2) {
+            text-align: center;
+            padding-left: 0;
+        }
+
+        #board-list th {
+            background-color: #f0fdf4;
+            color: #065f46;
+        }
+
+        #board-list tr:hover {
+            background-color: #f9fafb;
+            cursor: pointer;
+        }
+
+        /* 열 너비 설정 */
+        #board-list th:nth-child(1), #board-list td:nth-child(1) {
+            width: 15%;
+        }
+
+        #board-list th:nth-child(2), #board-list td:nth-child(2) {
+            width: 35%;
+        }
+
+        #board-list th:nth-child(3), #board-list td:nth-child(3) {
+            width: 15%;
+        }
+
+        #board-list th:nth-child(4), #board-list td:nth-child(4) {
+            width: 15%;
+        }
+
+        #board-list th:nth-child(5), #board-list td:nth-child(5) {
+            width: 10%;
+        }
+
+        #board-list th:nth-child(6), #board-list td:nth-child(6) {
+            width: 10%;
+        }
+
+        /* 페이지네이션 */
+        .pagination {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .pagination a {
+            display: inline-block;
+            padding: 8px 12px;
+            margin: 0 5px;
+            color: #10b981;
+            background-color: #f0fdf4;
+            border: 1px solid #d1fae5;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .pagination a:hover {
+            background-color: #10b981;
+            color: white;
+        }
+
+        .pagination a.active {
+            background-color: #10b981;
+            color: white;
+            font-weight: bold;
+        }
+
+        footer {
+            background-color: #1f2937;
+            color: #d1d5db;
+            height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div id="logo">
+        <img src="/files/logo2.png" alt="Fitory 로고"/>
+    </div>
+    <div>
+        <span th:if="${session.nickname != null}" th:text="${session.nickname}"></span>
+        <a th:if="${session.nickname != null}" href="/logout" style="color:white; margin-left:15px;">로그아웃</a>
+    </div>
+    <nav class="headMenu">
+        <a href="#">홈</a>
+        <a href="/boardlist">게시판</a>
+        <a href="#">식단</a>
+        <a href="#">운동</a>
+        <a href="#">건강정보</a>
+        <a href="#">마이페이지</a>
+        <a href="http://localhost:8080/login">로그인</a>
+    </nav>
+</header>
+
+<section id="board-section">
+    <h2>게시판</h2>
+    <div id="board-controls">
+        <form th:action="@{/boardlist}" method="get">
+            <select name="pcategory" >
+                <option value="all">전체게시글</option>
+                <option value="운동꿀팁">운동꿀팁</option>
+                <option value="운동질문">운동질문</option>
+                <option value="식단후기">식단후기</option>
+            </select>
+
+            <input type="text" placeholder="제목 검색" name="ptitle" >
+            <button type="submit">검색</button> <!-- 여기엔 onclick 빼기 -->
+            <button type="button" onclick="window.location.href='/write'">글쓰기</button>
+        </form>
+        </div>
+       <table id="board-list">
+        <thead>
+        <tr>
+            <th>카테고리</th>
+            <th>제목</th>
+            <th>작성자</th>
+            <th>작성일</th>
+            <th>좋아요</th>
+            <th>조회수</th>
+        </tr>
+        </thead>
+        <tbody id="board-body">
+        <tr th:each="list : ${list}" th:onclick="|location.href='/detailview?pnum=' + '${list.pnum}'|">
+            <td th:text="${list.pcategory}"></td>
+            <td th:text="${list.ptitle}"></td>
+            <td th:text="${list.nickname}"></td>
+            <td th:text="${list.pdate}"></td>
+            <td th:text="${list.plike}"></td>
+            <td th:text="${list.plook}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- 페이지네이션 -->
+    <div class="pagination">
+
+
+        <!-- 이전 -->
+
+
+        <!-- 숫자 페이지 (최대 5개) -->
+        <th:block th:each="page : ${#numbers.sequence(startpage, endpage)}">
+            <a th:if="${page != nowpage}" th:href="@{/boardlist(page=${page - 1})}" th:text="${page}"></a>
+            <a th:if="${page == nowpage}" class="active" th:text="${page}"></a>
+        </th:block>
+
+
+    </div>
+</section>
+
+<footer>
+    © 2025 Fitory. 건강한 삶을 위한 파트너
+</footer>
+</body>
+<script>
+
+</script>
+
+</html>

@@ -1,0 +1,64 @@
+package com.Fitory.fitory.service;
+
+import com.Fitory.fitory.DTO.PtitlePcategoryDTO;
+import com.Fitory.fitory.entity.Board;
+import com.Fitory.fitory.entity.Files;
+import com.Fitory.fitory.repository.BoardRepository;
+import com.Fitory.fitory.repository.FileRepository;
+import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class BoardService implements IF_BoardService {
+
+    @Autowired
+    private BoardRepository boardrepository;
+    @Autowired
+    private FileRepository filerepository;
+
+    @Override
+    public void savepost(Board board) {
+       boardrepository.save(board);
+    }
+
+    @Override
+    public void savefile(Files fileone) {
+    filerepository.save(fileone);
+    }
+
+    @Override
+    public Page<Board> alllist(Pageable pageable) {
+        return boardrepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<Board> searchboard(PtitlePcategoryDTO searchboard, Pageable pageable) {
+        String pcategory=searchboard.getPcategory();
+        String ptitle=searchboard.getPtitle();
+        return boardrepository.findByPcategoryAndPtitleContaining(pcategory,ptitle,pageable);
+    }
+
+    @Override
+    public Board searchoneboard(Integer pnum) {
+        return boardrepository.findByPnum(pnum);
+    }
+
+    @Override
+    public Page<Board> searchptitle(PtitlePcategoryDTO searchboard,Pageable pageable) {
+        String ptitle=searchboard.getPtitle();
+
+        return boardrepository.findByPtitleContaining(ptitle,pageable);
+    }
+    @Transactional
+    @Override
+    public void updateplook(Integer pnum) {
+        boardrepository.updateplook(pnum);
+    }
+
+
+}

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>회원가입 - Fitory</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Noto Sans KR', sans-serif;
+    }
+
+    body {
+      background-color: rgb(249, 250, 251); 
+      min-width: 1200px;
+    }
+
+    header {
+      height: 80px;
+      background-color: rgb(16, 185, 129); 
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      color: rgb(255, 255, 255);
+    }
+
+    #logo img {
+      height: 60px;
+    }
+
+    header a {
+      color: rgb(255, 255, 255);
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    main {
+      max-width: 600px;
+      margin: 60px auto;
+      background-color: rgb(255, 255, 255);
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    }
+
+    main h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: rgb(6, 95, 70); 
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    label {
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    input, select {
+      padding: 12px;
+      margin-bottom: 20px;
+      border: 1px solid rgb(209, 213, 219); 
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: rgb(16, 185, 129); 
+      box-shadow: 0 0 0 2px rgb(167, 243, 208); 
+    }
+
+    .radio-group {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 20px;
+      align-items: center;
+    }
+
+    .radio-group input {
+      margin-right: 6px;
+    }
+
+    .submit-btn {
+      background-color: rgb(16, 185, 129); 
+      color: rgb(255, 255, 255);
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .submit-btn:hover {
+      background-color: rgb(5, 150, 105); 
+    }
+
+    .footer {
+      margin-top: 80px;
+      background-color: rgb(31, 41, 55); 
+      height: 150px;
+      color: rgb(209, 213, 219); 
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div id="logo">
+      <img src="/planmate/src/main/resources/image/logo2.png" alt="Fitory 로고" />
+    </div>
+    <a href="http://localhost:8080/">홈으로</a>
+  </header>
+
+  <main>
+    <h2>회원가입</h2>
+    <form action="http://localhost:8080/user" method="post" >
+      <label for="userid">아이디</label>
+      <input type="text" id="userid" name="uid" required />
+      
+      <label for="password">비밀번호</label>
+      <input type="password" id="password" name="password" required minlength="6" />
+
+      <label for="confirm">비밀번호 확인</label>
+      <input type="password" id="confirm" name="confirm" required />
+      
+      <label for="email">이메일</label>
+      <input type="email" id="email" name="email" required />
+
+      <label for="name">닉네임</label>
+      <input type="text" id="nickname" name="nickname" required />
+
+      <label for="name">이름</label>
+      <input type="text" id="name" name="name" required />
+
+      <label>성별</label>
+      <div class="radio-group">
+        <label><input type="radio" name="gender" value="male" required /> 남성</label>
+        <label><input type="radio" name="gender" value="female" /> 여성</label>
+      </div>
+
+      <label for="birth">생년월일</label>
+      <input type="date" id="birth" name="birth" required />
+
+      <label for="height">키 (cm)</label>
+      <input type="number" id="height" name="height" required min="0" step="0.1" />
+
+      <label for="weight">몸무게 (kg)</label>
+      <input type="number" id="weight" name="weight" required min="0" step="0.1" />
+
+      <button type="submit" class="submit-btn">가입하기</button>
+    </form>
+  </main>
+
+  <footer class="footer">
+    © 2025 Fitory. 건강한 삶을 위한 파트너
+  </footer>
+
+</body>
+</html>

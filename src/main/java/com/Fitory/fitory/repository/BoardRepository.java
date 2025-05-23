@@ -1,0 +1,26 @@
+package com.Fitory.fitory.repository;
+
+import com.Fitory.fitory.entity.Board;
+import feign.Param;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface BoardRepository extends JpaRepository<Board, Integer> {
+
+    Board findByPnum(Integer pnum);
+
+
+    Page<Board> findByPcategoryAndPtitleContaining(String pcategory, String ptitle, Pageable pageable);
+
+    Page<Board> findByPtitleContaining(String ptitle,Pageable pageable);
+
+    @Modifying
+    @Query("update Board b set b.plook=b.plook+1 where b.pnum= :pnum")
+    void updateplook(@Param("pnum") Integer pnum);
+
+}
