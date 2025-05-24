@@ -28,4 +28,10 @@ public interface IF_BoardService {
     Page<Board> searchptitle(PtitlePcategoryDTO searchboard ,Pageable pageable);
 
     void updateplook(Integer pnum);
+
+    void blike(Integer pnum);
+
+    void phate(Integer pnum, String uid);
+
+    void bhate(Integer pnum);
 }

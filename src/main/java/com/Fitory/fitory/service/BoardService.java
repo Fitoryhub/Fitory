@@ -5,6 +5,7 @@ import com.Fitory.fitory.entity.Board;
 import com.Fitory.fitory.entity.Files;
 import com.Fitory.fitory.repository.BoardRepository;
 import com.Fitory.fitory.repository.FileRepository;
+import com.Fitory.fitory.repository.PlikeRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,7 +21,8 @@ public class BoardService implements IF_BoardService {
     private BoardRepository boardrepository;
     @Autowired
     private FileRepository filerepository;
-
+    @Autowired
+    private PlikeRepository plikerepository;
     @Override
     public void savepost(Board board) {
        boardrepository.save(board);
@@ -58,6 +60,21 @@ public class BoardService implements IF_BoardService {
     @Override
     public void updateplook(Integer pnum) {
         boardrepository.updateplook(pnum);
+    }
+    @Transactional
+    @Override
+    public void blike(Integer pnum) {
+        boardrepository.plike(pnum);
+    }
+    @Transactional
+    @Override
+    public void phate(Integer pnum, String uid) {
+        plikerepository.deleteByPnumAndUid(pnum,uid);
+    }
+    @Transactional
+    @Override
+    public void bhate(Integer pnum) {
+        boardrepository.bhate(pnum);
     }
 
 

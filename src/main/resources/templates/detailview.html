@@ -66,43 +66,11 @@
         }
 
         .comment-section {
-            margin-top: 40px;
-        }
-
-        .comment-form textarea {
-            width: 100%;
-            height: 80px;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-            resize: vertical;
-        }
-
-        .comment-form button {
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-
-        .comment {
-            border-top: 1px solid #eee;
-            padding: 10px 0;
-            font-size: 15px;
-            color: #333;
-        }
-
-        .comment-author {
-            font-weight: bold;
-            margin-right: 10px;
-        }
-        .comment-section {
             margin-top: 50px;
             padding-top: 30px;
             border-top: 2px solid #e0e0e0;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .comment-section h3 {
@@ -118,6 +86,8 @@
             flex-direction: column;
             gap: 10px;
             margin-bottom: 20px;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .comment-form textarea {
@@ -148,7 +118,17 @@
             background-color: #0056b3;
         }
 
+        .comment {
+            border-top: 1px solid #eee;
+            padding: 10px 0;
+            font-size: 15px;
+            color: #333;
+        }
 
+        .comment-author {
+            font-weight: bold;
+            margin-right: 10px;
+        }
     </style>
 </head>
 <body>
@@ -163,9 +143,21 @@
         <span>
             <span th:text="'좋아요: ' + ${board.plike}">좋아요</span>
 
-                <button type="submit">👍 좋아요</button>
+            <div th:if="${plike!=null}">
+                    <form th:action="@{/phate}" method="post">
+                            <input type="hidden" name="uid" th:value="${session.uid}">
+                            <input type="hidden" name="pnum" th:value="${board.getPnum()}">
+                            <button type="submit" class="like-button">❤️</button>
+                    </form>
+            </div>
 
-        </span>
+             <div th:if="${plike==null}">
+           <form th:action="@{/plike}" method="post">
+                            <input type="hidden" name="uid" th:value="${session.uid}">
+                            <input type="hidden" name="pnum" th:value="${board.getPnum()}">
+                            <button type="submit" class="like-button">🤍</button>
+                    </form>
+            </div>
     </div>
 
     <div class="category" th:text="'카테고리: ' + ${board.pcategory}">카테고리</div>
@@ -180,12 +172,10 @@
 
     <div class="comment-section">
         <h3>댓글</h3>
-
-        <!-- 댓글 작성 폼 -->
-
+        <form class="comment-form" th:action="@{/submit-comment}" method="post">
             <textarea name="content" placeholder="댓글을 입력하세요..."></textarea>
             <button type="submit">댓글 등록</button>
-
+        </form>
     </div>
 </div>
 

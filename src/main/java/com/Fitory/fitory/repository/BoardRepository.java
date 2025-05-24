@@ -23,4 +23,11 @@ public interface BoardRepository extends JpaRepository<Board, Integer> {
     @Query("update Board b set b.plook=b.plook+1 where b.pnum= :pnum")
     void updateplook(@Param("pnum") Integer pnum);
 
+    @Modifying
+    @Query("update Board b set b.plike=b.plike+1 where b.pnum=:pnum ")
+    void plike(@Param("pnum") Integer pnum);
+
+    @Modifying
+    @Query("update Board b set b.plike=b.plike-1 where b.pnum=:pnum")
+    void bhate(Integer pnum);
 }

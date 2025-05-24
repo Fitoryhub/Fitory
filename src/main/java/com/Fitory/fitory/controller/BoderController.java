@@ -3,7 +3,9 @@ package com.Fitory.fitory.controller;
 import com.Fitory.fitory.DTO.PtitlePcategoryDTO;
 import com.Fitory.fitory.entity.Board;
 import com.Fitory.fitory.entity.Files;
+import com.Fitory.fitory.entity.Plike;
 import com.Fitory.fitory.repository.FileRepository;
+import com.Fitory.fitory.repository.PlikeRepository;
 import com.Fitory.fitory.service.BoardService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -33,7 +35,8 @@ public class BoderController {
     private BoardService boardService;
     @Autowired
     private FileRepository fileRepository;
-
+    @Autowired
+    private PlikeRepository plikeRepository;
 
 
     @GetMapping("/boardlist")
@@ -47,7 +50,7 @@ public class BoderController {
         searchboard.setPtitle(ptitle);
 
             Page<Board> board;
-        System.out.println("11");
+
           if(searchboard.getPcategory()==null){
               board = boardService.alllist(pageable);
           }else {
@@ -102,15 +105,17 @@ public class BoderController {
     }
 
     @GetMapping("/detailview")
-    public String detailview(@RequestParam("pnum")Integer pnum, Model model) {
+    public String detailview(@RequestParam("pnum")Integer pnum, Model model ,HttpSession session) {
         System.out.println(pnum);
         boardService.updateplook(pnum);
         Board board = boardService.searchoneboard(pnum);
+        String uid = session.getAttribute("uid").toString();
+        Plike plike=plikeRepository.findByUidAndPnum(uid ,pnum);
        List<Files>files = fileRepository.findByPnum(pnum);
         model.addAttribute("board", board);
         model.addAttribute("files", files);
+        model.addAttribute("plike", plike);
        Integer num = board.getPnum();
-
         return "/detailview";
     }
 
@@ -120,5 +125,23 @@ public class BoderController {
         return "write";
 
     }
+    @PostMapping("/plike")
+    public String plike(@ModelAttribute Plike plike ,Model model) {
+        Integer pnum = plike.getPnum();
+        boardService.blike(pnum);
+        plikeRepository.save(plike);
 
+    return "redirect:/detailview?pnum="+pnum;
+
+    }
+    @PostMapping("/phate")
+    public String phate(@ModelAttribute Plike plike ,Model model) {
+
+        Integer pnum = plike.getPnum();
+        boardService.bhate(pnum);
+        String uid=plike.getUid();
+        boardService.phate(pnum,uid);
+        model.addAttribute("pnum", pnum);
+        return "redirect:/detailview?pnum="+pnum;
+    }
 }
