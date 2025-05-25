@@ -1,9 +1,9 @@
 package com.Fitory.fitory.controller;
 
 import com.Fitory.fitory.DTO.PtitlePcategoryDTO;
-import com.Fitory.fitory.entity.Board;
-import com.Fitory.fitory.entity.Files;
-import com.Fitory.fitory.entity.Plike;
+import com.Fitory.fitory.entity.*;
+import com.Fitory.fitory.repository.ClikeRepository;
+import com.Fitory.fitory.repository.CommentRepository;
 import com.Fitory.fitory.repository.FileRepository;
 import com.Fitory.fitory.repository.PlikeRepository;
 import com.Fitory.fitory.service.BoardService;
@@ -37,7 +37,10 @@ public class BoderController {
     private FileRepository fileRepository;
     @Autowired
     private PlikeRepository plikeRepository;
-
+    @Autowired
+    private CommentRepository commentRepository;
+    @Autowired
+    ClikeRepository clikeRepository;
 
     @GetMapping("/boardlist")
     public String boardlist(Model model ,@PageableDefault(page=0,size = 10 ,sort="pnum"
@@ -106,16 +109,22 @@ public class BoderController {
 
     @GetMapping("/detailview")
     public String detailview(@RequestParam("pnum")Integer pnum, Model model ,HttpSession session) {
-        System.out.println(pnum);
+
         boardService.updateplook(pnum);
         Board board = boardService.searchoneboard(pnum);
         String uid = session.getAttribute("uid").toString();
         Plike plike=plikeRepository.findByUidAndPnum(uid ,pnum);
        List<Files>files = fileRepository.findByPnum(pnum);
+        Integer num = board.getPnum();
+        List<Comment> comment=commentRepository.findByPnumOrderByCnumAsc(num);
+        List<Clike> clike=clikeRepository.findByPnum(num);
+        model.addAttribute("commentlist", comment);
         model.addAttribute("board", board);
         model.addAttribute("files", files);
         model.addAttribute("plike", plike);
-       Integer num = board.getPnum();
+        model.addAttribute("clike", clike);
+
+
         return "/detailview";
     }
 
@@ -144,4 +153,22 @@ public class BoderController {
         model.addAttribute("pnum", pnum);
         return "redirect:/detailview?pnum="+pnum;
     }
+    @PostMapping("comment")
+    public String comment(@ModelAttribute Comment comment , Model model) {
+        commentRepository.save(comment);
+        return "redirect:/detailview?pnum="+comment.getPnum();
+    }
+    @PostMapping("/clike")
+    public String clike(@ModelAttribute Clike clike) {
+        clikeRepository.save(clike);
+        boardService.clike(clike);
+        return "redirect:/detailview?pnum="+clike.getPnum();
+    }
+    @PostMapping("/chate")
+    public  String chate(@ModelAttribute Clike clike) {
+        clikeRepository.deleteByCnumAndUid(clike.getCnum() , clike.getUid());
+        boardService.chate(clike);
+        return "redirect:/detailview?pnum="+clike.getPnum();
+    }
+
 }

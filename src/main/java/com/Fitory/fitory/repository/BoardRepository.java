@@ -1,6 +1,7 @@
 package com.Fitory.fitory.repository;
 
 import com.Fitory.fitory.entity.Board;
+import com.Fitory.fitory.entity.Clike;
 import feign.Param;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,4 +31,8 @@ public interface BoardRepository extends JpaRepository<Board, Integer> {
     @Modifying
     @Query("update Board b set b.plike=b.plike-1 where b.pnum=:pnum")
     void bhate(Integer pnum);
+
+   
+
+
 }

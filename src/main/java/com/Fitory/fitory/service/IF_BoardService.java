@@ -2,6 +2,7 @@ package com.Fitory.fitory.service;
 
 import com.Fitory.fitory.DTO.PtitlePcategoryDTO;
 import com.Fitory.fitory.entity.Board;
+import com.Fitory.fitory.entity.Clike;
 import com.Fitory.fitory.entity.Files;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,4 +35,8 @@ public interface IF_BoardService {
     void phate(Integer pnum, String uid);
 
     void bhate(Integer pnum);
+
+    void clike(Clike clike);
+
+    void chate(Clike clike);
 }

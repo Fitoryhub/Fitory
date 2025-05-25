@@ -5,22 +5,29 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @Getter
 @Setter
 public class Comment {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer cnum;
-
-    private String pnum;
+    private Integer pnum;
     private String cbody;
     @Column(columnDefinition = "INT DEFAULT 0")
     private int clike;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date cdate;
+    private LocalDate cdate;
     private String nickname;
-    private String id;
+    @Column(name = "id")
+    private String uid;
+
+    @PrePersist
+    public void prePersist() {
+        if (cdate == null) {
+            cdate = LocalDate.now();  // 날짜만 포함
+        }
+    }
 }

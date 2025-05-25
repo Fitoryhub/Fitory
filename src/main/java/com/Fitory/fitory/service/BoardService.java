@@ -2,8 +2,10 @@ package com.Fitory.fitory.service;
 
 import com.Fitory.fitory.DTO.PtitlePcategoryDTO;
 import com.Fitory.fitory.entity.Board;
+import com.Fitory.fitory.entity.Clike;
 import com.Fitory.fitory.entity.Files;
 import com.Fitory.fitory.repository.BoardRepository;
+import com.Fitory.fitory.repository.CommentRepository;
 import com.Fitory.fitory.repository.FileRepository;
 import com.Fitory.fitory.repository.PlikeRepository;
 import jakarta.transaction.Transactional;
@@ -23,6 +25,8 @@ public class BoardService implements IF_BoardService {
     private FileRepository filerepository;
     @Autowired
     private PlikeRepository plikerepository;
+    @Autowired
+    private CommentRepository commentrepository;
     @Override
     public void savepost(Board board) {
        boardrepository.save(board);
@@ -75,6 +79,19 @@ public class BoardService implements IF_BoardService {
     @Override
     public void bhate(Integer pnum) {
         boardrepository.bhate(pnum);
+    }
+
+    @Transactional
+    @Override
+    public void clike(Clike clike) {
+        Integer cnum = clike.getCnum();
+        commentrepository.clike(cnum);
+    }
+
+    @Transactional
+    @Override
+    public void chate(Clike clike) {
+       commentrepository.chate(clike.getPnum());
     }
 
 
