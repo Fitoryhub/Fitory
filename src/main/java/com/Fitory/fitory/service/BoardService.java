@@ -4,10 +4,7 @@ import com.Fitory.fitory.DTO.PtitlePcategoryDTO;
 import com.Fitory.fitory.entity.Board;
 import com.Fitory.fitory.entity.Clike;
 import com.Fitory.fitory.entity.Files;
-import com.Fitory.fitory.repository.BoardRepository;
-import com.Fitory.fitory.repository.CommentRepository;
-import com.Fitory.fitory.repository.FileRepository;
-import com.Fitory.fitory.repository.PlikeRepository;
+import com.Fitory.fitory.repository.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -27,6 +24,8 @@ public class BoardService implements IF_BoardService {
     private PlikeRepository plikerepository;
     @Autowired
     private CommentRepository commentrepository;
+    @Autowired
+    private ClikeRepository clikerepository;
     @Override
     public void savepost(Board board) {
        boardrepository.save(board);
@@ -65,11 +64,13 @@ public class BoardService implements IF_BoardService {
     public void updateplook(Integer pnum) {
         boardrepository.updateplook(pnum);
     }
+
     @Transactional
     @Override
     public void blike(Integer pnum) {
         boardrepository.plike(pnum);
     }
+
     @Transactional
     @Override
     public void phate(Integer pnum, String uid) {
@@ -86,13 +87,16 @@ public class BoardService implements IF_BoardService {
     public void clike(Clike clike) {
         Integer cnum = clike.getCnum();
         commentrepository.clike(cnum);
+        clikerepository.save(clike);
     }
 
     @Transactional
     @Override
     public void chate(Clike clike) {
-       commentrepository.chate(clike.getPnum());
+        commentrepository.chate(clike.getCnum());
+        clikerepository.deleteByCnumAndUid(clike.getCnum(),clike.getUid());
     }
+
 
 
 }

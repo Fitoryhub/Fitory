@@ -42,6 +42,10 @@
         .like-button {
             display: inline-block;
             margin-left: 10px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
         }
 
         .category {
@@ -69,8 +73,6 @@
             margin-top: 50px;
             padding-top: 30px;
             border-top: 2px solid #e0e0e0;
-            width: 100%;
-            box-sizing: border-box;
         }
 
         .comment-section h3 {
@@ -86,8 +88,6 @@
             flex-direction: column;
             gap: 10px;
             margin-bottom: 20px;
-            width: 100%;
-            box-sizing: border-box;
         }
 
         .comment-form textarea {
@@ -99,7 +99,6 @@
             border-radius: 8px;
             resize: none;
             background-color: #fafafa;
-            box-sizing: border-box;
         }
 
         .comment-form button {
@@ -118,12 +117,10 @@
             background-color: #0056b3;
         }
 
-        /* 댓글 리스트 스타일 */
         .comments-list {
             display: flex;
             flex-direction: column;
             gap: 15px;
-            margin-top: 20px;
         }
 
         .comment-item {
@@ -152,15 +149,24 @@
             color: #999;
         }
 
-        .comment-like {
-            color: #ff4500;
-            font-weight: bold;
-        }
-
         .comment-body {
             font-size: 15px;
             color: #333;
             white-space: pre-wrap;
+            margin-bottom: 10px;
+        }
+
+        .comment-footer {
+            font-size: 14px;
+            color: #777;
+        }
+
+        .comment-like {
+            cursor: pointer;
+            font-size: 18px;
+            margin-right: 5px;
+            background: none;
+            border: none;
         }
     </style>
 </head>
@@ -176,25 +182,25 @@
         <span>
             <span th:text="'좋아요: ' + ${board.plike}">좋아요</span>
 
-            <div th:if="${plike!=null}">
-                    <form th:action="@{/phate}" method="post">
-                            <input type="hidden" name="uid" th:value="${session.uid}">
-                            <input type="hidden" name="pnum" th:value="${board.getPnum()}">
-                            <button type="submit" class="like-button">❤️</button>
-                    </form>
+            <div th:if="${plike != null}">
+                <form th:action="@{/phate}" method="post">
+                    <input type="hidden" name="uid" th:value="${session.uid}">
+                    <input type="hidden" name="pnum" th:value="${board.pnum}">
+                    <button type="submit" class="like-button">❤️</button>
+                </form>
             </div>
 
-             <div th:if="${plike==null}">
-           <form th:action="@{/plike}" method="post">
-                            <input type="hidden" name="uid" th:value="${session.uid}">
-                            <input type="hidden" name="pnum" th:value="${board.getPnum()}">
-                            <button type="submit" class="like-button">🤍</button>
-                    </form>
+            <div th:if="${plike == null}">
+                <form th:action="@{/plike}" method="post">
+                    <input type="hidden" name="uid" th:value="${session.uid}">
+                    <input type="hidden" name="pnum" th:value="${board.pnum}">
+                    <button type="submit" class="like-button">🤍</button>
+                </form>
             </div>
+        </span>
     </div>
 
     <div class="category" th:text="'카테고리: ' + ${board.pcategory}">카테고리</div>
-
     <div class="content" th:text="${board.pbody}">본문 내용</div>
 
     <div class="images" th:if="${files != null}">
@@ -205,49 +211,60 @@
 
     <div class="comment-section">
         <h3>댓글</h3>
-        <form  th:action="@{/comment}" class="comment-form" method="post">
+
+        <form th:action="@{/comment}" class="comment-form" method="post">
             <input type="hidden" name="nickname" th:value="${session.nickname}">
             <input type="hidden" name="uid" th:value="${session.uid}">
-            <input type="hidden" name="pnum" th:value="${board.getPnum()}">
+            <input type="hidden" name="pnum" th:value="${board.pnum}">
             <textarea name="cbody" placeholder="댓글을 입력하세요..."></textarea>
             <button type="submit">댓글 등록</button>
         </form>
 
-        <div class="comments-list">
+        <div class="commentlist">
             <div th:each="comment : ${commentlist}" class="comment-item">
-                <div class="comment-header">
-                    <span class="comment-author" th:text="${comment.nickname}">닉네임</span>
-                    <span class="comment-date" th:text="${comment.cdate}">날짜</span>
-
-                    <div th:each="clike : ${Clike}" th:if="${clike.uid==session.uid&& clike.cnum==comment.cnum}">
-                        <form th:action="@{/clike}">
-                            <input type="hidden" name="uid" th:value="${session.uid}">
-                            <input type="hidden" name="cnum" th:value="${comment.cnum}">
-                            <input type="hidden" name="pnum" th:value="${comment.pnum}">
-                            <button type="submit" class="comment-like">❤️</button>
-                            <span th:text="${comment.clike}"></span>
-                        </form>
+                <th:block th:if="${comment != null}">
+                    <div class="comment-header">
+                        <span class="comment-author" th:text="${comment.nickname}">작성자</span>
+                        <span class="comment-date" th:text="${comment.cdate}">작성일</span>
                     </div>
 
-                    <!-- 좋아요를 아직 안 누른 경우 -->
-                    <div th:if="${}">
-                        <form th:action="@{/chate}">
-                            <input type="hidden" name="uid" th:value="${session.uid}">
-                            <input type="hidden" name="cnum" th:value="${comment.cnum}">
-                            <input type="hidden" name="pnum" th:value="${comment.pnum}">
-                            <button type="submit" class="comment-like">❤</button>
-                            <span th:text="${comment.clike}"></span>
-                        </form>
-                    </div>
+                    <div class="comment-body" th:text="${comment.cbody}">댓글 내용</div>
 
-                </div>
-                <div class="comment-body" th:text="${comment.cbody}">댓글 내용</div>
+                    <div class="comment-footer">
+                        <th:block th:if="${comment.liked}">
+                            <!-- 좋아요 눌렀음 -->
+                            <form th:action="@{/chate}" method="post" style="display: inline;">
+                                <input type="hidden" name="uid" th:value="${session.uid}">
+                                <input type="hidden" name="cnum" th:value="${comment.cnum}">
+                                <input type="hidden" name="pnum" th:value="${comment.pnum}">
+                                <button type="submit" class="comment-like">❤️</button>
+                                <span th:text="${comment.clike}"></span>
+                            </form>
+                        </th:block>
+                        <th:block th:if="${!comment.liked}">
+                            <!-- 좋아요 안 눌렀음 -->
+                            <form th:action="@{/clike}" method="post" style="display: inline;">
+                                <input type="hidden" name="uid" th:value="${session.uid}">
+                                <input type="hidden" name="cnum" th:value="${comment.cnum}">
+                                <input type="hidden" name="pnum" th:value="${comment.pnum}">
+                                <button type="submit" class="comment-like">🤍</button>
+                                <span th:text="${comment.clike}"></span>
+                            </form>
+                        </th:block>
+                    </div>
+                    <th:block th:if="${comment != null}">
+                        <form th:action="@{/replies}" method="post">
+                        <textarea name="rbody" placeholder="답글을 입력하세요..."></textarea>
+                        <input type="hidden" name="cnum" th:value="${comment.cnum}">
+                        <input type="hidden" name="uid" th:value="${session.uid}">
+                        <input type="hidden" name="nickname" th:value="${session.nickname}">
+                            <input type="hidden" name="pnum" th:value="${comment.getPnum()}">
+                        <button type="submit">답글작성</button>
+                        </form>
+                    </th:block>
+                </th:block>
             </div>
         </div>
     </div>
-</div>
-<script>
-
-</script>
 </body>
 </html>

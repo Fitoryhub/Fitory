@@ -39,4 +39,6 @@ public interface IF_BoardService {
     void clike(Clike clike);
 
     void chate(Clike clike);
+
+
 }

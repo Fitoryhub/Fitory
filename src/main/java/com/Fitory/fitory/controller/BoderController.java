@@ -1,12 +1,11 @@
 package com.Fitory.fitory.controller;
 
+import com.Fitory.fitory.DTO.CommentDTO;
 import com.Fitory.fitory.DTO.PtitlePcategoryDTO;
 import com.Fitory.fitory.entity.*;
-import com.Fitory.fitory.repository.ClikeRepository;
-import com.Fitory.fitory.repository.CommentRepository;
-import com.Fitory.fitory.repository.FileRepository;
-import com.Fitory.fitory.repository.PlikeRepository;
+import com.Fitory.fitory.repository.*;
 import com.Fitory.fitory.service.BoardService;
+import com.Fitory.fitory.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +23,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -41,7 +41,9 @@ public class BoderController {
     private CommentRepository commentRepository;
     @Autowired
     ClikeRepository clikeRepository;
-
+    private UserService userService;
+    @Autowired
+    RepliesRepository repliesRepository;
     @GetMapping("/boardlist")
     public String boardlist(Model model ,@PageableDefault(page=0,size = 10 ,sort="pnum"
             ,direction = Sort.Direction.DESC) Pageable pageable
@@ -116,13 +118,35 @@ public class BoderController {
         Plike plike=plikeRepository.findByUidAndPnum(uid ,pnum);
        List<Files>files = fileRepository.findByPnum(pnum);
         Integer num = board.getPnum();
-        List<Comment> comment=commentRepository.findByPnumOrderByCnumAsc(num);
+        List<Comment> comments =commentRepository.findByPnumOrderByCnumAsc(num);
+       List<CommentDTO> commentDTOS=new ArrayList<>();
+        for(Comment comment:comments){
+            CommentDTO commentDTO = new CommentDTO();
+            commentDTO.setCnum(comment.getCnum());
+            commentDTO.setPnum(comment.getPnum());
+            commentDTO.setCbody(comment.getCbody());
+            commentDTO.setNickname(comment.getNickname());
+            commentDTO.setUid(comment.getUid());
+            commentDTO.setCdate(comment.getCdate());
+            commentDTO.setClike(comment.getClike());
+            commentDTOS.add(commentDTO);
+        }
         List<Clike> clike=clikeRepository.findByPnum(num);
-        model.addAttribute("commentlist", comment);
+        for(CommentDTO commentDTO:commentDTOS){
+            for(Clike c:clike){
+                if(c.getUid().equals(uid)&&commentDTO.getCnum()==(c.getCnum())){
+                    boolean liked=true;
+                    commentDTO.setLiked(liked);
+                }
+            }
+        }
+
+        model.addAttribute("commentlist", commentDTOS);
         model.addAttribute("board", board);
         model.addAttribute("files", files);
         model.addAttribute("plike", plike);
         model.addAttribute("clike", clike);
+
 
 
         return "/detailview";
@@ -160,15 +184,18 @@ public class BoderController {
     }
     @PostMapping("/clike")
     public String clike(@ModelAttribute Clike clike) {
-        clikeRepository.save(clike);
         boardService.clike(clike);
         return "redirect:/detailview?pnum="+clike.getPnum();
     }
     @PostMapping("/chate")
     public  String chate(@ModelAttribute Clike clike) {
-        clikeRepository.deleteByCnumAndUid(clike.getCnum() , clike.getUid());
-        boardService.chate(clike);
+                boardService.chate(clike);
         return "redirect:/detailview?pnum="+clike.getPnum();
+    }
+    @PostMapping("/replies")
+    public String replies(@ModelAttribute Replies replies) {
+    repliesRepository.save(replies);
+        return "redirect:/detailview?pnum="+replies.getPnum();
     }
 
 }
