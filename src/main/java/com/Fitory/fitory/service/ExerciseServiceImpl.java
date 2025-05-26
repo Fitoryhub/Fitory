@@ -70,4 +70,19 @@ public class ExerciseServiceImpl implements ExerciseService {
     public List<Exercises> getMatchingExercises(int met, String requiresEquipment, String isAnaerobic) {
         return ERepo.findByMatchingExercise(met, requiresEquipment, isAnaerobic);
     }
+
+    @Override
+    public List<Exercises> getMatchingExercises_v2(int met, String isAnaerobic) {
+        return ERepo.findByMetrankAndIsAnaerobic(met, isAnaerobic);
+    }
+
+    @Override
+    public List<Exercises> getMatchingExercises_v3(int met, String requiresEquipment) {
+        return ERepo.findByMetrankAndrequiresEquipment(met, requiresEquipment);
+    }
+
+    @Override
+    public List<Exercises> getMatchingExercises_v4(int met) {
+        return ERepo.findAllByMetrank(met);
+    }
 }

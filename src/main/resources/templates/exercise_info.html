@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>운동 필터</title>
 
-    <!-- 구글 폰트 -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet" />
 
     <style>
@@ -32,14 +31,14 @@
         }
 
         .left-panel {
-            flex: 1;
+            flex: 2;
             display: flex;
             flex-direction: column;
             gap: 30px;
         }
 
         .right-panel {
-            flex: 2;
+            flex: 3;
             background-color: #ffffff;
             border-radius: 16px;
             padding: 30px;
@@ -118,28 +117,57 @@
         }
 
         .recommendation-results h3 {
-            font-size: 22px;
+            font-size: 26px;
             color: #1f2937;
             margin-bottom: 16px;
         }
 
+        .recommendation-header {
+            display: flex;
+            font-weight: bold;
+            font-size: 20px;
+            margin-bottom: 16px;
+            padding: 8px 0;
+            border-bottom: 2px solid #d1d5db;
+        }
+
+        .recommendation-header > div {
+            flex: 1;
+        }
+
+        .recommendation-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
         .recommendation-item {
             padding: 12px;
-            margin-bottom: 12px;
             border-radius: 10px;
             background-color: #f3f4f6;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
         }
 
+        .recommendation-item label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+        }
+
+        hr {
+            margin: 20px 0;
+            border: none;
+            border-top: 1px solid #d1d5db;
+        }
     </style>
 </head>
 
 <body>
 <div class="container">
 
-    <!-- 좌측: 유저 정보 + 필터 폼 -->
+    <!-- 좌측 패널 -->
     <div class="left-panel">
-
         <!-- 유저 정보 -->
         <div class="user-info" th:if="${user != null}">
             <h2 th:text="'환영합니다, ' + ${user.userName} + '님!'"></h2>
@@ -155,7 +183,7 @@
         <!-- 운동 필터 -->
         <div class="filter-box">
             <h2>운동 필터</h2>
-            <form action="/set" method="post">
+            <form id="filter-form">
                 <div class="form-group">
                     <label for="exerciseTime">운동 시간 선택</label>
                     <select name="time" id="exerciseTime">
@@ -203,14 +231,76 @@
         </div>
     </div>
 
-    <!-- 우측: 운동 추천 결과 공간 -->
+    <!-- 우측 패널 -->
     <div class="right-panel">
         <div class="recommendation-results">
             <h3>추천 운동 목록</h3>
-            <!-- 여기에 추천된 운동들이 반복 렌더링됨 -->
-           
+
+
+
+                <!-- 제목 1회 출력 -->
+                <div class="recommendation-header">
+                 <!--    <div th:text="'선택 시간: ' + ${time} + '분'"></div>
+                    <div th:text="'목표 칼로리: ' + ${cal} + 'kcal'"></div>-->
+                </div>
+
+                <hr />
+
+                <!-- 리스트 출력 -->
+                <div class="recommendation-list">
+                    <!--
+                    <div th:each="exercise : ${elist}" class="recommendation-item">
+                        <label>
+                            <input type="checkbox" name="selectedExercises" th:value="${exercise.name}" />
+                            <span th:text="${exercise.name}"></span>
+                        </label>
+                    </div>-->
+                </div>
+            </div>
         </div>
     </div>
+
 </div>
 </body>
 </html>
+<script>
+    document.getElementById("filter-form").addEventListener("submit", function (e) {
+        e.preventDefault(); // 기본 제출 방지
+
+        const formData = new FormData(e.target);
+
+        fetch('/set', {
+            method: 'POST',
+            body: formData
+        })
+            .then(() => {
+                // POST 성공 후 바로 운동 리스트 fetch
+                return fetch('/api/exercise/set');
+            })
+            .then(res => res.json())
+            .then(data => {
+                console.log("서버 응답:", data);
+                const header = document.getElementsByClassName("recommendation-header")[0];
+                const list = document.getElementsByClassName("recommendation-list")[0];
+                header.innerHTML = `
+          <div>선택 시간: ${data.time}분</div>
+          <div>목표 칼로리: ${data.cal}kcal</div>
+        `;
+                list.innerHTML = '';
+
+                data.elist.forEach(exercise => {
+                    const div = document.createElement('div');
+                    div.classList.add('recommendation-item');
+                    div.innerHTML = `
+              <label>
+                <input type="checkbox" name="selectExercise" value="${exercise.name}">
+                <span>${exercise.name}</span>
+              </label>
+            `;
+                    list.appendChild(div);
+                });
+            })
+            .catch(error => console.error("요청 실패", error));
+    });
+
+</script>

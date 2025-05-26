@@ -12,6 +12,8 @@ public interface ExerciseRepository extends JpaRepository<Exercises, Integer> {
 
     List<Exercises> findByMetrank(int metrank);
 
+    List<Exercises> findAllByMetrank(int metrank);
+
     @Query("SELECT e FROM Exercises e WHERE e.metrank = :met AND " +
             "e.requiresEquipment = :requiresEquipment AND " +
             "e.isAnaerobic = :isAnaerobic")
@@ -19,6 +21,20 @@ public interface ExerciseRepository extends JpaRepository<Exercises, Integer> {
             @Param("met") int met,
             @Param("requiresEquipment") String requiresEquipment,
             @Param("isAnaerobic") String isAnaerobic
+    );
+
+    @Query("SELECT e FROM Exercises e WHERE e.metrank = :met AND " +
+            "e.isAnaerobic = :isAnaerobic")
+    List<Exercises> findByMetrankAndIsAnaerobic(
+            @Param("met")int met,
+            @Param("isAnaerobic") String isAnaerobic
+    );
+
+    @Query("SELECT e FROM Exercises e WHERE e.metrank = :met AND " +
+            "e.requiresEquipment = :requiresEquipment")
+    List<Exercises> findByMetrankAndrequiresEquipment(
+            @Param("met")int met,
+            @Param("requiresEquipment") String requiresEquipment
     );
 
 
