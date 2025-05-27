@@ -18,8 +18,7 @@ import java.util.Optional;
 @Controller
 public class UserController {
 
-    @Autowired
-    UserRepository userRepo;
+
     @Autowired
     UserService userService;
 
@@ -30,7 +29,7 @@ public class UserController {
 
     @PostMapping("/user_join")
     public String user_join(@ModelAttribute User user) {
-        userRepo.save(user);
+        userService.save(user);
         return "redirect:/";
     }
 

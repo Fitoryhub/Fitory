@@ -1,25 +1,22 @@
 package com.Fitory.fitory.controller;
 
 import com.Fitory.fitory.dto.ExerciseDTO;
+import com.Fitory.fitory.dto.ExerciseRoutineDTO;
 import com.Fitory.fitory.dto.UserSetDTO;
+import com.Fitory.fitory.entity.ExerciseRoutine;
 import com.Fitory.fitory.entity.Exercises;
 import com.Fitory.fitory.entity.User;
+import com.Fitory.fitory.service.ExerciseRoutineService;
 import com.Fitory.fitory.service.ExerciseService;
 import com.Fitory.fitory.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 @Controller
 public class ExerciseController {
@@ -28,6 +25,9 @@ public class ExerciseController {
     ExerciseService EService;
     @Autowired
     UserService userService;
+    @Autowired
+    ExerciseRoutineService exerciseRoutineService;
+
 
 
     @GetMapping("/exercise")
@@ -93,5 +93,29 @@ public class ExerciseController {
         session.setAttribute("time", e_time);
 
         return "redirect:/exercise";
+    }
+
+    @PostMapping("/routines")
+    @ResponseBody
+    public boolean routines(@RequestBody Map<String, Object> routineData, HttpSession session) {
+
+        int time = (int) routineData.get("time");
+        int cal = (int) routineData.get("cal");
+        String id = session.getAttribute("user_id").toString();
+        List<String> exercise = (List<String>) routineData.get("selectExercises");
+
+        for(int i=0; i<exercise.size(); i++){
+            ExerciseRoutine e = new ExerciseRoutine();
+            e.setUserId(id);
+            e.setRoutineName(exercise.get(i));
+            e.setTotalTime(time);
+            e.setTotalCalorie(cal);
+
+            exerciseRoutineService.save(e);
+        }
+
+
+
+            return false;
     }
 }

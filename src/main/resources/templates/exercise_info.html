@@ -43,6 +43,7 @@
             border-radius: 16px;
             padding: 30px;
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+            height: 930px;
         }
 
         .user-info {
@@ -163,6 +164,35 @@
             border: none;
             border-top: 1px solid #d1d5db;
         }
+        .right-panel {
+            position: relative; /* 자식 요소를 절대 위치로 배치하기 위해 필요 */
+        }
+
+        .save-button-wrapper {
+            position: absolute;
+            bottom: 20px;
+            right: 30px;
+        }
+
+        .save-button {
+            width: 20%; /* 가로 크기 줄이기 (전체의 20%) */
+            min-width: 150px; /* 너무 작아지지 않도록 최소 너비 지정 */
+            padding: 12px;
+            background-color: #10b981;
+            color: white;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .save-button:hover {
+            background-color: #059669;
+        }
+
+
     </style>
 </head>
 
@@ -260,6 +290,9 @@
                     </div>-->
                 </div>
             </div>
+        <div class="save-button-wrapper">
+            <button class="save-button" id="exerciseRoutine">저장</button>
+        </div>
         </div>
     </div>
 
@@ -286,8 +319,8 @@
                 const header = document.getElementsByClassName("recommendation-header")[0];
                 const list = document.getElementsByClassName("recommendation-list")[0];
                 header.innerHTML = `
-          <div>선택 시간: ${data.time}분</div>
-          <div>목표 칼로리: ${data.cal}kcal</div>
+          <div id="setTime">선택 시간: ${data.time}분</div>
+          <div id="setCal">목표 칼로리: ${data.cal}kcal</div>
         `;
                 list.innerHTML = '';
 
@@ -305,5 +338,43 @@
             })
             .catch(error => console.error("요청 실패", error));
     });
+
+    document.getElementById("exerciseRoutine").addEventListener("click", ()=>{
+        const timeText = document.getElementById("setTime").textContent;
+        const timeMatch = timeText.match(/\d+/);  // 숫자만 추출
+        const time = timeMatch ? parseInt(timeMatch[0]) : null;
+
+        const calText = document.getElementById("setCal").textContent;
+        const calMatch = calText.match(/\d+/);
+        const cal = calMatch ? parseInt(calMatch[0]) : null;
+
+        let selectExercises =[];
+        const list = document.getElementsByName("selectExercise");
+        for(let i=0; i<list.length; i++){
+            if(list[i].checked){
+                selectExercises.push(list[i].value);
+            }
+        }
+
+        const routineData = {
+            time : time,
+            cal : cal,
+            selectExercises : selectExercises
+        };
+
+        fetch('/routines', {
+            method : 'POST',
+            headers: {
+                'Content-Type' : 'application/json'
+            },
+            body: JSON.stringify(routineData)
+        })
+            .then(response => response.json())
+            .then(success =>{
+                if(!success){
+                    alert("저장 실패")
+                }
+            });
+    })
 
 </script>

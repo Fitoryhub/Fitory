@@ -9,7 +9,9 @@
     <facet type="jpa" name="JPA">
       <configuration>
         <setting name="validation-enabled" value="true" />
-        <datasource-mapping />
+        <datasource-mapping>
+          <factory-entry name="entityManagerFactory" value="47b4eda7-d34a-4277-8d4a-64d0c266863f" />
+        </datasource-mapping>
         <naming-strategy-map />
       </configuration>
     </facet>
