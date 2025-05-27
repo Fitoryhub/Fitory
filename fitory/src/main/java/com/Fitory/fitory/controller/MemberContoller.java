@@ -1,15 +1,19 @@
 package com.Fitory.fitory.controller;
 
+import com.Fitory.fitory.dto.SessionUserDTO;
 import com.Fitory.fitory.dto.UserDTO;
-import com.Fitory.fitory.entity.User;
 import com.Fitory.fitory.repository.UserRepository;
+import com.Fitory.fitory.service.UserServiceImpl;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.HashMap;
+import java.util.Map;
+
 
 @Controller
 public class MemberContoller {
@@ -17,28 +21,40 @@ public class MemberContoller {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    UserServiceImpl userServiceImpl;
+
+    // 메인 홈페이지
     @GetMapping("/")
-    public String main() {
+    public String main(HttpSession session, Model model) {
+        SessionUserDTO userInfo = (SessionUserDTO) session.getAttribute("userInfo");
+        model.addAttribute("userInfo", userInfo);
         return "main";
     }
 
-    @GetMapping("signup")
+    // 회원가입 페이지 이동
+    @GetMapping("/signup")
     public String signup() {
         return "signup";
     }
 
-    @GetMapping("login")
+    //로그인 페이지 이동
+    @GetMapping("/login")
     public String login() {
         return "login";
     }
 
 
-    @PostMapping("signin")
-    public String signin(Model model, @ModelAttribute UserDTO body) {
-        Optional<User> optionalUser = userRepository.findById(body.getId());
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();  // 이제 User 객체
-            if(user.getPassword().equals(body.getPassword())){
+    // 로그인
+    @PostMapping("/signin")
+    public String signin(HttpServletRequest request, Model model, @ModelAttribute UserDTO body) {
+        UserDTO udto = new UserDTO();
+        udto = userServiceImpl.login(body.getId());
+        if (udto != null) {
+            if(udto.getPassword().equals(body.getPassword())){
+                HttpSession session = request.getSession();
+                SessionUserDTO suser = new SessionUserDTO(udto.getId(), udto.getNickname());
+                session.setAttribute("userInfo", suser);
                 return "redirect:/";
             }
             else {
@@ -51,13 +67,29 @@ public class MemberContoller {
         }
     }
 
+    @GetMapping("/logout")
+    public String logout(HttpServletRequest request) {
+        HttpSession session = request.getSession(false); // 세션이 없으면 null 반환
+        if(session != null) {
+            session.invalidate();  // 세션 무효화(삭제)
+        }
+        return "main";
+    }
+
+    // id 중복체크
+    @GetMapping("/idChk")
+    @ResponseBody
+    public Map<String, Boolean> IDcheck(@RequestParam String id){
+        boolean exists = userServiceImpl.idchk(id);
+        Map<String, Boolean> result = new HashMap<>();
+        result.put("exists", exists);
+        return result;
+    }
+
+    // 회원가입
     @PostMapping("/user")
     public String demoController(@ModelAttribute UserDTO body) {
-        User user = new User();
-        user.update_user(body);
-
-        userRepository.save(user);
-        System.out.println("저장");
+        userServiceImpl.usersave(body);
         return "main";
     }
 }

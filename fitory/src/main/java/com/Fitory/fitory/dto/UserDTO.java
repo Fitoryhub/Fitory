@@ -1,5 +1,8 @@
 package com.Fitory.fitory.dto;
 
+
+import com.Fitory.fitory.entity.User;
+
 public class UserDTO {
     private String id;
     private String name;
@@ -65,4 +68,16 @@ public class UserDTO {
 
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
+
+    public void update_user(User user){
+        this.id = user.getId();
+        this.password = user.getPassword();
+        this.nickname = user.getNickname();
+        this.email = user.getEmail();
+        this.name = user.getName();
+        this.birth = user.getBirth();
+        this.gender = user.getGender();
+        this.height_cm = user.getHeight();
+        this.weight_kg = user.getWeight();
+    }
 }

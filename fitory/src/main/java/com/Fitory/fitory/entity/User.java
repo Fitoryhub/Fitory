@@ -10,7 +10,6 @@ import jakarta.persistence.Table;
 @Table(name="users")
 public class User {
     @Id
-
     private String id;
 
     private String nickname;
