@@ -25,7 +25,8 @@ public class Replies {
 
     private String rbody;
 
-    private Integer Pnum;
+
+    private Integer pnum;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate rdate;

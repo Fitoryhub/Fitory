@@ -2,6 +2,7 @@ package com.Fitory.fitory.controller;
 
 import com.Fitory.fitory.DTO.CommentDTO;
 import com.Fitory.fitory.DTO.PtitlePcategoryDTO;
+import com.Fitory.fitory.DTO.RepliesDTO;
 import com.Fitory.fitory.entity.*;
 import com.Fitory.fitory.repository.*;
 import com.Fitory.fitory.service.BoardService;
@@ -44,6 +45,8 @@ public class BoderController {
     private UserService userService;
     @Autowired
     RepliesRepository repliesRepository;
+    @Autowired
+    RlikeRepository rlikeRepository;
     @GetMapping("/boardlist")
     public String boardlist(Model model ,@PageableDefault(page=0,size = 10 ,sort="pnum"
             ,direction = Sort.Direction.DESC) Pageable pageable
@@ -140,7 +143,35 @@ public class BoderController {
                 }
             }
         }
+        List<Replies> replie =repliesRepository.findByPnum(num);
+        List<RepliesDTO> replies= new ArrayList<>();
 
+        for(Replies onereplie : replie){
+                          RepliesDTO repliesDTO=new RepliesDTO();
+                          repliesDTO.setCnum(onereplie.getCnum());
+                          repliesDTO.setPnum(onereplie.getPnum());
+                          repliesDTO.setRlikes(onereplie.getRlikes());
+                          repliesDTO.setRbody(onereplie.getRbody());
+                          repliesDTO.setRdate(onereplie.getRdate());
+                          repliesDTO.setNickname(onereplie.getNickname());
+                          repliesDTO.setUid(onereplie.getUid());
+                          repliesDTO.setRdate(onereplie.getRdate());
+                          repliesDTO.setRnum(onereplie.getRnum());
+                          replies.add(repliesDTO);
+        }
+
+        List<Rlikes> rlikes =rlikeRepository.findByPnum(num);
+        for(RepliesDTO repliesDTO : replies){
+            for(Rlikes rlike:rlikes){
+                if(rlike.getUid() != null && rlike.getRnum() != null && repliesDTO.getRnum() != null&&
+                        rlike.getUid().equals(uid)&&
+                        rlike.getRnum().equals(repliesDTO.getRnum())){
+                    repliesDTO.setCheck(true);
+                }
+            }
+        }
+
+        model.addAttribute("replies", replies);
         model.addAttribute("commentlist", commentDTOS);
         model.addAttribute("board", board);
         model.addAttribute("files", files);
@@ -195,7 +226,24 @@ public class BoderController {
     @PostMapping("/replies")
     public String replies(@ModelAttribute Replies replies) {
     repliesRepository.save(replies);
-        return "redirect:/detailview?pnum="+replies.getPnum();
+
+           return "redirect:/detailview?pnum="+replies.getPnum();
     }
+    @PostMapping("/rlike")
+    public String rlike(@ModelAttribute Rlikes rlikes) {
+        rlikeRepository.save(rlikes);
+        Integer rnum =rlikes.getRnum();
+        boardService.replieslike(rnum);
+        return "redirect:/detailview?pnum="+rlikes.getPnum();
+    }
+    @PostMapping("/rhate")
+    public String rhate(@ModelAttribute Rlikes rlikes) {
+        String uid =rlikes.getUid();
+        Integer rnum =rlikes.getRnum();
+        boardService.rhate(uid ,rnum);
+        boardService.replieshate(rnum);
+        return "redirect:/detailview?pnum="+rlikes.getPnum();
+    }
+
 
 }

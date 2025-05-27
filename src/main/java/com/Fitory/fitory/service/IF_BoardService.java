@@ -41,4 +41,9 @@ public interface IF_BoardService {
     void chate(Clike clike);
 
 
+    void rhate(String uid , Integer rnum);
+
+    void replieslike(Integer rnum);
+
+    void replieshate(Integer rnum);
 }

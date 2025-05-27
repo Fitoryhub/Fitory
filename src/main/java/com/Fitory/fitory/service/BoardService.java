@@ -26,6 +26,11 @@ public class BoardService implements IF_BoardService {
     private CommentRepository commentrepository;
     @Autowired
     private ClikeRepository clikerepository;
+    @Autowired
+    private RlikeRepository rlikerepository;
+    @Autowired
+    private RepliesRepository repliesrepository;
+
     @Override
     public void savepost(Board board) {
        boardrepository.save(board);
@@ -96,7 +101,22 @@ public class BoardService implements IF_BoardService {
         commentrepository.chate(clike.getCnum());
         clikerepository.deleteByCnumAndUid(clike.getCnum(),clike.getUid());
     }
+    @Transactional
+    @Override
+    public void rhate(String uid ,Integer rnum) {
+        rlikerepository.deleteByUidAndRnum(uid , rnum);
+    }
 
+    @Transactional
+    @Override
+    public void replieslike(Integer rnum) {
+        repliesrepository.update(rnum);
+    }
+    @Transactional
+    @Override
+    public void replieshate(Integer rnum) {
+        repliesrepository.replieshate(rnum);
+    }
 
 
 }
