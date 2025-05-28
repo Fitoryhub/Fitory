@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface BoardRepository extends JpaRepository<Board, Integer> {
 
+
     Board findByPnum(Integer pnum);
 
 
@@ -32,7 +33,7 @@ public interface BoardRepository extends JpaRepository<Board, Integer> {
     @Query("update Board b set b.plike=b.plike-1 where b.pnum=:pnum")
     void bhate(Integer pnum);
 
-   
-
-
+    @Modifying
+    @Query("update Board b set b.ptitle=:ptitle , b.pbody=:pbody , b.pcategory=:pcategory where b.pnum =:pnum ")
+    void modpost(Integer pnum, String ptitle, String pcategory, String pbody);
 }

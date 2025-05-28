@@ -24,5 +24,7 @@ public interface CommentRepository extends JpaRepository<Comment, Integer> {
     @Query("update Comment c set c.clike=c.clike-1 where c.cnum=:cnum")
     void chate(@Param("cnum") Integer cnum);
 
-
+    @Modifying
+    @Query("update Comment c set c.cbody=:cbody where c.cnum=:cnum")
+    void commentmod(Integer cnum, String cbody);
 }

@@ -1,9 +1,7 @@
 package com.Fitory.fitory.service;
 
 import com.Fitory.fitory.DTO.PtitlePcategoryDTO;
-import com.Fitory.fitory.entity.Board;
-import com.Fitory.fitory.entity.Clike;
-import com.Fitory.fitory.entity.Files;
+import com.Fitory.fitory.entity.*;
 import com.Fitory.fitory.repository.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -116,6 +115,50 @@ public class BoardService implements IF_BoardService {
     @Override
     public void replieshate(Integer rnum) {
         repliesrepository.replieshate(rnum);
+    }
+    @Transactional
+    @Override
+    public void board_mod(Board board) {
+
+       Integer pnum=board.getPnum();
+        String ptitle=board.getPtitle();
+        String pcategory=board.getPcategory();
+        String pbody=board.getPbody();
+        String uid=board.getUid();
+
+        boardrepository.modpost(pnum,ptitle,pcategory,pbody);
+        filerepository.deleteByPnum(board.getPnum());
+    }
+
+    @Override
+    public void boarddelete(Integer pnum) {
+        boardrepository.deleteById(pnum);
+    }
+
+    @Transactional
+    @Override
+    public void commentdelete(Integer cnum) {
+        commentrepository.deleteById(cnum);
+    }
+    @Transactional
+    @Override
+    public void commentmod(Comment comment) {
+        Integer cnum=comment.getCnum();
+        String cbody=comment.getCbody();
+        commentrepository.commentmod(cnum,cbody);
+    }
+
+    @Override
+    public void repliedelete(Integer rnum) {
+
+        repliesrepository.deleteById(rnum);
+    }
+    @Transactional
+    @Override
+    public void replymod(Replies replie) {
+        Integer rnum=replie.getRnum();
+        String rbody=replie.getRbody();
+        repliesrepository.replymod(rnum,rbody);
     }
 
 

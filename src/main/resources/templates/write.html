@@ -69,9 +69,11 @@
 
 <h2>게시글 작성</h2>
 
-<form th:action="@{/submit_post}" th:object="${board}" method="POST" enctype="multipart/form-data">
+<form th:action="${mod} ? @{/mod_post} : @{/submit_post}"
+      th:object="${board}" method="post" enctype="multipart/form-data">
     <input type="hidden" name="nickname" th:value="${session.nickname}"/>
     <input type="hidden" name="uid" th:value="${session.uid}">
+    <input th:if="${mod}" type="hidden" name="pnum" th:value="${board.pnum}">
     <table>
         <tr>
             <td>제목</td>

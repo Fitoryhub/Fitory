@@ -11,7 +11,7 @@
 
         body {
             font-family: 'Helvetica Neue', sans-serif;
-            background-color: #f9f9f9;
+            background: linear-gradient(135deg, #d4fcd6, #b2f0c5);
             margin: 0;
             padding: 20px;
         }
@@ -19,7 +19,7 @@
         .container {
             max-width: 850px;
             margin: 0 auto;
-            background-color: #fff;
+            background-color: #ffffff;
             padding: 40px;
             border-radius: 12px;
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
@@ -38,14 +38,23 @@
             border-bottom: 1px solid #eee;
             padding-bottom: 10px;
             margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
         }
 
         .meta span {
             margin-right: 20px;
         }
 
+        .meta div {
+            display: inline-flex;
+            gap: 10px;
+        }
+
         .like-form {
             display: inline-block;
+            margin-right: 10px;
         }
 
         .like-button {
@@ -84,7 +93,7 @@
         .comment-section h3 {
             font-size: 20px;
             margin-bottom: 20px;
-            border-left: 4px solid #007bff;
+            border-left: 4px solid #28a745;
             padding-left: 10px;
             color: #333;
         }
@@ -104,7 +113,7 @@
         .comment-form button {
             float: right;
             padding: 10px 20px;
-            background: #007bff;
+            background: #28a745;
             color: white;
             border: none;
             border-radius: 6px;
@@ -127,12 +136,18 @@
             color: #666;
             display: flex;
             justify-content: space-between;
+            align-items: center;
             margin-bottom: 10px;
+        }
+
+        .comment-header div {
+            display: inline-flex;
+            gap: 10px;
         }
 
         .comment-author {
             font-weight: bold;
-            color: #007bff;
+            color: #28a745;
         }
 
         .comment-body {
@@ -141,37 +156,103 @@
             margin-bottom: 10px;
         }
 
+        .comment-footer {
+            display: flex;
+            align-items: center;
+        }
+
         .comment-footer form {
             display: inline-block;
             margin-right: 10px;
         }
 
         .reply-box {
-            margin-top: 10px;
-            padding-left: 15px;
-            border-left: 2px solid #ccc;
-        }
-
-        .reply-item {
-            font-size: 14px;
-            color: #444;
-            margin-bottom: 10px;
-        }
-
-        .reply-item span {
-            margin-right: 8px;
-            font-weight: bold;
-            color: #007bff;
+            margin-top: 15px;
+            padding: 15px 20px;
+            background: #e6ffec;
+            border-left: 4px solid #34c759;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(52, 199, 89, 0.1);
         }
 
         .reply-form textarea {
             margin-top: 10px;
             height: 80px;
+            background-color: #f0fff5;
+            border: 1px solid #b2eec2;
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 14px;
+            color: #333;
         }
 
         .reply-form button {
-            margin-top: 5px;
+            margin-top: 8px;
             float: right;
+            background: #34c759;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            font-size: 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .reply-form button:hover {
+            background: #2fa74e;
+        }
+
+        .reply-item {
+            font-size: 14px;
+            color: #2e7d32;
+            margin-top: 10px;
+            padding: 10px 15px;
+            background: #f3fff8;
+            border: 1px solid #bce5c4;
+            border-radius: 8px;
+            box-shadow: 0 1px 4px rgba(0, 100, 0, 0.05);
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .reply-item span:first-child {
+            font-weight: bold;
+            color: #1e9442;
+            margin-right: 8px;
+        }
+
+        .reply-item span:nth-child(2) {
+            color: #333;
+            margin-right: 10px;
+        }
+
+        .reply-item span:nth-child(3) {
+            font-size: 12px;
+            color: #777;
+            margin-right: 10px;
+        }
+
+        .reply-item form {
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        .reply-item form button {
+            background: none;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .reply-item form button:hover {
+            transform: scale(1.1);
+        }
+
+        .reply-item div {
+            display: inline-flex;
+            gap: 10px;
         }
 
         @media (max-width: 600px) {
@@ -190,8 +271,6 @@
         <span th:text="'작성자: ' + ${board.nickname}">작성자</span>
         <span th:text="'작성일: ' + ${board.pdate}">작성일</span>
         <span th:text="'조회수: ' + ${board.plook}">조회수</span>
-        <span th:text="'좋아요: ' + ${board.plike}">좋아요수</span>
-
         <span class="like-form" th:if="${plike != null}">
             <form th:action="@{/phate}" method="post">
                 <input type="hidden" name="uid" th:value="${session.uid}">
@@ -199,7 +278,6 @@
                 <button type="submit" class="like-button">❤️</button>
             </form>
         </span>
-
         <span class="like-form" th:if="${plike == null}">
             <form th:action="@{/plike}" method="post">
                 <input type="hidden" name="uid" th:value="${session.uid}">
@@ -207,6 +285,19 @@
                 <button type="submit" class="like-button">🤍</button>
             </form>
         </span>
+
+        <span th:text="'좋아요: ' + ${board.plike}">좋아요수</span>
+        <div th:if="${board.nickname==session.nickname}">
+            <form th:action="@{/boardmod}" method="get">
+                <input type="hidden" th:name="pnum" th:value="${board.pnum}" />
+                <button type="submit">수정</button>
+            </form>
+            <form th:action="@{/boarddelete}" method="get">
+                <input type="hidden" th:name="pnum" th:value="${board.pnum}" />
+                <button>삭제</button>
+            </form>
+
+        </div>
     </div>
 
     <div class="category" th:text="'카테고리: ' + ${board.pcategory}">카테고리</div>
@@ -234,9 +325,30 @@
                 <div class="comment-header">
                     <span class="comment-author" th:text="${comment.nickname}">작성자</span>
                     <span th:text="${comment.cdate}">작성일</span>
+                    <div th:if="${comment.nickname==session.nickname}">
+
+                        <button type="button" th:onclick="'showEditForm(' + ${comment.cnum} + ')'">수정</button>
+
+                        <form th:action="@{/commentdelete}" method="post">
+                            <input type="hidden" name="cnum" th:value="${comment.cnum}">
+                            <input type="hidden" name="pnum" th:value="${board.pnum}">
+                            <button type="submit">삭제</button>
+                        </form>
+
+                    </div>
                 </div>
 
-                <div class="comment-body" th:text="${comment.cbody}">댓글 내용</div>
+                <div class="comment-body" th:id="'body-' + ${comment.cnum}" th:text="${comment.cbody}">댓글 내용</div>
+
+
+                <form th:action="@{/commentmod}" method="post" th:id="'editForm-' + ${comment.cnum}" style="display:none;">
+                    <input type="hidden" name="cnum" th:value="${comment.cnum}" />
+                    <input type="hidden" name="pnum" th:value="${board.pnum}" />
+                    <textarea name="cbody" th:text="${comment.cbody}" rows="3" style="width:100%;"></textarea>
+                    <button type="submit">확인</button>
+                    <button type="button" th:onclick="'hideEditForm(' + ${comment.cnum} + ')'">취소</button>
+                </form>
+
 
                 <div class="comment-footer">
                     <form th:if="${comment.liked}" th:action="@{/chate}" method="post">
@@ -244,40 +356,29 @@
                         <input type="hidden" name="cnum" th:value="${comment.cnum}">
                         <input type="hidden" name="pnum" th:value="${comment.pnum}">
                         <button type="submit" class="like-button">❤️</button>
-                        <span th:text="${comment.clike}"></span>
                     </form>
-
                     <form th:if="${!comment.liked}" th:action="@{/clike}" method="post">
                         <input type="hidden" name="uid" th:value="${session.uid}">
                         <input type="hidden" name="cnum" th:value="${comment.cnum}">
                         <input type="hidden" name="pnum" th:value="${comment.pnum}">
                         <button type="submit" class="like-button">🤍</button>
-                        <span th:text="${comment.clike}"></span>
                     </form>
+                    <span th:text="${comment.clike}">0</span>
                 </div>
 
                 <div class="reply-box">
-                    <form th:action="@{/replies}" method="post" class="reply-form">
-                        <textarea name="rbody" placeholder="답글을 입력하세요..."></textarea>
-                        <input type="hidden" name="cnum" th:value="${comment.cnum}">
-                        <input type="hidden" name="uid" th:value="${session.uid}">
-                        <input type="hidden" name="nickname" th:value="${session.nickname}">
-                        <input type="hidden" name="pnum" th:value="${board.pnum}">
-                        <button type="submit">답글 작성</button>
-                    </form>
-
                     <div class="reply-item" th:each="reply : ${replies}" th:if="${reply.cnum == comment.cnum}">
-                        <span th:text="${reply.nickname}">닉네임</span>
+                        <span th:text="'↪'+${reply.nickname}">닉네임</span>
+                        <span th:id="'rbody-' + ${reply.rnum}" th:text="${reply.rbody}">내용</span>
                         <span th:text="${reply.rdate}">날짜</span>
-                        <span th:text="${reply.rbody}">내용</span>
 
+                        <!-- 좋아요/싫어요 -->
                         <form th:if="${reply.check}" th:action="@{/rhate}" method="post" style="display:inline;">
                             <input type="hidden" name="rnum" th:value="${reply.rnum}">
                             <input type="hidden" name="uid" th:value="${session.uid}">
                             <input type="hidden" name="pnum" th:value="${board.pnum}">
                             <button type="submit">❤️</button>
                         </form>
-
                         <form th:if="${!reply.check}" th:action="@{/rlike}" method="post" style="display:inline;">
                             <input type="hidden" name="rnum" th:value="${reply.rnum}">
                             <input type="hidden" name="uid" th:value="${session.uid}">
@@ -286,12 +387,61 @@
                             <button type="submit">🤍</button>
                         </form>
                         <span th:text="${reply.rlikes}">0</span>
+
+                        <!-- 수정/삭제 -->
+                        <div th:if="${reply.nickname==session.nickname}">
+                            <button type="button" th:onclick="'showReplyEditForm(' + ${reply.rnum} + ')'">수정</button>
+                            <form th:action="@{/repliedelete}" method="post">
+                                <input type="hidden" name="pnum" th:value="${board.pnum}">
+                                <input type="hidden" name="rnum" th:value="${reply.rnum}">
+                                <button type="submit">삭제</button>
+                            </form>
+                        </div>
+
+                        <!-- 대댓글 수정 폼 -->
+                        <form th:action="@{/replymod}" method="post" th:id="'replyEditForm-' + ${reply.rnum}" style="display:none; width: 100%; margin-top:10px;">
+                            <input type="hidden" name="rnum" th:value="${reply.rnum}" />
+                            <input type="hidden" name="pnum" th:value="${board.pnum}" />
+                            <textarea name="rbody" rows="2" style="width:100%;" th:text="${reply.rbody}"></textarea>
+                            <button type="submit">확인</button>
+                            <button type="button" th:onclick="'cancelReplyEditForm(' + ${reply.rnum} + ')'">취소</button>
+                        </form>
                     </div>
+
+
+
+                    <form th:action="@{/replies}" method="post" class="reply-form">
+                        <textarea name="rbody" placeholder="답글을 입력하세요..."></textarea>
+                        <input type="hidden" name="cnum" th:value="${comment.cnum}">
+                        <input type="hidden" name="uid" th:value="${session.uid}">
+                        <input type="hidden" name="nickname" th:value="${session.nickname}">
+                        <input type="hidden" name="pnum" th:value="${board.pnum}">
+                        <button type="submit">답글 작성</button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 </div>
+<script>
+    function showEditForm(cnum) {
+        document.getElementById('editForm-' + cnum).style.display = 'block';
+        document.getElementById('body-' + cnum).style.display = 'none';
+    }
 
+    function hideEditForm(cnum) {
+        document.getElementById('editForm-' + cnum).style.display = 'none';
+        document.getElementById('body-' + cnum).style.display = 'block';
+    }
+    function showReplyEditForm(rnum) {
+        document.getElementById('replyEditForm-' + rnum).style.display = 'block';
+        document.getElementById('rbody-' + rnum).style.display = 'none';
+    }
+
+    function cancelReplyEditForm(rnum) {
+        document.getElementById('replyEditForm-' + rnum).style.display = 'none';
+        document.getElementById('rbody-' + rnum).style.display = 'inline';
+    }
+</script>
 </body>
 </html>

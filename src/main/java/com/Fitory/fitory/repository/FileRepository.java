@@ -10,4 +10,6 @@ import java.util.List;
 public interface FileRepository extends JpaRepository<Files, Integer> {
 
     List<Files> findByPnum(Integer pnum);
+
+    void deleteByPnum(Integer pnum);
 }

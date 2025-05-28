@@ -244,6 +244,65 @@ public class BoderController {
         boardService.replieshate(rnum);
         return "redirect:/detailview?pnum="+rlikes.getPnum();
     }
+    @GetMapping("/boardmod")
+    public String boardmod(Model model ,@RequestParam("pnum") Integer pnum ) {
+
+        Board board=new Board();
+        board.setPnum(pnum);
+        model.addAttribute("mod",true);
+        model.addAttribute("board", board);
+        return "write";
+    }
+    @PostMapping("/mod_post")
+    public String modpost(@ModelAttribute Board board ,
+                          @RequestParam("files")MultipartFile[] filelist) throws Exception {
+        boardService.board_mod(board);
+
+        String ProjectPath = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\files";
+        System.out.println(board.getPnum());
+
+        for (MultipartFile onefile : filelist) {
+            if(!onefile.isEmpty()) {
+                UUID uuid = UUID.randomUUID();
+                String filename = uuid + "_" + onefile.getOriginalFilename();
+                File savfile = new File(ProjectPath, filename);
+                onefile.transferTo(savfile);
+                Files files = new Files();
+                files.setFilename(filename);
+                files.setPnum(board.getPnum());
+                fileRepository.save(files);
+            }
+        }
+
+        return "redirect:/detailview?pnum="+board.getPnum();
+    }
+
+    @GetMapping("/boarddelete")
+    public String boarddelete(@RequestParam("pnum") Integer pnum) {
+        boardService.boarddelete(pnum);
+        return "redirect:/boardlist";
+    }
+    @PostMapping("/commentdelete")
+    public String commentdelete(@RequestParam("pnum") Integer pnum ,@RequestParam("cnum") Integer cnum) {
+        boardService.commentdelete(cnum);
+        return "redirect:/detailview?pnum="+pnum;
+    }
+    @PostMapping("/commentmod")
+    public String commentmod(@ModelAttribute Comment comment ) {
 
 
+        boardService.commentmod(comment);
+        return "redirect:/detailview?pnum="+comment.getPnum();
+    }
+    @PostMapping("/repliedelete")
+    public String repliedelete(@RequestParam("rnum") Integer rnum,@RequestParam("pnum") Integer pnum) {
+
+        boardService.repliedelete(rnum);
+        return "redirect:/detailview?pnum="+pnum;
+    }
+   @PostMapping("/replymod")
+    public String replymod(@ModelAttribute Replies replie) {
+     boardService.replymod(replie);
+     return "redirect:/detailview?pnum="+replie.getPnum();
+   }
 }

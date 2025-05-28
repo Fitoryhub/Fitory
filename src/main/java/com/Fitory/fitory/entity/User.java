@@ -17,6 +17,8 @@ public class User {
     @Column(name = "id")
     private String uid;
 
+
+
     private String name;
     private String password;
     private String email;

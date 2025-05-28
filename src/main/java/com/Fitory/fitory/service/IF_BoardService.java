@@ -1,9 +1,7 @@
 package com.Fitory.fitory.service;
 
 import com.Fitory.fitory.DTO.PtitlePcategoryDTO;
-import com.Fitory.fitory.entity.Board;
-import com.Fitory.fitory.entity.Clike;
-import com.Fitory.fitory.entity.Files;
+import com.Fitory.fitory.entity.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -46,4 +44,16 @@ public interface IF_BoardService {
     void replieslike(Integer rnum);
 
     void replieshate(Integer rnum);
+
+    void board_mod(Board board);
+
+    void boarddelete(Integer pnum);
+
+    void commentdelete(Integer cnum);
+
+    void commentmod(Comment comment);
+
+    void repliedelete(Integer rnum);
+
+    void replymod(Replies replie);
 }

@@ -23,4 +23,8 @@ public interface RepliesRepository extends JpaRepository<Replies, Integer> {
     @Modifying
     @Query("update Replies r set r.rlikes=r.rlikes-1 where r.rnum=:rnum")
     void replieshate(@Param("rnum") Integer rnum);
+
+    @Modifying
+    @Query("update Replies r set r.rbody=:rbody where r.rnum=:rnum")
+    void replymod(@Param("rnum") Integer rnum, @Param("rbody") String rbody);
 }
