@@ -5,6 +5,9 @@ import com.Fitory.fitory.repository.ExerciseRoutineRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 public class ExerciseRoutineServiceImpl implements ExerciseRoutineService {
 
@@ -20,5 +23,11 @@ public class ExerciseRoutineServiceImpl implements ExerciseRoutineService {
 
         return false;
         }
+    }
+
+    @Override
+    public List<ExerciseRoutine> findByUserID(String id) {
+
+        return exerciseRoutineRepository.findByUserId(id);
     }
 }

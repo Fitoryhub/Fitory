@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Fitory 마이페이지</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet"/>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+
+        body {
+            background-color: #f9fafb;
+            color: #333;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 220px;
+            background-color: #10b981;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .sidebar img {
+            width: 120px;
+            margin-bottom: 40px;
+        }
+
+        .sidebar nav {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+        }
+
+        .sidebar nav a {
+            text-decoration: none;
+            font-size: 16px;
+            color: black;
+            font-weight: 600;
+            padding: 10px 15px;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .sidebar nav a:hover, .sidebar nav a.active {
+            background-color: #60C693;
+        }
+
+        .main-container {
+            flex: 1;
+            display: flex;
+            flex-direction: row;
+        }
+
+        .main-content {
+            flex: 3;
+            padding: 40px 60px;
+            background-color: #fff;
+        }
+
+        .section-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #111827;
+            margin-bottom: 30px;
+        }
+
+        .info-box, .exercise-box {
+            background-color: #f0fdf4;
+            border: 1px solid #d1fae5;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .info-item span {
+            font-weight: 600;
+            color: #065f46;
+            display: inline-block;
+            width: 100px;
+        }
+
+        .exercise-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .exercise-list li {
+            padding: 8px 0;
+            font-size: 16px;
+            border-bottom: 1px solid #d1fae5;
+        }
+
+        #sort-buttons {
+            margin-bottom: 20px;
+            text-align: right;
+        }
+
+        #sort-buttons button {
+            padding: 8px 12px;
+            margin-right: 2px;
+            background-color:#33ad86;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 10px;
+        }
+
+        #sort-buttons button:hover {
+            background-color: #059669;
+        }
+
+        .profile-summary {
+            flex: 1;
+            background-color: #f3f4f6;
+            padding: 40px 20px;
+            border-left: 1px solid #e5e7eb;
+        }
+
+        .profile-summary img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-bottom: 20px;
+        }
+
+        .profile-summary .username {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 10px;
+        }
+
+        .profile-summary .menu-group {
+            margin-top: 30px;
+        }
+
+        .profile-summary .menu-group h4 {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 10px;
+        }
+
+        .profile-summary .menu-group ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .profile-summary .menu-group ul li {
+            padding: 5px 0;
+            font-size: 14px;
+            color: #374151;
+            cursor: pointer;
+        }
+
+        .profile-summary .menu-group ul li:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<!-- 사이드바 -->
+<aside class="sidebar">
+    <img src="/image/logo2.png" alt="Fitory 로고">
+    <nav>
+        <a href="/">홈</a>
+        <a href="/mypage" class="active">마이페이지</a>
+        <a href="#">스케줄러</a>
+        <a href="/logOut">로그아웃</a>
+    </nav>
+</aside>
+
+<!-- 메인 콘텐츠 -->
+<div class="main-container">
+
+    <main class="main-content">
+        <div class="section-title">마이페이지</div>
+
+        <!-- 회원 정보 -->
+        <div class="info-box">
+            <h3>회원 정보</h3>
+            <div class="info-grid" th:if="${user != null}">
+                <div class="info-item"><span>이름:</span> <span th:text="${user.userName}"></span></div>
+                <div class="info-item"><span>성별:</span> <span th:text="${user.gender}"></span></div>
+                <div class="info-item"><span>생년월일:</span> <span th:text="${user.birth}"></span></div>
+                <div class="info-item"><span>몸무게:</span> <span th:text="${user.weightKg}">kg</span></div>
+                <div class="info-item"><span>키:</span> <span th:text="${user.heightCm}">cm</span></div>
+                <div class="info-item"><span>아이디:</span> <span th:text="${user.user_id}"></span></div>
+                <div class="info-item"><span>이메일:</span> <span th:text="${user.email}"></span></div>
+            </div>
+        </div>
+
+        <!-- 추천 운동 -->
+        <div class="exercise-box">
+            <h3>저장한 운동</h3>
+
+            <!-- 정렬 버튼 -->
+            <div id="sort-buttons">
+                <button id="sort_cal"> 칼로리별</button>
+                <button id="sort_time"> 시간별</button>
+                <button id="delete">삭제</button>
+            </div>
+
+            <ul class="exercise-list" id="exerciseList">
+
+                <li th:each="routine : ${routineList}"
+                    th:text="'운동명 : '+${routine.routineName + ' / ' + routine.totalTime + '분  /' + routine.totalCalorie}+'kcal'">
+                </li>
+
+            </ul>
+
+        </div>
+    </main>
+
+    <!-- 사용자 요약 -->
+    <aside class="profile-summary">
+        <div class="username" th:text="${user.userName}">홍길동</div>
+        <div class="user-desc" >닉네임 : ~~~~</div>
+
+        <div class="menu-group">
+            <h4>계정</h4>
+            <ul>
+                <li>내 정보 관리</li>
+            </ul>
+        </div>
+
+        <div class="menu-group">
+            <h4>글 관리</h4>
+            <ul>
+                <li>내가 쓴 글</li>
+                <li>댓글 단 글</li>
+            </ul>
+        </div>
+    </aside>
+
+</div>
+</body>
+</html>
+<script th:inline="javascript">
+    let routines;
+    routines = [[${routineList}]];
+
+    function renderRoutineList() {
+        const ul = document.getElementById("exerciseList");
+        ul.innerHTML = "";  // 기존 항목 초기화
+
+        routines.forEach(routine => {
+            const li = document.createElement("li");
+            li.textContent = `운동명 : ${routine.routineName} / ${routine.totalTime}분 / ${routine.totalCalorie}kcal`;
+            ul.appendChild(li);
+        });
+    }
+
+    // 최초 렌더링 (서버에서 받아온 데이터 표시)
+    renderRoutineList();
+
+    // 칼로리 내림차순 정렬 버튼
+    document.getElementById("sort_cal").addEventListener("click", () => {
+        routines.sort((a, b) => b.totalCalorie - a.totalCalorie);
+        renderRoutineList();
+    });
+
+    // 시간 내림차순 정렬 버튼
+    document.getElementById("sort_time").addEventListener("click", () => {
+        routines.sort((a, b) => b.totalTime - a.totalTime);
+        renderRoutineList();
+    });
+
+
+</script>

@@ -2,12 +2,12 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <meta charset="UTF-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <meta charset="UTF-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Fitory 건강한 삶을 위한 첫 걸음</title>
 
-    <!-- 구글 폰트 또는 pretendard 사용 -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet"/>
+    <!-- 구글 폰트 -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet" />
 
     <style>
         * {
@@ -25,7 +25,7 @@
 
         header {
             height: 80px;
-            background-color: #10b981; /* emerald-500 */
+            background-color: #10b981;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -51,7 +51,7 @@
         }
 
         nav.headMenu a:hover {
-            color: #d1fae5; /* 밝은 그린 */
+            color: #d1fae5;
         }
 
         section#body1 {
@@ -75,11 +75,7 @@
             padding: 20px;
         }
 
-        #board1, #board2 {
-            width: 30%;
-        }
-
-        #board3 {
+        #board1, #board2, #board3 {
             width: 30%;
         }
 
@@ -110,6 +106,8 @@
             cursor: pointer;
             transition: transform 0.2s ease, box-shadow 0.2s ease;
             display: inline-block;
+            text-decoration: none;
+            color: inherit;
             vertical-align: top;
         }
 
@@ -141,12 +139,13 @@
         }
     </style>
 </head>
+
 <body>
 
 <!-- 헤더 -->
 <header>
     <div id="logo">
-        <img alt="Fitory 로고" src="/image/logo2.png"/>
+        <img alt="Fitory 로고" src="/image/logo2.png" />
     </div>
     <nav class="headMenu">
         <span th:if="${user != null}" th:text="${user.userName} + '님, 환영합니다!'"></span>
@@ -154,10 +153,9 @@
         <a href="#">식단</a>
         <a href="#">운동</a>
         <a href="#">건강정보</a>
-        <a href="#">마이페이지</a>
+        <a href="/mypage" id="myPage">마이페이지</a>
         <a href="/loginForm" th:if="${session.user_id == null}">로그인</a>
         <a href="/logOut" th:if="${session.user_id != null}">로그아웃</a>
-
     </nav>
 </header>
 
@@ -179,22 +177,26 @@
     <div id="body2title">
         <h2>우리의 서비스</h2>
     </div>
-    <div class="menu">
+
+    <a class="menu" href="#">
         <h2>맞춤 식단 추천</h2>
         <h3>개인의 건강 상태와 목표에 <br>맞는 식단을 제공합니다.</h3>
-    </div>
-    <div class="menu">
+    </a>
+
+    <a class="menu" href="#">
         <h2>영양정보 분석</h2>
         <h3>섭취한 식단의 영양을 빠르게 분석합니다.</h3>
-    </div>
-    <div class="menu">
-        <a href="/exercise"><h2>운동 루틴 추천</h2></a>
+    </a>
+
+    <a class="menu" href="/exercise">
+        <h2>운동 루틴 추천</h2>
         <h3>목표에 맞는 루틴을 <br> 계획해드립니다.</h3>
-    </div>
-    <div class="menu">
+    </a>
+
+    <a class="menu" href="#">
         <h2>일정 관리</h2>
         <h3>운동 및 식단을 쉽게 <br> 스케줄링하세요.</h3>
-    </div>
+    </a>
 </section>
 
 <!-- 푸터 -->
@@ -204,3 +206,12 @@
 
 </body>
 </html>
+<script th:inline="javascript">
+  /*  document.getElementById("myPage").addEventListener("click", ()=>{
+       let userId= [[${session.user_id}]] null;
+       if(userId==null){
+           alert("로그인이 필요합니다.")
+       }
+    })
+  */
+</script>
