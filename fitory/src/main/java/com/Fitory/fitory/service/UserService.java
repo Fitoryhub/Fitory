@@ -7,5 +7,8 @@ public interface UserService {
 
     public boolean idchk(String id);
 
+    public boolean nicknamechk(String nickname);
+
     public UserDTO login(String id);
+
 }

@@ -28,6 +28,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public boolean nicknamechk(String nickname) {
+        return userRepository.existsByNickname(nickname);
+    }
+
+    @Override
     public UserDTO login(String id) {
         Optional<User> optionalUser = userRepository.findById(id);
         UserDTO udto = new UserDTO();

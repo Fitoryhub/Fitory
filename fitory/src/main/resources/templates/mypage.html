@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Fitory 마이페이지</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet"/>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+
+        body {
+            background-color: #f9fafb;
+            color: #333;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 220px;
+            background-color: #10b981;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .sidebar img {
+            width: 120px;
+            margin-bottom: 40px;
+        }
+
+        .sidebar nav {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+        }
+
+        .sidebar nav a {
+            text-decoration: none;
+            font-size: 16px;
+            color: black;
+            font-weight: 600;
+            padding: 10px 15px;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .sidebar nav a:hover, .sidebar nav a.active {
+            background-color: #60C693;
+        }
+
+        .main-container {
+            flex: 1;
+            display: flex;
+            flex-direction: row;
+        }
+
+        .main-content {
+            flex: 3;
+            padding: 40px 60px;
+            background-color: #fff;
+        }
+
+        .section-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #111827;
+            margin-bottom: 30px;
+        }
+
+        .info-box, .exercise-box, .additional-info-box {
+            background-color: #f0fdf4;
+            border: 1px solid #d1fae5;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .info-box h3,
+        .additional-info-box h3 {
+            font-size: 20px;
+            color: #065f46;
+            margin-bottom: 25px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .info-item span {
+            font-weight: 600;
+            color: #065f46;
+            display: inline-block;
+            width: 100px;
+        }
+
+        .info-box input[type="button"] {
+            margin-top: 20px;
+            padding: 10px 16px;
+            background-color: #10b981;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+
+        .info-box input[type="button"]:hover {
+            background-color: #059669;
+        }
+
+        .additional-info-box .info-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .additional-info-box label {
+            width: 120px;
+            font-weight: bold;
+            color: #065f46;
+            margin-right: 10px;
+        }
+
+        .additional-info-box input,
+        .additional-info-box select,
+        .additional-info-box textarea {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        .exercise-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .exercise-list li {
+            padding: 8px 0;
+            font-size: 16px;
+            border-bottom: 1px solid #d1fae5;
+        }
+
+        #sort-buttons {
+            margin-bottom: 20px;
+            text-align: right;
+        }
+
+        #sort-buttons button {
+            padding: 8px 12px;
+            margin-right: 2px;
+            background-color: #33ad86;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 10px;
+        }
+
+        #sort-buttons button:hover {
+            background-color: #059669;
+        }
+
+        .profile-summary {
+            flex: 1;
+            background-color: #f3f4f6;
+            padding: 40px 20px;
+            border-left: 1px solid #e5e7eb;
+        }
+
+        .profile-summary img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-bottom: 20px;
+        }
+
+        .profile-summary .username {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 10px;
+        }
+
+        .profile-summary .user-desc {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .profile-summary .menu-group {
+            margin-top: 30px;
+        }
+
+        .profile-summary .menu-group h4 {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 10px;
+        }
+
+        .profile-summary .menu-group ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .profile-summary .menu-group ul li {
+            padding: 5px 0;
+            font-size: 14px;
+            color: #374151;
+            cursor: pointer;
+        }
+
+        .profile-summary .menu-group ul li:hover {
+            text-decoration: underline;
+        }
+
+        /* 추가 정보 읽기 전용 뷰 스타일 */
+        #viewAdditionalInfo > div {
+            margin-bottom: 10px;
+        }
+
+        #viewAdditionalInfo strong {
+            color: #065f46;
+            width: 120px;
+            display: inline-block;
+        }
+
+        #editBtn {
+            margin-top: 15px;
+            padding: 8px 16px;
+            background-color: #10b981;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+
+        #editBtn:hover {
+            background-color: #059669;
+        }
+
+        #cancelBtn {
+            padding: 8px 16px;
+            background-color: #ccc;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+
+        #cancelBtn:hover {
+            background-color: #999;
+        }
+    </style>
+</head>
+<body>
+    <!-- 사이드바 -->
+    <aside class="sidebar">
+        <img src="/image/logo2.png" alt="Fitory 로고">
+        <nav>
+            <a href="http://192.168.0.63:8080/">홈</a>
+            <a href="http://192.168.0.63:8080/mypage" class="active">마이페이지</a>
+            <a href="#">스케줄러</a>
+            <a href="http://192.168.0.63:8080/logOut">로그아웃</a>
+        </nav>
+    </aside>
+
+    <!-- 메인 콘텐츠 -->
+    <div class="main-container">
+        <main class="main-content">
+            <div class="section-title">마이페이지</div>
+
+            <!-- 회원 정보 -->
+            <div class="info-box">
+                <h3>회원 정보</h3>
+                <div class="info-grid" th:if="${user != null}">
+                    <div class="info-item"><span>이름:</span> <span th:text="${user.userName}"></span></div>
+                    <div class="info-item"><span>닉네임:</span> <span th:text="${user.nickname}"></span></div>
+                    <div class="info-item"><span>성별:</span> <span th:text="${user.gender}"></span></div>
+                    <div class="info-item"><span>생년월일:</span> <span th:text="${user.birth}"></span></div>
+                    <div class="info-item"><span>몸무게:</span> <span th:text="${user.weightKg}"></span>kg</div>
+                    <div class="info-item"><span>키:</span> <span th:text="${user.heightCm}"></span>cm</div>
+                    <div class="info-item"><span>아이디:</span> <span th:text="${user.user_id}"></span></div>
+                    <div class="info-item"><span>이메일:</span> <span th:text="${user.email}"></span></div>
+                    <div><input type="button" value="개인정보수정"></div>
+                </div>
+            </div>
+
+            <!-- 추가 정보 -->
+            <div class="additional-info-box">
+                <h3>추가 정보</h3>
+
+                <!-- 읽기 전용 뷰 -->
+                <div id="viewAdditionalInfo" th:if="${user != null}">
+                    <div><strong>기초대사량:</strong> <span th:text="${user.bmr}">1200</span></div>
+                    <div><strong>권장칼로리:</strong> <span th:text="${user.recommendedCalorie}">2000</span></div>
+                    <div><strong>목표체중:</strong> <span th:text="${user.targetWeight}">65</span></div>
+                    <div><strong>혈압:</strong> <span th:text="${user.bloodPressure}">120/80</span></div>
+                    <div><strong>당뇨여부:</strong> <span th:text="${user.diabetes}">없음</span></div>
+                    <div><strong>흡연여부:</strong> <span th:text="${user.smoking}">비흡연</span></div>
+                    <div><strong>체지방률:</strong> <span th:text="${user.bodyFat}">15.5</span></div>
+                    <div><strong>근육량:</strong> <span th:text="${user.muscleMass}">40.0</span></div>
+                    <div><strong>활동 수준:</strong> <span th:text="${user.activityLevel}">보통</span></div>
+                    <div><strong>질병 이력:</strong> <span th:text="${user.medicalHistory}">없음</span></div>
+                    <div><strong>알레르기:</strong> <span th:text="${user.allergy}">없음</span></div>
+                    <button id="editBtn" type="button">수정</button>
+                </div>
+
+                <!-- 수정 폼 -->
+                <form id="editAdditionalInfo" th:action="@{/updateInfo}" method="post" style="display:none; margin-top: 20px;">
+                    <div class="info-row"><label for="bmr">기초대사량:</label><input id="bmr" type="number" name="bmr" th:value="${user.bmr}" required/></div>
+                    <div class="info-row"><label for="recommendedCalorie">권장칼로리:</label><input id="recommendedCalorie" type="number" name="recommendedCalorie" th:value="${user.recommendedCalorie}" required/></div>
+                    <div class="info-row"><label for="targetWeight">목표체중:</label><input id="targetWeight" type="number" name="targetWeight" th:value="${user.targetWeight}" required/></div>
+                    <div class="info-row"><label for="bloodPressure">혈압:</label><input id="bloodPressure" type="text" name="bloodPressure" th:value="${user.bloodPressure}" required/></div>
+                    <div class="info-row"><label for="diabetes">당뇨여부:</label>
+                        <select id="diabetes" name="diabetes" th:value="${user.diabetes}">
+                            <option value="없음" th:selected="${user.diabetes == '없음'}">없음</option>
+                            <option value="있음" th:selected="${user.diabetes == '있음'}">있음</option>
+                        </select>
+                    </div>
+                    <div class="info-row"><label for="smoking">흡연여부:</label>
+                        <select id="smoking" name="smoking" th:value="${user.smoking}">
+                            <option value="비흡연" th:selected="${user.smoking == '비흡연'}">비흡연</option>
+                            <option value="흡연" th:selected="${user.smoking == '흡연'}">흡연</option>
+                        </select>
+                    </div>
+                    <div class="info-row"><label for="bodyFat">체지방률:</label><input id="bodyFat" type="number" step="0.1" name="bodyFat" th:value="${user.bodyFat}" required/></div>
+                    <div class="info-row"><label for="muscleMass">근육량:</label><input id="muscleMass" type="number" step="0.1" name="muscleMass" th:value="${user.muscleMass}" required/></div>
+                    <div class="info-row"><label for="activityLevel">활동 수준:</label>
+                        <select id="activityLevel" name="activityLevel" th:value="${user.activityLevel}">
+                            <option value="낮음" th:selected="${user.activityLevel == '낮음'}">낮음</option>
+                            <option value="보통" th:selected="${user.activityLevel == '보통'}">보통</option>
+                            <option value="높음" th:selected="${user.activityLevel == '높음'}">높음</option>
+                        </select>
+                    </div>
+                    <div class="info-row"><label for="medicalHistory">질병 이력:</label><textarea id="medicalHistory" name="medicalHistory" rows="2" th:text="${user.medicalHistory}"></textarea></div>
+                    <div class="info-row"><label for="allergy">알레르기:</label><textarea id="allergy" name="allergy" rows="2" th:text="${user.allergy}"></textarea></div>
+                    <div style="text-align: right; margin-top: 10px;">
+                        <button type="button" id="cancelBtn">취소</button>
+                        <input type="submit" value="저장" style="padding: 8px 16px; background-color: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer;">
+                    </div>
+                </form>
+            </div>
+
+            <!-- 추천 운동 -->
+            <div class="exercise-box">
+                <h3>저장한 운동</h3>
+
+                <!-- 정렬 버튼 -->
+                <div id="sort-buttons">
+                    <button id="sort_cal"> 칼로리별</button>
+                    <button id="sort_time"> 시간별</button>
+                    <button id="delete">삭제</button>
+                </div>
+
+                <ul class="exercise-list" id="exerciseList">
+
+                    <li th:each="routine : ${routineList}"
+                        th:text="'운동명 : '+${routine.routineName + ' / ' + routine.totalTime + '분  /' + routine.totalCalorie}+'kcal'">
+                    </li>
+
+                </ul>
+
+            </div>
+        </main>
+
+        <!-- 프로필 요약 (오른쪽) -->
+        <aside class="profile-summary">
+            <img src="/image/profile_icon.png" alt="프로필 아이콘">
+            <div class="username" th:text="${user.nickname}">사용자 닉네임</div>
+            <div class="user-desc" th:text="${user.description}">자기소개 문구</div>
+
+            <div class="menu-group">
+                <h4>기본메뉴</h4>
+                <ul>
+                    <li>내정보 수정</li>
+                </ul>
+            </div>
+            <div class="menu-group">
+                <h4>메뉴</h4>
+                <ul>
+                    <li>내글목록</li>
+                </ul>
+            </div>
+        </aside>
+    </div>
+
+</body>
+<script th:inline="javascript">
+    let routines;
+    routines = [[${routineList}]];
+
+    function renderRoutineList() {
+        const ul = document.getElementById("exerciseList");
+        ul.innerHTML = "";  // 기존 항목 초기화
+
+        routines.forEach(routine => {
+            const li = document.createElement("li");
+            li.textContent = `운동명 : ${routine.routineName} / ${routine.totalTime}분 / ${routine.totalCalorie}kcal`;
+            ul.appendChild(li);
+        });
+    }
+
+    // 최초 렌더링 (서버에서 받아온 데이터 표시)
+    renderRoutineList();
+
+    // 칼로리 내림차순 정렬 버튼
+    document.getElementById("sort_cal").addEventListener("click", () => {
+        routines.sort((a, b) => b.totalCalorie - a.totalCalorie);
+        renderRoutineList();
+    });
+
+    // 시간 내림차순 정렬 버튼
+    document.getElementById("sort_time").addEventListener("click", () => {
+        routines.sort((a, b) => b.totalTime - a.totalTime);
+        renderRoutineList();
+    });
+    // 수정 버튼 클릭 시 읽기 전용 -> 수정 폼 토글
+    document.getElementById('editBtn').addEventListener('click', () => {
+        document.getElementById('viewAdditionalInfo').style.display = 'none';
+        document.getElementById('editAdditionalInfo').style.display = 'block';
+    });
+
+    // 취소 버튼 클릭 시 수정 폼 -> 읽기 전용 토글
+    document.getElementById('cancelBtn').addEventListener('click', () => {
+        document.getElementById('editAdditionalInfo').style.display = 'none';
+        document.getElementById('viewAdditionalInfo').style.display = 'block';
+    });
+
+</script>
+</html>

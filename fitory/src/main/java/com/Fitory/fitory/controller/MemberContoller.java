@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 
-
 @Controller
 public class MemberContoller {
 
@@ -38,12 +37,11 @@ public class MemberContoller {
         return "signup";
     }
 
-    //로그인 페이지 이동
+    // 로그인 페이지 이동
     @GetMapping("/login")
     public String login() {
         return "login";
     }
-
 
     // 로그인
     @PostMapping("/signin")
@@ -51,13 +49,12 @@ public class MemberContoller {
         UserDTO udto = new UserDTO();
         udto = userServiceImpl.login(body.getId());
         if (udto != null) {
-            if(udto.getPassword().equals(body.getPassword())){
+            if (udto.getPassword().equals(body.getPassword())) {
                 HttpSession session = request.getSession();
                 SessionUserDTO suser = new SessionUserDTO(udto.getId(), udto.getNickname());
                 session.setAttribute("userInfo", suser);
                 return "redirect:/";
-            }
-            else {
+            } else {
                 model.addAttribute("message", "아이디 또는 비밀번호가 틀렸습니다.");
                 return "login";
             }
@@ -70,8 +67,8 @@ public class MemberContoller {
     @GetMapping("/logout")
     public String logout(HttpServletRequest request) {
         HttpSession session = request.getSession(false); // 세션이 없으면 null 반환
-        if(session != null) {
-            session.invalidate();  // 세션 무효화(삭제)
+        if (session != null) {
+            session.invalidate(); // 세션 무효화(삭제)
         }
         return "main";
     }
@@ -79,8 +76,19 @@ public class MemberContoller {
     // id 중복체크
     @GetMapping("/idChk")
     @ResponseBody
-    public Map<String, Boolean> IDcheck(@RequestParam String id){
+    public Map<String, Boolean> IDcheck(@RequestParam String id) {
         boolean exists = userServiceImpl.idchk(id);
+        Map<String, Boolean> result = new HashMap<>();
+        result.put("exists", exists);
+        return result;
+    }
+
+    // 닉네임 중복체크aa
+    @GetMapping("/nickChk")
+    @ResponseBody
+    public Map<String, Boolean> nickChk(@RequestParam String nickname) {
+        System.out.println("ddddafsdfasdhfklasjdhfklasjdhfkasjdhflkasdjhflkasjhdf46346436");
+        boolean exists = userServiceImpl.nicknamechk(nickname);
         Map<String, Boolean> result = new HashMap<>();
         result.put("exists", exists);
         return result;

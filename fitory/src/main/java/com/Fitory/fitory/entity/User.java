@@ -7,7 +7,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name="users")
+@Table(name = "users")
 public class User {
     @Id
     private String id;
@@ -28,7 +28,7 @@ public class User {
 
     private String weight;
 
-    public void update_user(UserDTO udto){
+    public void update_user(UserDTO udto) {
         this.id = udto.getId();
         this.password = udto.getPassword();
         this.nickname = udto.getNickname();
