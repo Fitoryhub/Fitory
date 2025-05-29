@@ -203,10 +203,10 @@
     <div class="left-panel">
         <!-- 유저 정보 -->
         <div class="user-info" th:if="${user != null}">
-            <h2 th:text="'환영합니다, ' + ${user.userName} + '님!'"></h2>
+            <h2 th:text="'환영합니다, ' + ${user.name} + '님!'"></h2>
             <p><strong>나이:</strong> <span th:text="${user.birth}"></span>세</p>
-            <p><strong>몸무게:</strong> <span th:text="${user.weightKg}"></span>kg</p>
-            <p><strong>신장:</strong> <span th:text="${user.heightCm}"></span>cm</p>
+            <p><strong>몸무게:</strong> <span th:text="${user.weight}"></span>kg</p>
+            <p><strong>신장:</strong> <span th:text="${user.height}"></span>cm</p>
         </div>
 
         <div class="user-info" th:if="${user == null}">
@@ -296,7 +296,6 @@
         </div>
     </div>
 
-</div>
 </body>
 </html>
 <script>

@@ -13,21 +13,14 @@ import java.time.LocalDate;
 @Entity(name ="users")
 public class User {
     @Id
-    private String user_id;
+    private String id;
 
-    @Column(name="username")
-    private String userName;
-
-    @Column(name ="password")
-    private String userPassword;
-
+    private String nickname;
+    private String name;
+    private String password;
     private String email;
     private String gender;
-    @Column(name ="birth_date")
     private LocalDate birth;
-
-    @Column(name="height_cm")
-    private int heightCm;
-    @Column(name="weight_kg")
-    private int weightKg;
+    private int height;
+    private int weight;
 }

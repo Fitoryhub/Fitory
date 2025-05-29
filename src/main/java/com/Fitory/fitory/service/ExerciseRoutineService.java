@@ -9,4 +9,6 @@ public interface ExerciseRoutineService {
    public boolean save(ExerciseRoutine routine);
 
    public List<ExerciseRoutine> findByUserID(String id);
+
+   public boolean deleteByroutineid(int routineid);
 }

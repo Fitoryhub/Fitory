@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Fitory 마이페이지</title>
@@ -107,12 +108,12 @@
             border-bottom: 1px solid #d1fae5;
         }
 
-        #sort-buttons {
+        .sort-buttons {
             margin-bottom: 20px;
             text-align: right;
         }
 
-        #sort-buttons button {
+        .sort-buttons button {
             padding: 8px 12px;
             margin-right: 2px;
             background-color:#33ad86;
@@ -124,7 +125,7 @@
             font-size: 10px;
         }
 
-        #sort-buttons button:hover {
+        .sort-buttons button:hover {
             background-color: #059669;
         }
 
@@ -199,12 +200,12 @@
         <div class="info-box">
             <h3>회원 정보</h3>
             <div class="info-grid" th:if="${user != null}">
-                <div class="info-item"><span>이름:</span> <span th:text="${user.userName}"></span></div>
+                <div class="info-item"><span>이름:</span> <span th:text="${user.name}"></span></div>
                 <div class="info-item"><span>성별:</span> <span th:text="${user.gender}"></span></div>
                 <div class="info-item"><span>생년월일:</span> <span th:text="${user.birth}"></span></div>
-                <div class="info-item"><span>몸무게:</span> <span th:text="${user.weightKg}">kg</span></div>
-                <div class="info-item"><span>키:</span> <span th:text="${user.heightCm}">cm</span></div>
-                <div class="info-item"><span>아이디:</span> <span th:text="${user.user_id}"></span></div>
+                <div class="info-item"><span>몸무게:</span> <span th:text="${user.weight}">kg</span></div>
+                <div class="info-item"><span>키:</span> <span th:text="${user.height}">cm</span></div>
+                <div class="info-item"><span>아이디:</span> <span th:text="${user.id}"></span></div>
                 <div class="info-item"><span>이메일:</span> <span th:text="${user.email}"></span></div>
             </div>
         </div>
@@ -214,27 +215,28 @@
             <h3>저장한 운동</h3>
 
             <!-- 정렬 버튼 -->
-            <div id="sort-buttons">
+            <div class="sort-buttons">
                 <button id="sort_cal"> 칼로리별</button>
                 <button id="sort_time"> 시간별</button>
                 <button id="delete">삭제</button>
             </div>
 
             <ul class="exercise-list" id="exerciseList">
-
-                <li th:each="routine : ${routineList}"
-                    th:text="'운동명 : '+${routine.routineName + ' / ' + routine.totalTime + '분  /' + routine.totalCalorie}+'kcal'">
+                <li th:each="routine : ${routineList}">
+                    <input type="checkbox" class="checkbox">
+                    <span th:text="'운동명 : ' + ${routine.routine} + ' / ' + ${routine.time} + '분 / ' + ${routine.calorie} + 'kcal'"></span>
                 </li>
-
             </ul>
-
+            <div class="sort-buttons">
+            <button id="delete_all">확인</button>
+            </div>
         </div>
     </main>
 
     <!-- 사용자 요약 -->
     <aside class="profile-summary">
-        <div class="username" th:text="${user.userName}">홍길동</div>
-        <div class="user-desc" >닉네임 : ~~~~</div>
+        <div class="username" th:text="${user.name}">홍길동</div>
+        <div class="user-desc" ><span>닉네임:</span> <span th:text="${user.nickname}"></span></div>
 
         <div class="menu-group">
             <h4>계정</h4>
@@ -256,16 +258,28 @@
 </body>
 </html>
 <script th:inline="javascript">
-    let routines;
-    routines = [[${routineList}]];
+    let routines = [[${routineList}]];
+    let deleteset = false;
 
     function renderRoutineList() {
         const ul = document.getElementById("exerciseList");
-        ul.innerHTML = "";  // 기존 항목 초기화
+        ul.innerHTML = "";
 
         routines.forEach(routine => {
             const li = document.createElement("li");
-            li.textContent = `운동명 : ${routine.routineName} / ${routine.totalTime}분 / ${routine.totalCalorie}kcal`;
+
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.classList.add("checkbox");
+            checkbox.style.display = deleteset ? "inline-block" : "none";
+
+            checkbox.setAttribute("data-id", routine.routineid);
+
+            const span = document.createElement("span");
+            span.textContent = `운동명 : ${routine.routine} / ${routine.time}분 / ${routine.calorie}kcal`;
+
+            li.appendChild(checkbox);
+            li.appendChild(span);
             ul.appendChild(li);
         });
     }
@@ -275,15 +289,60 @@
 
     // 칼로리 내림차순 정렬 버튼
     document.getElementById("sort_cal").addEventListener("click", () => {
-        routines.sort((a, b) => b.totalCalorie - a.totalCalorie);
+        routines.sort((a, b) => b.calorie - a.calorie);
         renderRoutineList();
     });
 
     // 시간 내림차순 정렬 버튼
     document.getElementById("sort_time").addEventListener("click", () => {
-        routines.sort((a, b) => b.totalTime - a.totalTime);
+        routines.sort((a, b) => b.time - a.time);
         renderRoutineList();
     });
+    document.getElementById("delete_all").addEventListener("click", ()=>{
+        const selected = document.querySelectorAll('.checkbox:checked');
+       const deletelist = [];
+       for(let i=0; i<selected.length; i++){
+           let cb = selected[i];
+           let id = cb.getAttribute('data-id');
+           deletelist.push(id);
+        }
+       $.ajax({
+           type: "POST",
+           url : "/api/exercise/deleteList",
+           traditional: true,
+           data: { deletelist: deletelist },
+           dataType : "json",
+           success : function (res) {
 
+               console.log("응답내용",res)
+               if(res === true){
+                   alert("삭제했습니다.")
+                   location.reload();
+               }else{
+                   alert("실패");
+               }
+           }
+       })
 
+    })
+    window.onload = function (){
+        let deleteset = false;
+        let deletebtn = document.getElementById("delete_all");
+        deletebtn.style.display = 'none';
+
+    document.getElementById("delete").addEventListener("click", ()=>{
+        deleteset = !deleteset;
+        const checkboxes = document.querySelectorAll('.checkbox');
+        checkboxes.forEach(cb=>{
+            cb.style.display = deleteset ? 'inline-block' : 'none';
+        })
+        if(deleteset===false){
+            document.getElementById('delete').innerText = "삭제";
+        }else{
+            document.getElementById('delete').innerText = "취소";
+        }
+        deletebtn.style.display = deleteset ? 'inline-block' : 'none';
+    })
+
+    }
 </script>

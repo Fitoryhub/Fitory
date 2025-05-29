@@ -54,12 +54,12 @@ public class ExerciseServiceImpl implements ExerciseService {
             JSONObject json = jsonArray.getJSONObject(i);
 
             Exercises exercises = new Exercises();
-            exercises.setExercise_id(json.getInt("exercise_id"));
-            exercises.setE_name(json.getString("name"));
-            exercises.setMetrank(json.getInt("met_rank"));
+            exercises.setExerciseid(json.getInt("exerciseid"));
+            exercises.setEname(json.getString("ename"));
+            exercises.setMetrank(json.getInt("metrank"));
             exercises.setIntensity(json.getString("intensity"));
-            exercises.setIsAnaerobic(json.getString("is_anaerobic"));
-            exercises.setRequiresEquipment(json.getString("requires_equipment"));
+            exercises.setOxygen(json.getString("oxygen"));
+            exercises.setBodyweight(json.getString("bodyweight"));
 
             ERepo.save(exercises);
         }

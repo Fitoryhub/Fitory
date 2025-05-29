@@ -6,25 +6,15 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Entity(name = "exercise_routine")
+@Entity(name = "routines")
 public class ExerciseRoutine {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "routine_id")
-    private int id;
+    private int routineid;
+    private String routine;
+    private int calorie;
 
-
-    @Column(name = "routine_name")
-    private String routineName;
-
-    @Column(name = "total_calorie")
-    private int totalCalorie;
-
-
-    @Column(name = "user_id")
-    private String userId;
-
-    @Column(name = "total_time")
-    private int totalTime;
-
+    @Column(name="userid")
+    private String userid;
+    private int time;
 }

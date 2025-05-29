@@ -44,14 +44,14 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestParam String user_id, String password, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
-       Optional<User> user = userService.findById(user_id);
+    public String login(@RequestParam String id, String password, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
+       Optional<User> user = userService.findById(id);
         if(user.isPresent()) {
             User u = user.get();
-            if(u.getUserPassword().equals(password)) {
-                session.setAttribute("user_id", user_id);
+            if(u.getPassword().equals(password)) {
+                session.setAttribute("user_id", id);
                 model.addAttribute("user", u);
-                System.out.println("로그인 성공"+user_id);
+                System.out.println("로그인 성공"+id);
                 return "main";
             }else{
                 redirectAttributes.addFlashAttribute("error", "비밀번호가 들렸습니다.");
@@ -65,18 +65,11 @@ public class UserController {
 
     @GetMapping("/mypage")
     public String mypage(HttpSession session, Model model) {
-        String uid =session.getAttribute("user_id").toString();
+        String uid = session.getAttribute("user_id").toString();
        if(uid==null) {
            return "redirect:/login";
        }
-
         List<ExerciseRoutine> routineList = exerciseRoutineService.findByUserID(uid);
-       if(routineList.isEmpty()) {
-           System.out.println("루틴 리스트 빔");
-       }else {
-         System.out.println(routineList.get(0).getRoutineName()+"운동루틴 명");
-
-       }
         Optional<User> user = userService.findById(uid);
         user.ifPresent(u -> model.addAttribute("user", u));
         model.addAttribute("routineList", routineList);

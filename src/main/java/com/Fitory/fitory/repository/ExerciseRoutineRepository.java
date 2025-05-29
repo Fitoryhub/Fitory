@@ -10,5 +10,7 @@ public interface ExerciseRoutineRepository extends JpaRepository<ExerciseRoutine
     @Override
     <S extends ExerciseRoutine> S save(S entity);
 
-    List<ExerciseRoutine> findByUserId(String userId);
+    List<ExerciseRoutine> findByUserid(String userId);
+
+    int deleteByroutineid(int routineid);
 }

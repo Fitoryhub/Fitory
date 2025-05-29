@@ -1,13 +1,12 @@
 package com.Fitory.fitory.controller.api;
 
 import com.Fitory.fitory.entity.Exercises;
+import com.Fitory.fitory.service.ExerciseRoutineService;
 import com.Fitory.fitory.service.ExerciseService;
 import com.Fitory.fitory.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,10 +17,9 @@ import java.util.Map;
 @RequestMapping("/api/exercise")
 public class ExerciseApiController {
 
+
     @Autowired
-    ExerciseService EService;
-    @Autowired
-    UserService userService;
+    ExerciseRoutineService exerciseRoutineService;
 
 
     @GetMapping("/set")
@@ -40,5 +38,20 @@ public class ExerciseApiController {
         response.put("cal", cal);
         response.put("time", time);
         return response;
+    }
+
+    @PostMapping("/deleteList") //
+    public boolean deleteList(@RequestParam List<Integer> deletelist) {
+
+        System.out.println("삭제할 ID들: " + deletelist);
+
+        for(int i=0;i<deletelist.size();i++){
+           boolean result = exerciseRoutineService.deleteByroutineid(deletelist.get(i));
+           if(!result){
+               return false;
+           }
+        }
+            return true;
+
     }
 }

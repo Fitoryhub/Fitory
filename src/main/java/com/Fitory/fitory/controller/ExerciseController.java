@@ -57,7 +57,7 @@ public class ExerciseController {
     public String handleForm(@ModelAttribute UserSetDTO userset, HttpSession session) {
         String id = session.getAttribute("user_id").toString();
         User user = userService.findById(id).orElseThrow(() -> new NoSuchElementException("user not found"));
-        int weight = user.getWeightKg();
+        int weight = user.getWeight();
         int cal = userset.getCal();
         int e_time = userset.getTime();
 
@@ -81,10 +81,10 @@ public class ExerciseController {
         List<ExerciseDTO> edto = new ArrayList<>();
         for (Exercises e : exercises) {
             ExerciseDTO dto = new ExerciseDTO();
-            dto.setName(e.getE_name());
+            dto.setName(e.getEname());
             dto.setIntensity(e.getIntensity());
-            dto.setIs_anaerobic(e.getIsAnaerobic());
-            dto.setRequires_equipment(e.getRequiresEquipment());
+            dto.setIs_anaerobic(e.getOxygen());
+            dto.setRequires_equipment(e.getBodyweight());
             dto.setMet_rank(e.getMetrank());
             edto.add(dto);
         }
@@ -106,10 +106,10 @@ public class ExerciseController {
 
         for(int i=0; i<exercise.size(); i++){
             ExerciseRoutine e = new ExerciseRoutine();
-            e.setUserId(id);
-            e.setRoutineName(exercise.get(i));
-            e.setTotalTime(time);
-            e.setTotalCalorie(cal);
+            e.setUserid(id);
+            e.setRoutine(exercise.get(i));
+            e.setTime(time);
+            e.setCalorie(cal);
 
             exerciseRoutineService.save(e);
         }
