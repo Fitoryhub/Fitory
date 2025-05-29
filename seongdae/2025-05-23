@@ -1,1 +1,6 @@
+# 📅 2025-05-23 4일차
 
+# 📝 작업 내용
+1. DB 테이블에 대응되는 Entity 작성
+2. Entity와 테이블을 연결시킬 Reopsitory 작성
+3. Repository 메서드를 call할 Service 작성
