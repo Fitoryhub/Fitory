@@ -47,29 +47,30 @@ public class BoderController {
     RepliesRepository repliesRepository;
     @Autowired
     RlikeRepository rlikeRepository;
+
     @GetMapping("/boardlist")
-    public String boardlist(Model model ,@PageableDefault(page=0,size = 10 ,sort="pnum"
-            ,direction = Sort.Direction.DESC) Pageable pageable
-            ,@RequestParam(required = false) String pcategory,
-             @RequestParam(required = false) String ptitle) {
+    public String boardlist(Model model, @PageableDefault(page = 0, size = 10, sort = "pnum"
+                                    , direction = Sort.Direction.DESC) Pageable pageable
+            , @RequestParam(required = false) String pcategory,
+                            @RequestParam(required = false) String ptitle) {
 
         PtitlePcategoryDTO searchboard = new PtitlePcategoryDTO();
         searchboard.setPcategory(pcategory);
         searchboard.setPtitle(ptitle);
 
-            Page<Board> board;
+        Page<Board> board;
 
-          if(searchboard.getPcategory()==null){
-              board = boardService.alllist(pageable);
-          }else {
-              if (searchboard.getPcategory().equals("all")) {
-                    board = boardService.searchptitle(searchboard , pageable);
-              }else{
+        if (searchboard.getPcategory() == null) {
+            board = boardService.alllist(pageable);
+        } else {
+            if (searchboard.getPcategory().equals("all")) {
+                board = boardService.searchptitle(searchboard, pageable);
+            } else {
 
-                  board = boardService.searchboard(searchboard, pageable);
-              }
-                  }
-        int nowpage= board.getPageable().getPageNumber()+1;
+                board = boardService.searchboard(searchboard, pageable);
+            }
+        }
+        int nowpage = board.getPageable().getPageNumber() + 1;
         int startpage = Math.max(nowpage - 2, 1);  // 현재 페이지를 중심으로 2개 앞뒤
         int endpage = Math.min(startpage + 4, board.getTotalPages()); // 총 5개만 보이도록 조정
 
@@ -81,12 +82,9 @@ public class BoderController {
     }
 
 
-
-
-
     @PostMapping("/submit_post")
     public String submitPost(@ModelAttribute("board") Board board,
-                             @RequestParam("files")MultipartFile[] filelist) throws Exception {
+                             @RequestParam("files") MultipartFile[] filelist) throws Exception {
 
         System.out.println("확인한다" + board.getNickname());
 
@@ -96,7 +94,7 @@ public class BoderController {
 
 
         for (MultipartFile onefile : filelist) {
-            if(!onefile.isEmpty()) {
+            if (!onefile.isEmpty()) {
                 UUID uuid = UUID.randomUUID();
                 String filename = uuid + "_" + onefile.getOriginalFilename();
                 File savfile = new File(ProjectPath, filename);
@@ -113,17 +111,17 @@ public class BoderController {
     }
 
     @GetMapping("/detailview")
-    public String detailview(@RequestParam("pnum")Integer pnum, Model model ,HttpSession session) {
+    public String detailview(@RequestParam("pnum") Integer pnum, Model model, HttpSession session) {
 
         boardService.updateplook(pnum);
         Board board = boardService.searchoneboard(pnum);
         String uid = session.getAttribute("uid").toString();
-        Plike plike=plikeRepository.findByUidAndPnum(uid ,pnum);
-       List<Files>files = fileRepository.findByPnum(pnum);
+        Plike plike = plikeRepository.findByUidAndPnum(uid, pnum);
+        List<Files> files = fileRepository.findByPnum(pnum);
         Integer num = board.getPnum();
-        List<Comment> comments =commentRepository.findByPnumOrderByCnumAsc(num);
-       List<CommentDTO> commentDTOS=new ArrayList<>();
-        for(Comment comment:comments){
+        List<Comment> comments = commentRepository.findByPnumOrderByCnumAsc(num);
+        List<CommentDTO> commentDTOS = new ArrayList<>();
+        for (Comment comment : comments) {
             CommentDTO commentDTO = new CommentDTO();
             commentDTO.setCnum(comment.getCnum());
             commentDTO.setPnum(comment.getPnum());
@@ -134,38 +132,36 @@ public class BoderController {
             commentDTO.setClike(comment.getClike());
             commentDTOS.add(commentDTO);
         }
-        List<Clike> clike=clikeRepository.findByPnum(num);
-        for(CommentDTO commentDTO:commentDTOS){
-            for(Clike c:clike){
-                if(c.getUid().equals(uid)&&commentDTO.getCnum()==(c.getCnum())){
-                    boolean liked=true;
+        List<Clike> clike = clikeRepository.findByPnum(num);
+        for (CommentDTO commentDTO : commentDTOS) {
+            for (Clike c : clike) {
+                if (c.getUid().equals(uid) && commentDTO.getCnum() == (c.getCnum())) {
+                    boolean liked = true;
                     commentDTO.setLiked(liked);
                 }
             }
         }
-        List<Replies> replie =repliesRepository.findByPnum(num);
-        List<RepliesDTO> replies= new ArrayList<>();
+        List<Replies> replie = repliesRepository.findByPnum(num);
+        List<RepliesDTO> replies = new ArrayList<>();
 
-        for(Replies onereplie : replie){
-                          RepliesDTO repliesDTO=new RepliesDTO();
-                          repliesDTO.setCnum(onereplie.getCnum());
-                          repliesDTO.setPnum(onereplie.getPnum());
-                          repliesDTO.setRlikes(onereplie.getRlikes());
-                          repliesDTO.setRbody(onereplie.getRbody());
-                          repliesDTO.setRdate(onereplie.getRdate());
-                          repliesDTO.setNickname(onereplie.getNickname());
-                          repliesDTO.setUid(onereplie.getUid());
-                          repliesDTO.setRdate(onereplie.getRdate());
-                          repliesDTO.setRnum(onereplie.getRnum());
-                          replies.add(repliesDTO);
+        for (Replies onereplie : replie) {
+            RepliesDTO repliesDTO = new RepliesDTO();
+            repliesDTO.setCnum(onereplie.getCnum());
+            repliesDTO.setPnum(onereplie.getPnum());
+            repliesDTO.setRlikes(onereplie.getRlikes());
+            repliesDTO.setRbody(onereplie.getRbody());
+            repliesDTO.setRdate(onereplie.getRdate());
+            repliesDTO.setNickname(onereplie.getNickname());
+            repliesDTO.setUid(onereplie.getUid());
+            repliesDTO.setRdate(onereplie.getRdate());
+            repliesDTO.setRnum(onereplie.getRnum());
+            replies.add(repliesDTO);
         }
 
-        List<Rlikes> rlikes =rlikeRepository.findByPnum(num);
-        for(RepliesDTO repliesDTO : replies){
-            for(Rlikes rlike:rlikes){
-                if(rlike.getUid() != null && rlike.getRnum() != null && repliesDTO.getRnum() != null&&
-                        rlike.getUid().equals(uid)&&
-                        rlike.getRnum().equals(repliesDTO.getRnum())){
+        List<Rlikes> rlikes = rlikeRepository.findByPnum(num);
+        for (RepliesDTO repliesDTO : replies) {
+            for (Rlikes rlike : rlikes) {
+                if (rlike.getUid().equals(uid) && rlike.getRnum() == repliesDTO.getRnum()) {
                     repliesDTO.setCheck(true);
                 }
             }
@@ -179,7 +175,6 @@ public class BoderController {
         model.addAttribute("clike", clike);
 
 
-
         return "/detailview";
     }
 
@@ -189,80 +184,101 @@ public class BoderController {
         return "write";
 
     }
+
     @PostMapping("/plike")
-    public String plike(@ModelAttribute Plike plike ,Model model) {
+    @ResponseBody
+    public Integer plike(@ModelAttribute Plike plike) {
         Integer pnum = plike.getPnum();
-        boardService.blike(pnum);
+        Integer num = boardService.blike(pnum);
         plikeRepository.save(plike);
 
-    return "redirect:/detailview?pnum="+pnum;
+        return num ;
 
     }
+
     @PostMapping("/phate")
-    public String phate(@ModelAttribute Plike plike ,Model model) {
+    @ResponseBody
+    public Integer phate(@ModelAttribute Plike plike, Model model) {
 
         Integer pnum = plike.getPnum();
-        boardService.bhate(pnum);
-        String uid=plike.getUid();
-        boardService.phate(pnum,uid);
-        model.addAttribute("pnum", pnum);
-        return "redirect:/detailview?pnum="+pnum;
+        Board board= boardService.bhate(pnum);
+        String uid = plike.getUid();
+        boardService.phate(pnum, uid);
+        Integer num=board.getPlike();
+        return num;
     }
+
     @PostMapping("comment")
-    public String comment(@ModelAttribute Comment comment , Model model) {
+        public String comment(@ModelAttribute Comment comment, Model model) {
         commentRepository.save(comment);
-        return "redirect:/detailview?pnum="+comment.getPnum();
+        return "redirect:/detailview?pnum=" + comment.getPnum();
     }
+
     @PostMapping("/clike")
-    public String clike(@ModelAttribute Clike clike) {
-        boardService.clike(clike);
-        return "redirect:/detailview?pnum="+clike.getPnum();
+    @ResponseBody
+    public int clike(@ModelAttribute Clike clike) {
+       Comment comment =boardService.clike(clike);
+       int num = comment.getClike();
+       return num;
+
     }
+
     @PostMapping("/chate")
-    public  String chate(@ModelAttribute Clike clike) {
-                boardService.chate(clike);
-        return "redirect:/detailview?pnum="+clike.getPnum();
+    @ResponseBody
+    public int chate(@ModelAttribute Clike clike) {
+       Comment comment= boardService.chate(clike);
+       int num=comment.getClike();
+       return num;
     }
+
     @PostMapping("/replies")
     public String replies(@ModelAttribute Replies replies) {
-    repliesRepository.save(replies);
+        repliesRepository.save(replies);
 
-           return "redirect:/detailview?pnum="+replies.getPnum();
+        return "redirect:/detailview?pnum=" + replies.getPnum();
     }
+
     @PostMapping("/rlike")
-    public String rlike(@ModelAttribute Rlikes rlikes) {
+    @ResponseBody
+    public int rlike(@ModelAttribute Rlikes rlikes) {
         rlikeRepository.save(rlikes);
-        Integer rnum =rlikes.getRnum();
+        Integer rnum = rlikes.getRnum();
         boardService.replieslike(rnum);
-        return "redirect:/detailview?pnum="+rlikes.getPnum();
+        int num=boardService.rlike(rnum);
+        return  num;
     }
-    @PostMapping("/rhate")
-    public String rhate(@ModelAttribute Rlikes rlikes) {
-        String uid =rlikes.getUid();
-        Integer rnum =rlikes.getRnum();
-        boardService.rhate(uid ,rnum);
-        boardService.replieshate(rnum);
-        return "redirect:/detailview?pnum="+rlikes.getPnum();
-    }
-    @GetMapping("/boardmod")
-    public String boardmod(Model model ,@RequestParam("pnum") Integer pnum ) {
 
-        Board board=new Board();
+    @PostMapping("/rhate")
+    @ResponseBody
+    public int rhate(@ModelAttribute Rlikes rlikes) {
+        String uid = rlikes.getUid();
+        Integer rnum = rlikes.getRnum();
+        boardService.rhate(uid, rnum);
+        boardService.replieshate(rnum);
+        int num =boardService.rlike(rnum);
+        return num;
+    }
+
+    @GetMapping("/boardmod")
+    public String boardmod(Model model, @RequestParam("pnum") Integer pnum) {
+
+        Board board = new Board();
         board.setPnum(pnum);
-        model.addAttribute("mod",true);
+        model.addAttribute("mod", true);
         model.addAttribute("board", board);
         return "write";
     }
+
     @PostMapping("/mod_post")
-    public String modpost(@ModelAttribute Board board ,
-                          @RequestParam("files")MultipartFile[] filelist) throws Exception {
+    public String modpost(@ModelAttribute Board board,
+                          @RequestParam("files") MultipartFile[] filelist) throws Exception {
         boardService.board_mod(board);
 
         String ProjectPath = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\files";
         System.out.println(board.getPnum());
 
         for (MultipartFile onefile : filelist) {
-            if(!onefile.isEmpty()) {
+            if (!onefile.isEmpty()) {
                 UUID uuid = UUID.randomUUID();
                 String filename = uuid + "_" + onefile.getOriginalFilename();
                 File savfile = new File(ProjectPath, filename);
@@ -274,7 +290,7 @@ public class BoderController {
             }
         }
 
-        return "redirect:/detailview?pnum="+board.getPnum();
+        return "redirect:/detailview?pnum=" + board.getPnum();
     }
 
     @GetMapping("/boarddelete")
@@ -282,27 +298,31 @@ public class BoderController {
         boardService.boarddelete(pnum);
         return "redirect:/boardlist";
     }
+
     @PostMapping("/commentdelete")
-    public String commentdelete(@RequestParam("pnum") Integer pnum ,@RequestParam("cnum") Integer cnum) {
+    public String commentdelete(@RequestParam("pnum") Integer pnum, @RequestParam("cnum") Integer cnum) {
         boardService.commentdelete(cnum);
-        return "redirect:/detailview?pnum="+pnum;
+        return "redirect:/detailview?pnum=" + pnum;
     }
+
     @PostMapping("/commentmod")
-    public String commentmod(@ModelAttribute Comment comment ) {
+    public String commentmod(@ModelAttribute Comment comment) {
 
 
         boardService.commentmod(comment);
-        return "redirect:/detailview?pnum="+comment.getPnum();
+        return "redirect:/detailview?pnum=" + comment.getPnum();
     }
+
     @PostMapping("/repliedelete")
-    public String repliedelete(@RequestParam("rnum") Integer rnum,@RequestParam("pnum") Integer pnum) {
+    public String repliedelete(@RequestParam("rnum") Integer rnum, @RequestParam("pnum") Integer pnum) {
 
         boardService.repliedelete(rnum);
-        return "redirect:/detailview?pnum="+pnum;
+        return "redirect:/detailview?pnum=" + pnum;
     }
-   @PostMapping("/replymod")
+
+    @PostMapping("/replymod")
     public String replymod(@ModelAttribute Replies replie) {
-     boardService.replymod(replie);
-     return "redirect:/detailview?pnum="+replie.getPnum();
-   }
+        boardService.replymod(replie);
+        return "redirect:/detailview?pnum=" + replie.getPnum();
+    }
 }

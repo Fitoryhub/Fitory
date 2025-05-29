@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>게시글 상세보기</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         * {
@@ -271,29 +272,21 @@
         <span th:text="'작성자: ' + ${board.nickname}">작성자</span>
         <span th:text="'작성일: ' + ${board.pdate}">작성일</span>
         <span th:text="'조회수: ' + ${board.plook}">조회수</span>
-        <span class="like-form" th:if="${plike != null}">
-            <form th:action="@{/phate}" method="post">
-                <input type="hidden" name="uid" th:value="${session.uid}">
-                <input type="hidden" name="pnum" th:value="${board.pnum}">
-                <button type="submit" class="like-button">❤️</button>
-            </form>
-        </span>
-        <span class="like-form" th:if="${plike == null}">
-            <form th:action="@{/plike}" method="post">
-                <input type="hidden" name="uid" th:value="${session.uid}">
-                <input type="hidden" name="pnum" th:value="${board.pnum}">
-                <button type="submit" class="like-button">🤍</button>
-            </form>
-        </span>
 
-        <span th:text="'좋아요: ' + ${board.plike}">좋아요수</span>
+        <button class="like-button" th:data-pnum="${board.pnum}" th:data-liked="${plike != null}"
+                th:data-uid="${session.uid}">
+            <span class="like-icon" th:text="${plike != null ? '❤️' : '🤍'}"></span>
+        </button>
+        <span th:id="'like-count-'+${board.pnum}" th:text="${board.plike}"></span>
+
+
         <div th:if="${board.nickname==session.nickname}">
             <form th:action="@{/boardmod}" method="get">
-                <input type="hidden" th:name="pnum" th:value="${board.pnum}" />
+                <input type="hidden" th:name="pnum" th:value="${board.pnum}"/>
                 <button type="submit">수정</button>
             </form>
             <form th:action="@{/boarddelete}" method="get">
-                <input type="hidden" th:name="pnum" th:value="${board.pnum}" />
+                <input type="hidden" th:name="pnum" th:value="${board.pnum}"/>
                 <button>삭제</button>
             </form>
 
@@ -341,9 +334,10 @@
                 <div class="comment-body" th:id="'body-' + ${comment.cnum}" th:text="${comment.cbody}">댓글 내용</div>
 
 
-                <form th:action="@{/commentmod}" method="post" th:id="'editForm-' + ${comment.cnum}" style="display:none;">
-                    <input type="hidden" name="cnum" th:value="${comment.cnum}" />
-                    <input type="hidden" name="pnum" th:value="${board.pnum}" />
+                <form th:action="@{/commentmod}" method="post" th:id="'editForm-' + ${comment.cnum}"
+                      style="display:none;">
+                    <input type="hidden" name="cnum" th:value="${comment.cnum}"/>
+                    <input type="hidden" name="pnum" th:value="${board.pnum}"/>
                     <textarea name="cbody" th:text="${comment.cbody}" rows="3" style="width:100%;"></textarea>
                     <button type="submit">확인</button>
                     <button type="button" th:onclick="'hideEditForm(' + ${comment.cnum} + ')'">취소</button>
@@ -351,19 +345,14 @@
 
 
                 <div class="comment-footer">
-                    <form th:if="${comment.liked}" th:action="@{/chate}" method="post">
-                        <input type="hidden" name="uid" th:value="${session.uid}">
-                        <input type="hidden" name="cnum" th:value="${comment.cnum}">
-                        <input type="hidden" name="pnum" th:value="${comment.pnum}">
-                        <button type="submit" class="like-button">❤️</button>
-                    </form>
-                    <form th:if="${!comment.liked}" th:action="@{/clike}" method="post">
-                        <input type="hidden" name="uid" th:value="${session.uid}">
-                        <input type="hidden" name="cnum" th:value="${comment.cnum}">
-                        <input type="hidden" name="pnum" th:value="${comment.pnum}">
-                        <button type="submit" class="like-button">🤍</button>
-                    </form>
-                    <span th:text="${comment.clike}">0</span>
+                    <button class="like-button2"
+                            th:data-cnum="${comment.cnum}"
+                            th:data-pnum="${comment.pnum}"
+                            th:data-liked="${comment.liked}"
+                            th:data-uid="${session.uid}">
+                        <span class="like-icon" th:text="${comment.liked} ? '❤️' : '🤍'"></span>
+                    </button>
+                    <span th:id="'like-count2-'+${comment.cnum}" th:text="${comment.clike}">0</span>
                 </div>
 
                 <div class="reply-box">
@@ -372,21 +361,19 @@
                         <span th:id="'rbody-' + ${reply.rnum}" th:text="${reply.rbody}">내용</span>
                         <span th:text="${reply.rdate}">날짜</span>
 
-                        <!-- 좋아요/싫어요 -->
-                        <form th:if="${reply.check}" th:action="@{/rhate}" method="post" style="display:inline;">
-                            <input type="hidden" name="rnum" th:value="${reply.rnum}">
-                            <input type="hidden" name="uid" th:value="${session.uid}">
-                            <input type="hidden" name="pnum" th:value="${board.pnum}">
-                            <button type="submit">❤️</button>
-                        </form>
-                        <form th:if="${!reply.check}" th:action="@{/rlike}" method="post" style="display:inline;">
-                            <input type="hidden" name="rnum" th:value="${reply.rnum}">
-                            <input type="hidden" name="uid" th:value="${session.uid}">
-                            <input type="hidden" name="pnum" th:value="${board.pnum}">
-                            <input type="hidden" name="cnum" th:value="${comment.cnum}">
-                            <button type="submit">🤍</button>
-                        </form>
-                        <span th:text="${reply.rlikes}">0</span>
+
+                        <div class="reply-footer">
+                            <button class="like-button3"
+                                    th:data-rnum="${reply.rnum}"
+                                    th:data-pnum="${board.pnum}"
+                                    th:data-cnum="${comment.cnum}"
+                                    th:data-liked="${reply.check}"
+                                    th:data-uid="${session.uid}">
+                                <span class="like-icon" th:text="${reply.check} ? '❤️' : '🤍'"></span>
+                            </button>
+                            <span th:id="'like-count3-'+${reply.rnum}" th:text="${reply.rlikes}">0</span>
+                        </div>
+
 
                         <!-- 수정/삭제 -->
                         <div th:if="${reply.nickname==session.nickname}">
@@ -399,15 +386,15 @@
                         </div>
 
                         <!-- 대댓글 수정 폼 -->
-                        <form th:action="@{/replymod}" method="post" th:id="'replyEditForm-' + ${reply.rnum}" style="display:none; width: 100%; margin-top:10px;">
-                            <input type="hidden" name="rnum" th:value="${reply.rnum}" />
-                            <input type="hidden" name="pnum" th:value="${board.pnum}" />
+                        <form th:action="@{/replymod}" method="post" th:id="'replyEditForm-' + ${reply.rnum}"
+                              style="display:none; width: 100%; margin-top:10px;">
+                            <input type="hidden" name="rnum" th:value="${reply.rnum}"/>
+                            <input type="hidden" name="pnum" th:value="${board.pnum}"/>
                             <textarea name="rbody" rows="2" style="width:100%;" th:text="${reply.rbody}"></textarea>
                             <button type="submit">확인</button>
                             <button type="button" th:onclick="'cancelReplyEditForm(' + ${reply.rnum} + ')'">취소</button>
                         </form>
                     </div>
-
 
 
                     <form th:action="@{/replies}" method="post" class="reply-form">
@@ -433,6 +420,7 @@
         document.getElementById('editForm-' + cnum).style.display = 'none';
         document.getElementById('body-' + cnum).style.display = 'block';
     }
+
     function showReplyEditForm(rnum) {
         document.getElementById('replyEditForm-' + rnum).style.display = 'block';
         document.getElementById('rbody-' + rnum).style.display = 'none';
@@ -442,6 +430,123 @@
         document.getElementById('replyEditForm-' + rnum).style.display = 'none';
         document.getElementById('rbody-' + rnum).style.display = 'inline';
     }
+
+    $(document).ready(function () {
+
+        $('.like-button').click(function () {
+
+            let button = $(this);
+            let pnum = button.data('pnum');  // 게시글 번호
+            let liked = button.data('liked');  // 현재 좋아요 상태
+            let url = liked ? '/phate' : '/plike';  // 좋아요 취소 or 등록
+            let uid = button.data('uid');  // Thymeleaf에서 uid 직접 삽입
+
+
+            $.ajax({
+                url: liked ? '/phate' : '/plike', // 좋아요/싫어요에 따라 URL 동적 설정
+                method: 'POST',
+                dataType: 'text', // 응답은 텍스트
+                data: ({
+                    uid: uid,
+                    pnum: pnum,
+                }),
+
+                success: function (data) {
+                    // 좋아요 상태 토글
+                    if (liked) {
+                        button.find('.like-icon').text('🤍');
+                        button.data('liked', false);
+                    } else {
+                        button.find('.like-icon').text('❤️');
+                        button.data('liked', true);
+                    }
+
+                    $('#like-count-' + pnum).text(data);
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error:', xhr.responseText);
+                    alert('좋아요 처리 중 오류가 발생했습니다.');
+                }
+            });
+        });
+
+
+        $('.like-button2').click(function () {
+            const button = $(this);
+            const cnum = button.data('cnum');
+            const pnum = button.data('pnum');
+            const uid = button.data('uid');
+            const liked = button.data('liked');
+            const url = liked ? '/chate' : '/clike';
+
+
+            $.ajax({
+                url: url,
+                method: 'POST',
+                dataType: 'text',
+                data: {
+                    uid: uid,
+                    cnum: cnum,
+                    pnum: pnum
+                },
+                success: function (data) {
+
+                    if (liked) {
+                        button.find('.like-icon').text('🤍');
+                        button.data('liked', false);
+                    } else {
+                        button.find('.like-icon').text('❤️');
+                        button.data('liked', true);
+                    }
+                    // 좋아요 카운트 업데이트
+                    $('#like-count2-' + cnum).text(data);
+                },
+                error: function () {
+                    alert('좋아요 처리 중 오류가 발생했습니다.');
+                }
+            });
+        });
+
+
+        $(document).ready(function () {
+            $('.like-button3').click(function () {
+                const button = $(this);
+                const rnum = button.data('rnum'); // 대댓글 번호
+                const cnum = button.data('cnum'); // 댓글 번호
+                const pnum = button.data('pnum'); // 게시글 번호
+                const uid = button.data('uid');
+                const liked = button.data('liked');
+                const url = liked ? '/rhate' : '/rlike';
+
+                $.ajax({
+                    url: url,
+                    method: 'POST',
+                    dataType: 'text',
+                    data: {
+                        rnum: rnum,
+                        cnum: cnum,
+                        pnum: pnum,
+                        uid: uid
+                    },
+                    success: function (data) {
+                        if (liked) {
+                            button.find('.like-icon').text('🤍');
+                            button.data('liked', false);
+                        } else {
+                            button.find('.like-icon').text('❤️');
+                            button.data('liked', true);
+                        }
+                        // 좋아요 카운트 업데이트
+                        $('#like-count3-' + rnum).text(data);
+                    },
+                    error: function () {
+                        alert('좋아요 처리 중 오류가 발생했습니다.');
+                    }
+                });
+            });
+        });
+    });
 </script>
+
 </body>
 </html>

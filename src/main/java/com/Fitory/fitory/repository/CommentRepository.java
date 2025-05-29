@@ -27,4 +27,6 @@ public interface CommentRepository extends JpaRepository<Comment, Integer> {
     @Modifying
     @Query("update Comment c set c.cbody=:cbody where c.cnum=:cnum")
     void commentmod(Integer cnum, String cbody);
+
+    Comment findByCnum(Integer cnum);
 }

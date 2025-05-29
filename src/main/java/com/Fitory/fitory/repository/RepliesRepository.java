@@ -27,4 +27,6 @@ public interface RepliesRepository extends JpaRepository<Replies, Integer> {
     @Modifying
     @Query("update Replies r set r.rbody=:rbody where r.rnum=:rnum")
     void replymod(@Param("rnum") Integer rnum, @Param("rbody") String rbody);
+
+    Replies findByRnum(Integer rnum);
 }

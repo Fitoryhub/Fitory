@@ -28,16 +28,15 @@ public interface IF_BoardService {
 
     void updateplook(Integer pnum);
 
-    void blike(Integer pnum);
+    Integer blike(Integer pnum);
 
     void phate(Integer pnum, String uid);
 
-    void bhate(Integer pnum);
+    Board bhate(Integer pnum);
 
-    void clike(Clike clike);
+    Comment clike(Clike clike);
 
-    void chate(Clike clike);
-
+    Comment chate(Clike clike);
 
     void rhate(String uid , Integer rnum);
 
@@ -56,4 +55,6 @@ public interface IF_BoardService {
     void repliedelete(Integer rnum);
 
     void replymod(Replies replie);
+
+    int rlike(Integer rnum);
 }

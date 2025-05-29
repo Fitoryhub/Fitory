@@ -36,4 +36,6 @@ public interface BoardRepository extends JpaRepository<Board, Integer> {
     @Modifying
     @Query("update Board b set b.ptitle=:ptitle , b.pbody=:pbody , b.pcategory=:pcategory where b.pnum =:pnum ")
     void modpost(Integer pnum, String ptitle, String pcategory, String pbody);
+
+
 }

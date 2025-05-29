@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BoardService implements IF_BoardService {
@@ -71,8 +72,10 @@ public class BoardService implements IF_BoardService {
 
     @Transactional
     @Override
-    public void blike(Integer pnum) {
+    public Integer blike(Integer pnum) {
         boardrepository.plike(pnum);
+       Board board= boardrepository.findByPnum(pnum);
+       return board.getPlike();
     }
 
     @Transactional
@@ -82,23 +85,27 @@ public class BoardService implements IF_BoardService {
     }
     @Transactional
     @Override
-    public void bhate(Integer pnum) {
+    public Board bhate(Integer pnum) {
         boardrepository.bhate(pnum);
+       return boardrepository.findByPnum(pnum);
     }
 
     @Transactional
     @Override
-    public void clike(Clike clike) {
+    public Comment clike(Clike clike) {
         Integer cnum = clike.getCnum();
         commentrepository.clike(cnum);
         clikerepository.save(clike);
+        return commentrepository.findByCnum(cnum);
     }
 
     @Transactional
     @Override
-    public void chate(Clike clike) {
+    public Comment chate(Clike clike) {
         commentrepository.chate(clike.getCnum());
         clikerepository.deleteByCnumAndUid(clike.getCnum(),clike.getUid());
+       Comment comment= commentrepository.findByCnum(clike.getCnum());
+        return comment;
     }
     @Transactional
     @Override
@@ -159,6 +166,13 @@ public class BoardService implements IF_BoardService {
         Integer rnum=replie.getRnum();
         String rbody=replie.getRbody();
         repliesrepository.replymod(rnum,rbody);
+    }
+
+    @Override
+    public int rlike(Integer rnum) {
+       Replies r= repliesrepository.findByRnum(rnum);
+       int num=r.getRlikes();
+       return num;
     }
 
 
