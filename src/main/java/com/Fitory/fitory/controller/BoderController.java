@@ -34,19 +34,6 @@ public class BoderController {
 
     @Autowired
     private BoardService boardService;
-    @Autowired
-    private FileRepository fileRepository;
-    @Autowired
-    private PlikeRepository plikeRepository;
-    @Autowired
-    private CommentRepository commentRepository;
-    @Autowired
-    ClikeRepository clikeRepository;
-    private UserService userService;
-    @Autowired
-    RepliesRepository repliesRepository;
-    @Autowired
-    RlikeRepository rlikeRepository;
 
     @GetMapping("/boardlist")
     public String boardlist(Model model, @PageableDefault(page = 0, size = 10, sort = "pnum"
@@ -70,6 +57,7 @@ public class BoderController {
                 board = boardService.searchboard(searchboard, pageable);
             }
         }
+
         int nowpage = board.getPageable().getPageNumber() + 1;
         int startpage = Math.max(nowpage - 2, 1);  // 현재 페이지를 중심으로 2개 앞뒤
         int endpage = Math.min(startpage + 4, board.getTotalPages()); // 총 5개만 보이도록 조정
@@ -102,7 +90,7 @@ public class BoderController {
                 Files files = new Files();
                 files.setFilename(filename);
                 files.setPnum(board.getPnum());
-                fileRepository.save(files);
+                boardService.filesave(files);
             }
         }
 
@@ -116,10 +104,10 @@ public class BoderController {
         boardService.updateplook(pnum);
         Board board = boardService.searchoneboard(pnum);
         String uid = session.getAttribute("uid").toString();
-        Plike plike = plikeRepository.findByUidAndPnum(uid, pnum);
-        List<Files> files = fileRepository.findByPnum(pnum);
+        Plike plike = boardService.findplike(uid, pnum);
+        List<Files> files = boardService.findboard(pnum);
         Integer num = board.getPnum();
-        List<Comment> comments = commentRepository.findByPnumOrderByCnumAsc(num);
+        List<Comment> comments = boardService.findcomment(num);
         List<CommentDTO> commentDTOS = new ArrayList<>();
         for (Comment comment : comments) {
             CommentDTO commentDTO = new CommentDTO();
@@ -132,7 +120,7 @@ public class BoderController {
             commentDTO.setClike(comment.getClike());
             commentDTOS.add(commentDTO);
         }
-        List<Clike> clike = clikeRepository.findByPnum(num);
+        List<Clike> clike = boardService.findclike(num);
         for (CommentDTO commentDTO : commentDTOS) {
             for (Clike c : clike) {
                 if (c.getUid().equals(uid) && commentDTO.getCnum() == (c.getCnum())) {
@@ -141,7 +129,7 @@ public class BoderController {
                 }
             }
         }
-        List<Replies> replie = repliesRepository.findByPnum(num);
+        List<Replies> replie = boardService.findreplies(num);
         List<RepliesDTO> replies = new ArrayList<>();
 
         for (Replies onereplie : replie) {
@@ -158,7 +146,7 @@ public class BoderController {
             replies.add(repliesDTO);
         }
 
-        List<Rlikes> rlikes = rlikeRepository.findByPnum(num);
+        List<Rlikes> rlikes = boardService.findrlike(num);
         for (RepliesDTO repliesDTO : replies) {
             for (Rlikes rlike : rlikes) {
                 if (rlike.getUid().equals(uid) && rlike.getRnum() == repliesDTO.getRnum()) {
@@ -190,9 +178,10 @@ public class BoderController {
     public Integer plike(@ModelAttribute Plike plike) {
         Integer pnum = plike.getPnum();
         Integer num = boardService.blike(pnum);
-        plikeRepository.save(plike);
+        boardService.saveplike(plike);
 
-        return num ;
+
+        return num;
 
     }
 
@@ -201,39 +190,41 @@ public class BoderController {
     public Integer phate(@ModelAttribute Plike plike, Model model) {
 
         Integer pnum = plike.getPnum();
-        Board board= boardService.bhate(pnum);
+        Board board = boardService.bhate(pnum);
         String uid = plike.getUid();
         boardService.phate(pnum, uid);
-        Integer num=board.getPlike();
+        Integer num = board.getPlike();
         return num;
     }
 
     @PostMapping("comment")
-        public String comment(@ModelAttribute Comment comment, Model model) {
-        commentRepository.save(comment);
+    public String comment(@ModelAttribute Comment comment, Model model) {
+        boardService.commentsave(comment);
+
         return "redirect:/detailview?pnum=" + comment.getPnum();
     }
 
     @PostMapping("/clike")
     @ResponseBody
     public int clike(@ModelAttribute Clike clike) {
-       Comment comment =boardService.clike(clike);
-       int num = comment.getClike();
-       return num;
+        Comment comment = boardService.clike(clike);
+        int num = comment.getClike();
+        return num;
 
     }
 
     @PostMapping("/chate")
     @ResponseBody
     public int chate(@ModelAttribute Clike clike) {
-       Comment comment= boardService.chate(clike);
-       int num=comment.getClike();
-       return num;
+        Comment comment = boardService.chate(clike);
+        int num = comment.getClike();
+        return num;
     }
 
     @PostMapping("/replies")
     public String replies(@ModelAttribute Replies replies) {
-        repliesRepository.save(replies);
+        boardService.repliessave(replies);
+
 
         return "redirect:/detailview?pnum=" + replies.getPnum();
     }
@@ -241,11 +232,12 @@ public class BoderController {
     @PostMapping("/rlike")
     @ResponseBody
     public int rlike(@ModelAttribute Rlikes rlikes) {
-        rlikeRepository.save(rlikes);
+        boardService.rlikesave(rlikes);
+
         Integer rnum = rlikes.getRnum();
         boardService.replieslike(rnum);
-        int num=boardService.rlike(rnum);
-        return  num;
+        int num = boardService.rlike(rnum);
+        return num;
     }
 
     @PostMapping("/rhate")
@@ -255,7 +247,7 @@ public class BoderController {
         Integer rnum = rlikes.getRnum();
         boardService.rhate(uid, rnum);
         boardService.replieshate(rnum);
-        int num =boardService.rlike(rnum);
+        int num = boardService.rlike(rnum);
         return num;
     }
 
@@ -286,7 +278,7 @@ public class BoderController {
                 Files files = new Files();
                 files.setFilename(filename);
                 files.setPnum(board.getPnum());
-                fileRepository.save(files);
+                boardService.filesave(files);
             }
         }
 

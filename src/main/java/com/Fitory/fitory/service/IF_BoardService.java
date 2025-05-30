@@ -57,4 +57,26 @@ public interface IF_BoardService {
     void replymod(Replies replie);
 
     int rlike(Integer rnum);
+
+    void filesave(Files files);
+
+    Plike findplike(String uid, Integer pnum);
+
+    List<Files> findboard(Integer pnum);
+
+    List<Comment> findcomment(Integer num);
+
+    List<Clike> findclike(Integer num);
+
+    List<Replies> findreplies(Integer num);
+
+    List<Rlikes> findrlike(Integer num);
+
+    void saveplike(Plike plike);
+
+    void commentsave(Comment comment);
+
+    void repliessave(Replies replies);
+
+    void rlikesave(Rlikes rlikes);
 }

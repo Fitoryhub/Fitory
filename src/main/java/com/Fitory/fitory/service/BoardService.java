@@ -33,12 +33,12 @@ public class BoardService implements IF_BoardService {
 
     @Override
     public void savepost(Board board) {
-       boardrepository.save(board);
+        boardrepository.save(board);
     }
 
     @Override
     public void savefile(Files fileone) {
-    filerepository.save(fileone);
+        filerepository.save(fileone);
     }
 
     @Override
@@ -48,9 +48,9 @@ public class BoardService implements IF_BoardService {
 
     @Override
     public Page<Board> searchboard(PtitlePcategoryDTO searchboard, Pageable pageable) {
-        String pcategory=searchboard.getPcategory();
-        String ptitle=searchboard.getPtitle();
-        return boardrepository.findByPcategoryAndPtitleContaining(pcategory,ptitle,pageable);
+        String pcategory = searchboard.getPcategory();
+        String ptitle = searchboard.getPtitle();
+        return boardrepository.findByPcategoryAndPtitleContaining(pcategory, ptitle, pageable);
     }
 
     @Override
@@ -59,11 +59,12 @@ public class BoardService implements IF_BoardService {
     }
 
     @Override
-    public Page<Board> searchptitle(PtitlePcategoryDTO searchboard,Pageable pageable) {
-        String ptitle=searchboard.getPtitle();
+    public Page<Board> searchptitle(PtitlePcategoryDTO searchboard, Pageable pageable) {
+        String ptitle = searchboard.getPtitle();
 
-        return boardrepository.findByPtitleContaining(ptitle,pageable);
+        return boardrepository.findByPtitleContaining(ptitle, pageable);
     }
+
     @Transactional
     @Override
     public void updateplook(Integer pnum) {
@@ -74,20 +75,21 @@ public class BoardService implements IF_BoardService {
     @Override
     public Integer blike(Integer pnum) {
         boardrepository.plike(pnum);
-       Board board= boardrepository.findByPnum(pnum);
-       return board.getPlike();
+        Board board = boardrepository.findByPnum(pnum);
+        return board.getPlike();
     }
 
     @Transactional
     @Override
     public void phate(Integer pnum, String uid) {
-        plikerepository.deleteByPnumAndUid(pnum,uid);
+        plikerepository.deleteByPnumAndUid(pnum, uid);
     }
+
     @Transactional
     @Override
     public Board bhate(Integer pnum) {
         boardrepository.bhate(pnum);
-       return boardrepository.findByPnum(pnum);
+        return boardrepository.findByPnum(pnum);
     }
 
     @Transactional
@@ -103,14 +105,15 @@ public class BoardService implements IF_BoardService {
     @Override
     public Comment chate(Clike clike) {
         commentrepository.chate(clike.getCnum());
-        clikerepository.deleteByCnumAndUid(clike.getCnum(),clike.getUid());
-       Comment comment= commentrepository.findByCnum(clike.getCnum());
+        clikerepository.deleteByCnumAndUid(clike.getCnum(), clike.getUid());
+        Comment comment = commentrepository.findByCnum(clike.getCnum());
         return comment;
     }
+
     @Transactional
     @Override
-    public void rhate(String uid ,Integer rnum) {
-        rlikerepository.deleteByUidAndRnum(uid , rnum);
+    public void rhate(String uid, Integer rnum) {
+        rlikerepository.deleteByUidAndRnum(uid, rnum);
     }
 
     @Transactional
@@ -118,22 +121,24 @@ public class BoardService implements IF_BoardService {
     public void replieslike(Integer rnum) {
         repliesrepository.update(rnum);
     }
+
     @Transactional
     @Override
     public void replieshate(Integer rnum) {
         repliesrepository.replieshate(rnum);
     }
+
     @Transactional
     @Override
     public void board_mod(Board board) {
 
-       Integer pnum=board.getPnum();
-        String ptitle=board.getPtitle();
-        String pcategory=board.getPcategory();
-        String pbody=board.getPbody();
-        String uid=board.getUid();
+        Integer pnum = board.getPnum();
+        String ptitle = board.getPtitle();
+        String pcategory = board.getPcategory();
+        String pbody = board.getPbody();
+        String uid = board.getUid();
 
-        boardrepository.modpost(pnum,ptitle,pcategory,pbody);
+        boardrepository.modpost(pnum, ptitle, pcategory, pbody);
         filerepository.deleteByPnum(board.getPnum());
     }
 
@@ -147,12 +152,13 @@ public class BoardService implements IF_BoardService {
     public void commentdelete(Integer cnum) {
         commentrepository.deleteById(cnum);
     }
+
     @Transactional
     @Override
     public void commentmod(Comment comment) {
-        Integer cnum=comment.getCnum();
-        String cbody=comment.getCbody();
-        commentrepository.commentmod(cnum,cbody);
+        Integer cnum = comment.getCnum();
+        String cbody = comment.getCbody();
+        commentrepository.commentmod(cnum, cbody);
     }
 
     @Override
@@ -160,19 +166,75 @@ public class BoardService implements IF_BoardService {
 
         repliesrepository.deleteById(rnum);
     }
+
     @Transactional
     @Override
     public void replymod(Replies replie) {
-        Integer rnum=replie.getRnum();
-        String rbody=replie.getRbody();
-        repliesrepository.replymod(rnum,rbody);
+        Integer rnum = replie.getRnum();
+        String rbody = replie.getRbody();
+        repliesrepository.replymod(rnum, rbody);
     }
 
     @Override
     public int rlike(Integer rnum) {
-       Replies r= repliesrepository.findByRnum(rnum);
-       int num=r.getRlikes();
-       return num;
+        Replies r = repliesrepository.findByRnum(rnum);
+        int num = r.getRlikes();
+        return num;
+    }
+
+    @Override
+    public void filesave(Files files) {
+        filerepository.save(files);
+    }
+
+    @Override
+    public Plike findplike(String uid, Integer pnum) {
+        return plikerepository.findByUidAndPnum(uid, pnum);
+    }
+
+    @Override
+    public List<Files> findboard(Integer pnum) {
+        return filerepository.findByPnum(pnum);
+    }
+
+    @Override
+    public List<Comment> findcomment(Integer num) {
+        return commentrepository.findByPnumOrderByCnumAsc(num);
+    }
+
+    @Override
+    public List<Clike> findclike(Integer num) {
+        return clikerepository.findByPnum(num);
+    }
+
+    @Override
+    public List<Replies> findreplies(Integer num) {
+        return repliesrepository.findByPnum(num);
+    }
+
+    @Override
+    public List<Rlikes> findrlike(Integer num) {
+        return rlikerepository.findByPnum(num);
+    }
+
+    @Override
+    public void saveplike(Plike plike) {
+        plikerepository.save(plike);
+    }
+
+    @Override
+    public void commentsave(Comment comment) {
+        commentrepository.save(comment);
+    }
+
+    @Override
+    public void repliessave(Replies replies) {
+        repliesrepository.save(replies);
+    }
+
+    @Override
+    public void rlikesave(Rlikes rlikes) {
+        rlikerepository.save(rlikes);
     }
 
 
