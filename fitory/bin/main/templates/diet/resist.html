@@ -205,7 +205,7 @@
                     if($(this).is(":checked")==true){
                         if(fnsellist.length<6){
                             fnsellist.push(foodnlist[$(this).val()].food_name);
-                            let tempjson=JSON.stringify(foodnlist[$(this).val()]);
+                            let tempjson=btoa(encodeURIComponent(JSON.stringify(foodnlist[$(this).val()])));
                             $('#sel_food').append(foodnlist[$(this).val()].food_name+' '+`<input type="hidden" name="Foodlist" value='${tempjson}'>`);
                         }
                     }
@@ -217,7 +217,7 @@
 
             function save(){
                 let foodlist = Array.from(document.getElementsByName('Foodlist')).map(input =>
-                    JSON.parse(input.value)
+                    JSON.parse(decodeURIComponent(atob(input.value)))
                 );
                 fetch("/diet/save",{
                     method:'POST',
@@ -240,28 +240,26 @@
                     alert('오류');
                 });
             }
-            async function getdata(data,foodtype) {
-                console.log(data)
-                for(let i=0; i<data.length; i++){
-                    let url=base+'/getFoodNtrCpntDbInq02?serviceKey='+servicekey+'&pageNo=1&numOfRows=3&type=json&FOOD_NM_KR='+data[i].food_name+'&RESEARCH_YMD=2017-12-31&FOOD_CAT1_NM='+foodtype+'&UPDATE_DATE='+data[i].createdat+'&DB_CLASS_NM=품목대표';
-                    try {
-                        const response= await fetch(url);
-                        const inform= await response.json();
-                        const item=inform.response.body.items;
 
-                        let nutrition={
-                            foodname:data[i],
-                            calories:item[0].AMT_NUM1,
-                            carbohydrate:item[0].AMT_NUM6,
-                            protein:item[0].AMT_NUM3,
-                            fat:item[0].AMT_NUM4,
-                            sodium:item[0].AMT_NUM13,
-                            sugar:item[0].AMT_NUM7
-                        }
-                        foodnlist.push(nutrition);
-                    } catch (error) {
-                        alert('오류');
+            async function getdata(foodname) {
+                let url=base+'/getFoodNtrCpntDbInq02?serviceKey='+servicekey+'&pageNo=1&numOfRows=3&type=json&FOOD_NM_KR='+foodname+'&DB_CLASS_NM=품목대표';
+                try {
+                    const response= await fetch(url);
+                    const inform= await response.json();
+                    const item=inform.response.body.items;
+
+                    let nutrition={
+                        foodname:data[i],
+                        calories:item[0].AMT_NUM1,
+                        carbohydrate:item[0].AMT_NUM6,
+                        protein:item[0].AMT_NUM3,
+                        fat:item[0].AMT_NUM4,
+                        sodium:item[0].AMT_NUM13,
+                        sugar:item[0].AMT_NUM7
                     }
+                    foodnlist.push(nutrition);
+                } catch (error) {
+                    alert('오류');
                 }
             }
         </script>

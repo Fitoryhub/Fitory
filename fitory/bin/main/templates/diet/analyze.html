@@ -6,7 +6,8 @@
         <br>
         <h4>먹은 음식</h4>
         <input type="text" name="atefd" id="atefd" style="display: inline-block;">
-        <input type="button" value="추가" onclick="af_ok()">
+        <input type="button" value="검색" onclick="search()">
+        <section id="searchlist"></section>
         <br>
         <br>
         <table id="atefd_title" style="width: 600px;">
@@ -21,7 +22,6 @@
             </tr>
         </table>
         <table id="atefd_content" style="width: 600px; height: 400px;">
-
         </table>
         <table id="total" style="width: 600px;">
             <tr>
@@ -35,43 +35,62 @@
             </tr>
         </table>
         <script>
-            function af_ok(){
+            const servicekey='jL8PHgOttipXdQtu%2BF4YntDmduAIvBCSdB7OP5VHXLcT8zpvkYvHRaPOAiwsFhAZVTG9hy%2FiVtBt%2Bqn7aQmT0w%3D%3D';
+            const base='https://apis.data.go.kr/1471000/FoodNtrCpntDbInfo02';
+
+            function search(){
                 let selectfd=$('#atefd').val();
-                $.ajax({
-                    url:'/diet/selectfood',
-                    method:'get',
-                    dataType:'json',
-                    data:{
-                        food_name:selectfd
-                    },
-                    success:function(data){
-                        let sentence1='<tr>';
-                        sentence1+='<td style="font-size: 13px; width: 170px;">'+data.food_name+'</td>';
-                        sentence1+='<td style="font-size: 13px; width: 65px;">'+data.calories+'</td>';
-                        sentence1+='<td style="font-size: 13px; width: 65px;">'+data.carbohydrate+'</td>';
-                        sentence1+='<td style="font-size: 13px; width: 65px;">'+data.protein+'</td>';
-                        sentence1+='<td style="font-size: 13px; width: 65px;">'+data.fat+'</td>';
-                        sentence1+='<td style="font-size: 13px; width: 65px;">'+data.sugar+'</td>';
-                        sentence1+='<td style="font-size: 13px; width: 65px;">'+data.sodium+'</td></tr>';
-                        $('#atefd_content').append(sentence1);
-                        let tcal=Number($("#tcal").html())+data.calories
-                        $('#tcal').html(tcal);
-                        let tcarbo=Number($("#tcarbo").html())+data.carbohydrate
-                        $('#tcarbo').html(tcarbo.toFixed(2));
-                        let tpro=Number($("#tpro").html())+data.protein
-                        $('#tpro').html(tpro.toFixed(2));
-                        let tfat=Number($("#tfat").html())+data.fat
-                        $('#tfat').html(tfat.toFixed(2));
-                        let tsugar=Number($("#tsugar").html())+data.sugar
-                        $('#tsugar').html(tsugar.toFixed(2));
-                        let tsod=Number($("#tsod").html())+data.sodium
-                        $('#tsod').html(tsod.toFixed(2));
-                    },
-                    error:function(data){
-                        alert('해당 데이터가 DB에 없음');
-                    }
-                })
+                console.log(selectfd);
+                getname(selectfd);
             }
+
+            function add(index){
+                let data=document.getElementsByName("tmplist")[index].value;
+                let item=JSON.parse(decodeURIComponent(atob(data)));
+                let sentence1='<tr>';
+                sentence1+='<td style="font-size: 13px; width: 170px;">'+item.FOOD_NM_KR+'</td>';
+                sentence1+='<td style="font-size: 13px; width: 65px;">'+item.AMT_NUM1+'</td>';
+                sentence1+='<td style="font-size: 13px; width: 65px;">'+item.AMT_NUM6+'</td>';
+                sentence1+='<td style="font-size: 13px; width: 65px;">'+item.AMT_NUM3+'</td>';
+                sentence1+='<td style="font-size: 13px; width: 65px;">'+item.AMT_NUM4+'</td>';
+                sentence1+='<td style="font-size: 13px; width: 65px;">'+item.AMT_NUM7+'</td>';
+                sentence1+='<td style="font-size: 13px; width: 65px;">'+item.AMT_NUM13+'</td></tr>';
+                $('#atefd_content').append(sentence1);
+                let tcal=Number($("#tcal").html())+Number(item.AMT_NUM1);
+                $('#tcal').html(tcal);
+                let tcarbo=Number($("#tcarbo").html())+Number(item.AMT_NUM6);
+                $('#tcarbo').html(tcarbo.toFixed(2));
+                let tpro=Number($("#tpro").html())+Number(item.AMT_NUM3);
+                $('#tpro').html(tpro.toFixed(2));
+                let tfat=Number($("#tfat").html())+Number(item.AMT_NUM4);
+                $('#tfat').html(tfat.toFixed(2));
+                let tsugar=Number($("#tsugar").html())+Number(item.AMT_NUM7);
+                $('#tsugar').html(tsugar.toFixed(2));
+                let tsod=Number($("#tsod").html())+Number(item.AMT_NUM13);
+                $('#tsod').html(tsod.toFixed(2));
+            }
+
+            async function getname(foodname) {
+                let url=base+'/getFoodNtrCpntDbInq02?serviceKey='+servicekey+'&type=json&FOOD_NM_KR='+foodname+'&DB_CLASS_NM=품목대표';
+                try {
+                    const response= await fetch(url);
+                    const inform= await response.json();
+                    const items=inform.body.items;
+                    let tempsnt='';
+                    $.each(items,function(index,item){
+                        tempsnt+='<span onclick="add('+index+')" style="border: 2px solid; cursor: pointer; display: inline-block;">'+item.FOOD_NM_KR+'('+item.FOOD_OR_NM+')'+'</span>&ensp;';
+                        tempsnt+='<input type="hidden" name="tmplist" value='+btoa(encodeURIComponent(JSON.stringify(item)))+'>';
+                    })
+                    if(tempsnt==''){
+                        tempsnt='해당 검색어에 대한 정보가 없습니다.';
+                    }
+                    $('#searchlist').html(tempsnt);
+                } catch (error) {
+                    alert('오류');
+                    console.log(error);
+                }
+            }
+
         </script>
     </section>
 </html>
