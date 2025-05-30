@@ -245,8 +245,8 @@
                     <label for="isAnaerobic">유산소</label>
                     <select name="is_anaerobic" id="isAnaerobic">
                         <option value="">전체</option>
-                        <option value="Y">Y</option>
-                        <option value="N">N</option>
+                        <option value="N">Y</option>
+                        <option value="Y">N</option>
                     </select>
                 </div>
 
@@ -273,21 +273,14 @@
 
                 <!-- 제목 1회 출력 -->
                 <div class="recommendation-header">
-                 <!--    <div th:text="'선택 시간: ' + ${time} + '분'"></div>
-                    <div th:text="'목표 칼로리: ' + ${cal} + 'kcal'"></div>-->
+
                 </div>
 
                 <hr />
 
                 <!-- 리스트 출력 -->
                 <div class="recommendation-list">
-                    <!--
-                    <div th:each="exercise : ${elist}" class="recommendation-item">
-                        <label>
-                            <input type="checkbox" name="selectedExercises" th:value="${exercise.name}" />
-                            <span th:text="${exercise.name}"></span>
-                        </label>
-                    </div>-->
+
                 </div>
             </div>
         <div class="save-button-wrapper">
@@ -372,8 +365,13 @@
             .then(success =>{
                 if(!success){
                     alert("저장 실패")
+                }else{
+                    alert("선택한 운동을 저장했습니다.")
                 }
             });
+                for(let i=0; i<list.length; i++){
+                 list[i].checked = false;
+                }
     })
 
 </script>

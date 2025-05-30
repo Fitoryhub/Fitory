@@ -2,8 +2,6 @@ package com.Fitory.fitory.controller.api;
 
 import com.Fitory.fitory.entity.Exercises;
 import com.Fitory.fitory.service.ExerciseRoutineService;
-import com.Fitory.fitory.service.ExerciseService;
-import com.Fitory.fitory.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

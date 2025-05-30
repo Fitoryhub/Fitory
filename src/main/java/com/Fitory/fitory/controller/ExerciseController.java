@@ -105,17 +105,18 @@ public class ExerciseController {
         List<String> exercise = (List<String>) routineData.get("selectExercises");
 
         for(int i=0; i<exercise.size(); i++){
+            boolean resutl;
             ExerciseRoutine e = new ExerciseRoutine();
             e.setUserid(id);
             e.setRoutine(exercise.get(i));
             e.setTime(time);
             e.setCalorie(cal);
 
-            exerciseRoutineService.save(e);
+            resutl=exerciseRoutineService.save(e);
+            if(!resutl){
+                return false;
+            }
         }
-
-
-
-            return false;
+            return true;
     }
 }
