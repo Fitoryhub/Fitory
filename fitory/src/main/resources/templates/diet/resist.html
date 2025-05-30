@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html layout:decorate="~{common}">
+    <section layout:fragment="content">
+        <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
+        <h2>식단 등록</h2>
+        <table id="resist_form" style="width: 645px; display: inline-block;">
+            <tr>
+                <td>제목</td>
+                <td><input type="text" name="title"></td>
+            </tr>
+            <tr>
+                <td style="vertical-align: text-top;">설명</td>
+                <td><textarea name="explanation" style="width: 600px; height: 500px;"></textarea></td>
+            </tr>
+            <tr style="height: 50px;">
+                <td style="vertical-align: top;">식단&ensp;</td>
+                <td style="vertical-align: top;"><span id="sel_food"></span></td>
+            </tr>
+            <tr>
+                <td>목표</td>
+                <td>
+                    <select name="goal_type">
+                        <option value="none">---</option>
+                        <option value="WEIGHT_LOSS">감량</option>
+                        <option value="MAINTAIN">유지</option>
+                        <option value="MUSCLE_GAIN">증량</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>시간</td>
+                <td>
+                    <select name="plan_type">
+                        <option value="none">---</option>
+                        <option value="DAY">하루</option>
+                        <option value="WEEK">주간</option>
+                    </select>
+                </td>
+            </tr>
+        </table>
+        <table id="ftable" style="display: inline-block; height: 663px;">
+            <tr>
+                <td><h4>■음식 선택</h4></td>
+            </tr>
+            <tr>
+                <td style="vertical-align: text-top;">
+                    음식 대분류:
+                    <select id="classification" name="classification" style="width: 60px; ">
+                        <option value="none">---------</option>
+                        <option value="튀김류">튀김류</option>
+                        <option value="찜류">찜류</option>
+                        <option value="찌개 및 전골류">찌개 및 전골류</option>
+                        <option value="죽 및 스프류">죽 및 스프류</option>
+                        <option value="밥류">밥류</option>
+                        <option value="면 및 만두류">면 및 만두류</option>
+                        <option value="국 및 탕류">국 및 탕류</option>
+                        <option value="전·적 및 부침류">전·적 및 부침류</option>
+                        <option value="볶음류">볶음류</option>
+                        <option value="조림류">조림류</option>
+                        <option value="나물·숙채류">나물·숙채류</option>
+                        <option value="생채·무침류">생채·무침류</option>
+                        <option value="장아찌·절임류">장아찌·절임류</option>
+                        <option value="음료 및 차류">음료 및 차류</option>
+                        <option value="수·조·어·육류">수·조·어·육류</option>
+                        <option value="장류, 양념류">장류, 양념류</option>
+                        <option value="과일류">과일류</option>
+                        <option value="유제품류 및 빙과류">유제품류 및 빙과류</option>
+                        <option value="두류, 견과 및 종실류">두류, 견과 및 종실류</option>
+                        <option value="곡류, 서류 제품">곡류, 서류 제품</option>
+                    </select>
+                    <span id="ftype"></span>
+                    <br>음식 &nbsp; <button id="ftinsert">선택</button><br>
+                    <table id="ftable_title" style="width: 600px;">
+                        <tr>
+                            <th></th>
+                            <th style="width: 200px;">음식명</th>
+                            <th style="width: 65px;">칼로리</th>
+                            <th style="width: 65px;">탄수화물</th>
+                            <th style="width: 65px;">단백질</th>
+                            <th style="width: 65px;">지방</th>
+                            <th style="width: 65px;">당류</th>
+                            <th>염분</th>
+                        </tr>
+                    </table>
+                    <table id="ftable_content" style="width: 600px; height: 422px;">
+                    </table>
+                </td>
+                <tr>
+                    <td id="ft_pagelist"></td>
+                </tr>
+            </tr>
+        </table>
+         <input type="button" value="등록" onclick="save()" style="display: inline-block;">
+        <script>
+            let fnsellist=[];
+            let foodnlist=[];
+            const servicekey='jL8PHgOttipXdQtu%2BF4YntDmduAIvBCSdB7OP5VHXLcT8zpvkYvHRaPOAiwsFhAZVTG9hy%2FiVtBt%2Bqn7aQmT0w%3D%3D';
+            const base='https://apis.data.go.kr/1471000/FoodNtrCpntDbInfo02';
+            
+            $('#classification').change(()=>{
+                let foodtype=$('#classification').val();
+                $.ajax({
+                    async:true,
+                    url:'/diet/foodlist',
+                    method:'get',
+                    dataType:'json',
+                    data:{
+                        "foodtype":foodtype,
+                        "page":1
+                    }
+                    ,
+                    success:function(data){
+                       let paging=data.page;
+                        foodnlist=data.flist;
+                        let sentence1='';
+                        let sentence2='';
+                        $.each(foodnlist,function(index, item){
+                            sentence1+='<tr>';
+                            sentence1+='<td><input type="checkbox" class="ftchk" style="width:30px" value='+index+'></td>';
+                            sentence1+='<td style="font-size: 13px; width: 170px;">'+item.food_name+'</td>';
+                            sentence1+='<td style="font-size: 13px; width: 65px;">'+item.calories+'</td>';
+                            sentence1+='<td style="font-size: 13px; width: 65px;">'+item.carbohydrate+'</td>';
+                            sentence1+='<td style="font-size: 13px; width: 65px;">'+item.protein+'</td>';
+                            sentence1+='<td style="font-size: 13px; width: 65px;">'+item.fat+'</td>';
+                            sentence1+='<td style="font-size: 13px; width: 65px;">'+item.sugar+'</td>';
+                            sentence1+='<td style="font-size: 13px; width: 65px;">'+item.sodium+'</td>';
+                            sentence1+='</tr>';
+                        })
+                        sentence2+='<ol class="pagelist" id="pagebox" >';
+                        if(paging.prev){
+                            sentence2+='<li class="prev" formmethod="get" style="display: inline-block;"><button class="fnpage" id="prevb" onclick="goPage('+(paging.startPage-10)+')">이전</button></li>';
+                        }
+                        for(let i=paging.startPage; i<=paging.endPage; i++){
+                            sentence2+='<li class="curr" formmethod="get" style="display: inline-block;"><button class="fnpage" id="currpage" onclick="goPage('+i+')">'+i+'</button></li>';
+                        }
+                        if(paging.next){
+                            sentence2+='<li class="next" formmethod="get" style="display: inline-block;"><button class="fnpage" id="nextb" onclick="goPage('+(paging.startPage+10)+')">다음</button></li>';
+                        }
+                        sentence2+='</ol>';
+                        $('#ftable_content').html(sentence1);
+                        $('#ft_pagelist').html(sentence2);
+                        $("#ftype").text(foodtype);
+                        $('#classification').val('none');
+                    },
+                    error:function(){
+                        $("#ftype").text('해당 종류의 음식 데이터 없음');
+                        $('#classification').val('none');
+                    }
+                })
+            })
+
+            function goPage(e){
+                let foodtype=$('#ftype').html();
+                let currpage=e;
+                $.ajax({
+                    async:true,
+                    url:'/diet/foodlist',
+                    method:'get',
+                    dataType:'json',
+                    data:{
+                        "foodtype":foodtype,
+                        "page":e
+                    }
+                    ,
+                    success:function(data){
+                        let paging=data.page;
+                        foodnlist=data.flist;
+                        let sentence1='';
+                        let sentence2='';
+                        $.each(foodnlist,function(index, item){
+                            sentence1+='<tr>';
+                            sentence1+='<td><input type="checkbox" class="ftchk" style="width:30px" value='+index+'></td>';
+                            sentence1+='<td style="font-size: 13px; width: 170px;">'+item.food_name+'</td>';
+                            sentence1+='<td style="font-size: 13px; width: 65px;">'+item.calories+'</td>';
+                            sentence1+='<td style="font-size: 13px; width: 65px;">'+item.carbohydrate+'</td>';
+                            sentence1+='<td style="font-size: 13px; width: 65px;">'+item.protein+'</td>';
+                            sentence1+='<td style="font-size: 13px; width: 65px;">'+item.fat+'</td>';
+                            sentence1+='<td style="font-size: 13px; width: 65px;">'+item.sugar+'</td>';
+                            sentence1+='<td style="font-size: 13px; width: 65px;">'+item.sodium+'</td>';
+                            sentence1+='</tr>';
+                        })
+                        sentence2+='<ol class="pagelist" id="pagebox">';
+                        if(paging.prev){
+                            sentence2+='<li class="prev" style="display: inline-block;"><button class="fnpage" onclick="goPage('+(paging.startPage-10)+')">이전</button></li>';
+                        }
+                        for(let i=paging.startPage; i<=paging.endPage; i++){
+                            sentence2+='<li class="curr" formmethod="get" style="display: inline-block;"><button class="fnpage" id="currpage" onclick="goPage('+i+')">'+i+'</button></li>';
+                        }
+                        if(paging.next){
+                            sentence2+='<li class="next" style="display: inline-block;"><button class="fnpage" onclick="goPage('+(paging.startPage+10)+')">다음</button></li>';
+                        }
+                        sentence2+='</ol>';
+                        $('#ftable_content').html(sentence1);
+                        $('#ft_pagelist').html(sentence2);
+                    },
+                    error:function(){
+                        alert('오류오류');
+                    }
+                })
+            }
+            
+            $('#ftinsert').click(()=>{
+                let templist=$('.ftchk');
+                $.each(templist,function(index){
+                    if($(this).is(":checked")==true){
+                        if(fnsellist.length<6){
+                            fnsellist.push(foodnlist[$(this).val()].food_name);
+                            let tempjson=JSON.stringify(foodnlist[$(this).val()]);
+                            $('#sel_food').append(foodnlist[$(this).val()].food_name+' '+`<input type="hidden" name="Foodlist" value='${tempjson}'>`);
+                        }
+                    }
+                })
+                $('#ftable_content').html('');
+                $('#ft_pagelist').html('');
+                $("#ftype").text('');
+            })
+
+            function save(){
+                let foodlist = Array.from(document.getElementsByName('Foodlist')).map(input =>
+                    JSON.parse(input.value)
+                );
+                fetch("/diet/save",{
+                    method:'POST',
+                    headers:{"Content-Type": "application/json"},
+                    body:JSON.stringify({
+                        diet:{
+                            title:document.getElementsByName('title')[0].value,
+                            explanation:document.getElementsByName('explanation')[0].value,
+                            goal_type:document.getElementsByName('goal_type')[0].value,
+                            plan_type:document.getElementsByName('plan_type')[0].value
+                        },
+                        foodlist:foodlist
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    window.location.href = data.url;
+                })
+                .catch(error => {
+                    alert('오류');
+                });
+            }
+            async function getdata(data,foodtype) {
+                console.log(data)
+                for(let i=0; i<data.length; i++){
+                    let url=base+'/getFoodNtrCpntDbInq02?serviceKey='+servicekey+'&pageNo=1&numOfRows=3&type=json&FOOD_NM_KR='+data[i].food_name+'&RESEARCH_YMD=2017-12-31&FOOD_CAT1_NM='+foodtype+'&UPDATE_DATE='+data[i].createdat+'&DB_CLASS_NM=품목대표';
+                    try {
+                        const response= await fetch(url);
+                        const inform= await response.json();
+                        const item=inform.response.body.items;
+
+                        let nutrition={
+                            foodname:data[i],
+                            calories:item[0].AMT_NUM1,
+                            carbohydrate:item[0].AMT_NUM6,
+                            protein:item[0].AMT_NUM3,
+                            fat:item[0].AMT_NUM4,
+                            sodium:item[0].AMT_NUM13,
+                            sugar:item[0].AMT_NUM7
+                        }
+                        foodnlist.push(nutrition);
+                    } catch (error) {
+                        alert('오류');
+                    }
+                }
+            }
+        </script>
+    </section>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html layout:decorate="~{common}">
+<section layout:fragment="content">
+    <section id="diet_board">
+        <h2 style="font-size: 35px; margin-left: 30px;">식단게시판</h2>
+        <button onclick="location.href='/diet/resist'">식단 등록</button>
+        
+        <table id="title_table" style="margin-top: 30px; margin-left: 20px; border-bottom: 1px solid;">
+            <tr>
+                <th style="width: 30px;">번호</th>
+                <th style="width: 320px; text-align: center;">제목</th>
+                <th style="width: 70px;">작성자</th>
+                <th style="width: 200px; text-align: center;">작성일</th>
+                <th style="width: 70px;">추천수</th>
+                <th style="width: 70px; text-align: center;">조회수</th>
+            </tr>
+        </table>
+        <table id="content_table">
+            <tr>
+                <td style="width: 30px;"></td>
+                <th style="width: 320px; text-align: center;"></th>
+                <th style="width: 70px;"></th>
+                <th style="width: 200px; text-align: center;"></th>
+                <th style="width: 70px;"></th>
+                <th style="width: 70px; text-align: center;"></th>
+            </tr>
+        </table>
+    </section>
+</section>
+</html>
