@@ -20,12 +20,10 @@ public class BoardService implements IF_BoardService {
     private BoardRepository boardrepository;
     @Autowired
     private FileRepository filerepository;
-    @Autowired
-    private PlikeRepository plikerepository;
+
     @Autowired
     private CommentRepository commentrepository;
-    @Autowired
-    private ClikeRepository clikerepository;
+
     @Autowired
     private RlikeRepository rlikerepository;
     @Autowired
@@ -36,10 +34,6 @@ public class BoardService implements IF_BoardService {
         boardrepository.save(board);
     }
 
-    @Override
-    public void savefile(Files fileone) {
-        filerepository.save(fileone);
-    }
 
     @Override
     public Page<Board> alllist(Pageable pageable) {
@@ -79,11 +73,6 @@ public class BoardService implements IF_BoardService {
         return board.getPlike();
     }
 
-    @Transactional
-    @Override
-    public void phate(Integer pnum, String uid) {
-        plikerepository.deleteByPnumAndUid(pnum, uid);
-    }
 
     @Transactional
     @Override
@@ -92,41 +81,9 @@ public class BoardService implements IF_BoardService {
         return boardrepository.findByPnum(pnum);
     }
 
-    @Transactional
-    @Override
-    public Comment clike(Clike clike) {
-        Integer cnum = clike.getCnum();
-        commentrepository.clike(cnum);
-        clikerepository.save(clike);
-        return commentrepository.findByCnum(cnum);
-    }
 
-    @Transactional
-    @Override
-    public Comment chate(Clike clike) {
-        commentrepository.chate(clike.getCnum());
-        clikerepository.deleteByCnumAndUid(clike.getCnum(), clike.getUid());
-        Comment comment = commentrepository.findByCnum(clike.getCnum());
-        return comment;
-    }
 
-    @Transactional
-    @Override
-    public void rhate(String uid, Integer rnum) {
-        rlikerepository.deleteByUidAndRnum(uid, rnum);
-    }
 
-    @Transactional
-    @Override
-    public void replieslike(Integer rnum) {
-        repliesrepository.update(rnum);
-    }
-
-    @Transactional
-    @Override
-    public void replieshate(Integer rnum) {
-        repliesrepository.replieshate(rnum);
-    }
 
     @Transactional
     @Override
@@ -147,95 +104,8 @@ public class BoardService implements IF_BoardService {
         boardrepository.deleteById(pnum);
     }
 
-    @Transactional
-    @Override
-    public void commentdelete(Integer cnum) {
-        commentrepository.deleteById(cnum);
-    }
 
-    @Transactional
-    @Override
-    public void commentmod(Comment comment) {
-        Integer cnum = comment.getCnum();
-        String cbody = comment.getCbody();
-        commentrepository.commentmod(cnum, cbody);
-    }
 
-    @Override
-    public void repliedelete(Integer rnum) {
-
-        repliesrepository.deleteById(rnum);
-    }
-
-    @Transactional
-    @Override
-    public void replymod(Replies replie) {
-        Integer rnum = replie.getRnum();
-        String rbody = replie.getRbody();
-        repliesrepository.replymod(rnum, rbody);
-    }
-
-    @Override
-    public int rlike(Integer rnum) {
-        Replies r = repliesrepository.findByRnum(rnum);
-        int num = r.getRlikes();
-        return num;
-    }
-
-    @Override
-    public void filesave(Files files) {
-        filerepository.save(files);
-    }
-
-    @Override
-    public Plike findplike(String uid, Integer pnum) {
-        return plikerepository.findByUidAndPnum(uid, pnum);
-    }
-
-    @Override
-    public List<Files> findboard(Integer pnum) {
-        return filerepository.findByPnum(pnum);
-    }
-
-    @Override
-    public List<Comment> findcomment(Integer num) {
-        return commentrepository.findByPnumOrderByCnumAsc(num);
-    }
-
-    @Override
-    public List<Clike> findclike(Integer num) {
-        return clikerepository.findByPnum(num);
-    }
-
-    @Override
-    public List<Replies> findreplies(Integer num) {
-        return repliesrepository.findByPnum(num);
-    }
-
-    @Override
-    public List<Rlikes> findrlike(Integer num) {
-        return rlikerepository.findByPnum(num);
-    }
-
-    @Override
-    public void saveplike(Plike plike) {
-        plikerepository.save(plike);
-    }
-
-    @Override
-    public void commentsave(Comment comment) {
-        commentrepository.save(comment);
-    }
-
-    @Override
-    public void repliessave(Replies replies) {
-        repliesrepository.save(replies);
-    }
-
-    @Override
-    public void rlikesave(Rlikes rlikes) {
-        rlikerepository.save(rlikes);
-    }
 
 
 }

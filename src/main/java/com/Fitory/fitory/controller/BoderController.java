@@ -5,8 +5,7 @@ import com.Fitory.fitory.DTO.PtitlePcategoryDTO;
 import com.Fitory.fitory.DTO.RepliesDTO;
 import com.Fitory.fitory.entity.*;
 import com.Fitory.fitory.repository.*;
-import com.Fitory.fitory.service.BoardService;
-import com.Fitory.fitory.service.UserService;
+import com.Fitory.fitory.service.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +33,19 @@ public class BoderController {
 
     @Autowired
     private BoardService boardService;
+
+    @Autowired
+    private FileService fileService;
+    @Autowired
+    private PlikeService plikeService;
+    @Autowired
+    private CommentService commentService;
+    @Autowired
+    private ClikeService clikeService;
+    @Autowired
+    private  ReplieService replieService;
+    @Autowired
+    private  RlikeService rlikeService;
 
     @GetMapping("/boardlist")
     public String boardlist(Model model, @PageableDefault(page = 0, size = 10, sort = "pnum"
@@ -90,7 +102,8 @@ public class BoderController {
                 Files files = new Files();
                 files.setFilename(filename);
                 files.setPnum(board.getPnum());
-                boardService.filesave(files);
+                fileService.filesave(files);
+
             }
         }
 
@@ -104,10 +117,16 @@ public class BoderController {
         boardService.updateplook(pnum);
         Board board = boardService.searchoneboard(pnum);
         String uid = session.getAttribute("uid").toString();
-        Plike plike = boardService.findplike(uid, pnum);
-        List<Files> files = boardService.findboard(pnum);
+        Plike plike=plikeService.findplike(uid , pnum );
+        List<Files> files = fileService.findfile(pnum);
+
+
+
         Integer num = board.getPnum();
-        List<Comment> comments = boardService.findcomment(num);
+        List<Comment> comments = commentService.findcomment(num);
+
+
+
         List<CommentDTO> commentDTOS = new ArrayList<>();
         for (Comment comment : comments) {
             CommentDTO commentDTO = new CommentDTO();
@@ -120,7 +139,9 @@ public class BoderController {
             commentDTO.setClike(comment.getClike());
             commentDTOS.add(commentDTO);
         }
-        List<Clike> clike = boardService.findclike(num);
+        List<Clike> clike = clikeService.findclike(num);
+
+
         for (CommentDTO commentDTO : commentDTOS) {
             for (Clike c : clike) {
                 if (c.getUid().equals(uid) && commentDTO.getCnum() == (c.getCnum())) {
@@ -129,7 +150,11 @@ public class BoderController {
                 }
             }
         }
-        List<Replies> replie = boardService.findreplies(num);
+        List<Replies> replie = replieService.findreplies(num);
+
+
+
+
         List<RepliesDTO> replies = new ArrayList<>();
 
         for (Replies onereplie : replie) {
@@ -146,7 +171,10 @@ public class BoderController {
             replies.add(repliesDTO);
         }
 
-        List<Rlikes> rlikes = boardService.findrlike(num);
+        List<Rlikes> rlikes = rlikeService.findrlike(num);
+
+
+
         for (RepliesDTO repliesDTO : replies) {
             for (Rlikes rlike : rlikes) {
                 if (rlike.getUid().equals(uid) && rlike.getRnum() == repliesDTO.getRnum()) {
@@ -173,12 +201,13 @@ public class BoderController {
 
     }
 
+
     @PostMapping("/plike")
     @ResponseBody
     public Integer plike(@ModelAttribute Plike plike) {
         Integer pnum = plike.getPnum();
         Integer num = boardService.blike(pnum);
-        boardService.saveplike(plike);
+        plikeService.saveplike(plike);
 
 
         return num;
@@ -192,14 +221,18 @@ public class BoderController {
         Integer pnum = plike.getPnum();
         Board board = boardService.bhate(pnum);
         String uid = plike.getUid();
-        boardService.phate(pnum, uid);
+        plikeService.phate(pnum,uid);
         Integer num = board.getPlike();
         return num;
+
     }
 
     @PostMapping("comment")
     public String comment(@ModelAttribute Comment comment, Model model) {
-        boardService.commentsave(comment);
+
+        commentService.commentsave(comment);
+
+
 
         return "redirect:/detailview?pnum=" + comment.getPnum();
     }
@@ -207,49 +240,76 @@ public class BoderController {
     @PostMapping("/clike")
     @ResponseBody
     public int clike(@ModelAttribute Clike clike) {
-        Comment comment = boardService.clike(clike);
+        Integer cnum = clike.getCnum();
+        clikeService.save(clike);
+
+        Comment comment = commentService.clike(clike);
+
         int num = comment.getClike();
         return num;
 
     }
+
+
+
+
+
+
+
+
 
     @PostMapping("/chate")
     @ResponseBody
     public int chate(@ModelAttribute Clike clike) {
-        Comment comment = boardService.chate(clike);
+
+        Comment comment = commentService.chate(clike);
+        clikeService.delete(clike);
         int num = comment.getClike();
         return num;
     }
 
+
+
+
+
+
     @PostMapping("/replies")
     public String replies(@ModelAttribute Replies replies) {
-        boardService.repliessave(replies);
-
-
+        replieService.repliessave(replies);
         return "redirect:/detailview?pnum=" + replies.getPnum();
     }
+
+
+
 
     @PostMapping("/rlike")
     @ResponseBody
     public int rlike(@ModelAttribute Rlikes rlikes) {
-        boardService.rlikesave(rlikes);
 
+        rlikeService.rlikesave(rlikes);
         Integer rnum = rlikes.getRnum();
-        boardService.replieslike(rnum);
-        int num = boardService.rlike(rnum);
+        replieService.replieslike(rnum);
+
+        int num = replieService.rlike(rnum);
+
         return num;
     }
+
+
+
 
     @PostMapping("/rhate")
     @ResponseBody
     public int rhate(@ModelAttribute Rlikes rlikes) {
         String uid = rlikes.getUid();
         Integer rnum = rlikes.getRnum();
-        boardService.rhate(uid, rnum);
-        boardService.replieshate(rnum);
-        int num = boardService.rlike(rnum);
+        rlikeService.rhate(uid, rnum);
+        replieService.replieshate(rnum);
+        int num = replieService.rlike(rnum);
         return num;
     }
+
+
 
     @GetMapping("/boardmod")
     public String boardmod(Model model, @RequestParam("pnum") Integer pnum) {
@@ -278,7 +338,7 @@ public class BoderController {
                 Files files = new Files();
                 files.setFilename(filename);
                 files.setPnum(board.getPnum());
-                boardService.filesave(files);
+                fileService.filesave(files);
             }
         }
 
@@ -291,30 +351,38 @@ public class BoderController {
         return "redirect:/boardlist";
     }
 
+
+
+
     @PostMapping("/commentdelete")
     public String commentdelete(@RequestParam("pnum") Integer pnum, @RequestParam("cnum") Integer cnum) {
-        boardService.commentdelete(cnum);
-        return "redirect:/detailview?pnum=" + pnum;
+        commentService.commentdelete(cnum);
+                return "redirect:/detailview?pnum=" + pnum;
     }
+
 
     @PostMapping("/commentmod")
     public String commentmod(@ModelAttribute Comment comment) {
 
+        commentService.commentmod(comment);
 
-        boardService.commentmod(comment);
         return "redirect:/detailview?pnum=" + comment.getPnum();
     }
+
+
+
+
 
     @PostMapping("/repliedelete")
     public String repliedelete(@RequestParam("rnum") Integer rnum, @RequestParam("pnum") Integer pnum) {
 
-        boardService.repliedelete(rnum);
-        return "redirect:/detailview?pnum=" + pnum;
+        replieService.repliedelete(rnum);
+                return "redirect:/detailview?pnum=" + pnum;
     }
 
     @PostMapping("/replymod")
     public String replymod(@ModelAttribute Replies replie) {
-        boardService.replymod(replie);
+        replieService.replymod(replie);
         return "redirect:/detailview?pnum=" + replie.getPnum();
     }
 }
