@@ -1,6 +1,70 @@
 <!DOCTYPE html>
 <html layout:decorate="~{common}">
 <section layout:fragment="content">
+    <style>
+        #diet_board {
+            min-height: 700px;
+            padding: 60px 5%;
+            background-color: #ffffff;
+        }
+
+        #diet_board h2 {
+            font-size: 32px;
+            margin-bottom: 20px;
+            color: #111827;
+        }
+
+        #diet_board button {
+            background-color: #10b981; 
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-left: 30px;
+            transition: background-color 0.2s ease;
+        }
+
+        #diet_board button:hover {
+            background-color: #059669;
+        }
+
+        #diet_board table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 16px;
+            color: #374151;
+        }
+
+        #diet_board th,
+        #diet_board td {
+            padding: 14px 10px;
+            border-bottom: 1px solid #e5e7eb;
+            text-align: left;
+        }
+
+        #diet_board th {
+            background-color: #f0fdf4;
+            color: #065f46;
+            font-weight: 600;
+        }
+
+        #diet_board td {
+            background-color: #ffffff;
+        }
+
+        #title_table {
+            margin-top: 30px;
+            border-bottom: 2px solid #10b981;
+        }
+
+        #content_table tr:hover {
+            background-color: #f9fafb;
+        }
+    </style>
     <section id="diet_board">
         <h2 style="font-size: 35px; margin-left: 30px;">식단게시판</h2>
         <button onclick="location.href='/diet/resist'">식단 등록</button>

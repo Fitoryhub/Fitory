@@ -44,32 +44,11 @@
             </tr>
             <tr>
                 <td style="vertical-align: text-top;">
-                    음식 대분류:
-                    <select id="classification" name="classification" style="width: 60px; ">
-                        <option value="none">---------</option>
-                        <option value="튀김류">튀김류</option>
-                        <option value="찜류">찜류</option>
-                        <option value="찌개 및 전골류">찌개 및 전골류</option>
-                        <option value="죽 및 스프류">죽 및 스프류</option>
-                        <option value="밥류">밥류</option>
-                        <option value="면 및 만두류">면 및 만두류</option>
-                        <option value="국 및 탕류">국 및 탕류</option>
-                        <option value="전·적 및 부침류">전·적 및 부침류</option>
-                        <option value="볶음류">볶음류</option>
-                        <option value="조림류">조림류</option>
-                        <option value="나물·숙채류">나물·숙채류</option>
-                        <option value="생채·무침류">생채·무침류</option>
-                        <option value="장아찌·절임류">장아찌·절임류</option>
-                        <option value="음료 및 차류">음료 및 차류</option>
-                        <option value="수·조·어·육류">수·조·어·육류</option>
-                        <option value="장류, 양념류">장류, 양념류</option>
-                        <option value="과일류">과일류</option>
-                        <option value="유제품류 및 빙과류">유제품류 및 빙과류</option>
-                        <option value="두류, 견과 및 종실류">두류, 견과 및 종실류</option>
-                        <option value="곡류, 서류 제품">곡류, 서류 제품</option>
-                    </select>
-                    <span id="ftype"></span>
-                    <br>음식 &nbsp; <button id="ftinsert">선택</button><br>
+                    음식 검색:
+                    <input type="text" name="food_name" id="food_name" placeholder="원하는 음식명을 입력하세요" style="display: inline-block;">
+                    <button id="search">검색</button>
+                    <span id="fword"></span>
+                    <br> &nbsp; <button id="ftinsert">선택</button><br>
                     <table id="ftable_title" style="width: 600px;">
                         <tr>
                             <th></th>
@@ -92,130 +71,147 @@
         </table>
          <input type="button" value="등록" onclick="save()" style="display: inline-block;">
         <script>
-            let fnsellist=[];
-            let foodnlist=[];
+            let tttttp=null;
+            let fseleclist=[];
+            let fcurrlist=[];
             const servicekey='jL8PHgOttipXdQtu%2BF4YntDmduAIvBCSdB7OP5VHXLcT8zpvkYvHRaPOAiwsFhAZVTG9hy%2FiVtBt%2Bqn7aQmT0w%3D%3D';
             const base='https://apis.data.go.kr/1471000/FoodNtrCpntDbInfo02';
             
-            $('#classification').change(()=>{
-                let foodtype=$('#classification').val();
-                $.ajax({
-                    async:true,
-                    url:'/diet/foodlist',
-                    method:'get',
-                    dataType:'json',
-                    data:{
-                        "foodtype":foodtype,
-                        "page":1
+            $('#search').click(()=>{
+                let foodname=$('#food_name').val();
+                getpage(foodname).then(pageinfo=>{
+                    if(pageinfo==null){
+                         $('#food_name').val('');
+                        return;
                     }
-                    ,
-                    success:function(data){
-                       let paging=data.page;
-                        foodnlist=data.flist;
-                        let sentence1='';
-                        let sentence2='';
-                        $.each(foodnlist,function(index, item){
-                            sentence1+='<tr>';
-                            sentence1+='<td><input type="checkbox" class="ftchk" style="width:30px" value='+index+'></td>';
-                            sentence1+='<td style="font-size: 13px; width: 170px;">'+item.food_name+'</td>';
-                            sentence1+='<td style="font-size: 13px; width: 65px;">'+item.calories+'</td>';
-                            sentence1+='<td style="font-size: 13px; width: 65px;">'+item.carbohydrate+'</td>';
-                            sentence1+='<td style="font-size: 13px; width: 65px;">'+item.protein+'</td>';
-                            sentence1+='<td style="font-size: 13px; width: 65px;">'+item.fat+'</td>';
-                            sentence1+='<td style="font-size: 13px; width: 65px;">'+item.sugar+'</td>';
-                            sentence1+='<td style="font-size: 13px; width: 65px;">'+item.sodium+'</td>';
-                            sentence1+='</tr>';
-                        })
-                        sentence2+='<ol class="pagelist" id="pagebox" >';
-                        if(paging.prev){
-                            sentence2+='<li class="prev" formmethod="get" style="display: inline-block;"><button class="fnpage" id="prevb" onclick="goPage('+(paging.startPage-10)+')">이전</button></li>';
+                    $.ajax({
+                        async:true,
+                        url:'/diet/foodlist',
+                        method:'get',
+                        dataType:'json',
+                        data:{
+                            "page":1,
+                            "totalCount":pageinfo.totalCount
                         }
-                        for(let i=paging.startPage; i<=paging.endPage; i++){
-                            sentence2+='<li class="curr" formmethod="get" style="display: inline-block;"><button class="fnpage" id="currpage" onclick="goPage('+i+')">'+i+'</button></li>';
+                        ,
+                        success:function(data){
+                            getdata(data,foodname).then(foodnlist=>{
+                                fcurrlist=foodnlist;
+                                let sentence1='';
+                                let sentence2='';
+                                $.each(foodnlist,function(index, item){
+                                    sentence1+='<tr>';
+                                    sentence1+='<td><input type="checkbox" class="ftchk" style="width:30px" value='+index+'></td>';
+                                    sentence1+='<td style="font-size: 13px; width: 170px;">'+item.food_name+'</td>';
+                                    sentence1+='<td style="font-size: 13px; width: 65px;">'+item.calories+'</td>';
+                                    sentence1+='<td style="font-size: 13px; width: 65px;">'+item.carbohydrate+'</td>';
+                                    sentence1+='<td style="font-size: 13px; width: 65px;">'+item.protein+'</td>';
+                                    sentence1+='<td style="font-size: 13px; width: 65px;">'+item.fat+'</td>';
+                                    sentence1+='<td style="font-size: 13px; width: 65px;">'+item.sugar+'</td>';
+                                    sentence1+='<td style="font-size: 13px; width: 65px;">'+item.sodium+'</td>';
+                                    sentence1+='</tr>';
+                                })
+                                sentence2+='<ol class="pagelist" id="pagebox" >';
+                                if(data.prev){
+                                    sentence2+='<li class="prev" formmethod="get" style="display: inline-block;"><button class="fnpage" id="prevb" onclick="goPage('+(data.startPage-10)+')">이전</button></li>';
+                                }
+                                for(let i=data.startPage; i<=data.endPage; i++){
+                                    sentence2+='<li class="curr" formmethod="get" style="display: inline-block;"><button class="fnpage" id="currpage" onclick="goPage('+i+')">'+i+'</button></li>';
+                                }
+                                if(data.next){
+                                    sentence2+='<li class="next" formmethod="get" style="display: inline-block;"><button class="fnpage" id="nextb" onclick="goPage('+(data.startPage+10)+')">다음</button></li>';
+                                }
+                                sentence2+='</ol>';
+                                $('#ftable_content').html(sentence1);
+                                $('#ft_pagelist').html(sentence2);
+                                $("#fword").text(foodname);
+                                $('#food_name').val('');
+                            });
+                        },
+                        error:function(){
+                            $('#food_name').val('none');
                         }
-                        if(paging.next){
-                            sentence2+='<li class="next" formmethod="get" style="display: inline-block;"><button class="fnpage" id="nextb" onclick="goPage('+(paging.startPage+10)+')">다음</button></li>';
-                        }
-                        sentence2+='</ol>';
-                        $('#ftable_content').html(sentence1);
-                        $('#ft_pagelist').html(sentence2);
-                        $("#ftype").text(foodtype);
-                        $('#classification').val('none');
-                    },
-                    error:function(){
-                        $("#ftype").text('해당 종류의 음식 데이터 없음');
-                        $('#classification').val('none');
-                    }
+                    })
                 })
+                
             })
 
             function goPage(e){
-                let foodtype=$('#ftype').html();
+                let foodname=$('#fword').text();
                 let currpage=e;
-                $.ajax({
-                    async:true,
-                    url:'/diet/foodlist',
-                    method:'get',
-                    dataType:'json',
-                    data:{
-                        "foodtype":foodtype,
-                        "page":e
-                    }
-                    ,
-                    success:function(data){
-                        let paging=data.page;
-                        foodnlist=data.flist;
-                        let sentence1='';
-                        let sentence2='';
-                        $.each(foodnlist,function(index, item){
-                            sentence1+='<tr>';
-                            sentence1+='<td><input type="checkbox" class="ftchk" style="width:30px" value='+index+'></td>';
-                            sentence1+='<td style="font-size: 13px; width: 170px;">'+item.food_name+'</td>';
-                            sentence1+='<td style="font-size: 13px; width: 65px;">'+item.calories+'</td>';
-                            sentence1+='<td style="font-size: 13px; width: 65px;">'+item.carbohydrate+'</td>';
-                            sentence1+='<td style="font-size: 13px; width: 65px;">'+item.protein+'</td>';
-                            sentence1+='<td style="font-size: 13px; width: 65px;">'+item.fat+'</td>';
-                            sentence1+='<td style="font-size: 13px; width: 65px;">'+item.sugar+'</td>';
-                            sentence1+='<td style="font-size: 13px; width: 65px;">'+item.sodium+'</td>';
-                            sentence1+='</tr>';
-                        })
-                        sentence2+='<ol class="pagelist" id="pagebox">';
-                        if(paging.prev){
-                            sentence2+='<li class="prev" style="display: inline-block;"><button class="fnpage" onclick="goPage('+(paging.startPage-10)+')">이전</button></li>';
+                getpage(foodname).then(pageinfo=>{
+                    $.ajax({
+                        async:true,
+                        url:'/diet/foodlist',
+                        method:'get',
+                        dataType:'json',
+                        data:{
+                            "page":e,
+                            "totalCount":pageinfo.totalCount
                         }
-                        for(let i=paging.startPage; i<=paging.endPage; i++){
-                            sentence2+='<li class="curr" formmethod="get" style="display: inline-block;"><button class="fnpage" id="currpage" onclick="goPage('+i+')">'+i+'</button></li>';
+                        ,
+                        success:function(data){
+                            getdata(data,foodname).then(foodnlist=>{
+                                fcurrlist=foodnlist;
+                                let sentence1='';
+                                let sentence2='';
+                                $.each(foodnlist,function(index, item){
+                                    sentence1+='<tr>';
+                                    sentence1+='<td><input type="checkbox" class="ftchk" style="width:30px" value='+index+'></td>';
+                                    sentence1+='<td style="font-size: 13px; width: 170px;">'+item.food_name+'</td>';
+                                    sentence1+='<td style="font-size: 13px; width: 65px;">'+item.calories+'</td>';
+                                    sentence1+='<td style="font-size: 13px; width: 65px;">'+item.carbohydrate+'</td>';
+                                    sentence1+='<td style="font-size: 13px; width: 65px;">'+item.protein+'</td>';
+                                    sentence1+='<td style="font-size: 13px; width: 65px;">'+item.fat+'</td>';
+                                    sentence1+='<td style="font-size: 13px; width: 65px;">'+item.sugar+'</td>';
+                                    sentence1+='<td style="font-size: 13px; width: 65px;">'+item.sodium+'</td>';
+                                    sentence1+='</tr>';
+                                })
+                                sentence2+='<ol class="pagelist" id="pagebox">';
+                                if(data.prev){
+                                    sentence2+='<li class="prev" style="display: inline-block;"><button class="fnpage" onclick="goPage('+(data.startPage-10)+')">이전</button></li>';
+                                }
+                                for(let i=data.startPage; i<=data.endPage; i++){
+                                    sentence2+='<li class="curr" formmethod="get" style="display: inline-block;"><button class="fnpage" id="currpage" onclick="goPage('+i+')">'+i+'</button></li>';
+                                }
+                                if(data.next){
+                                    sentence2+='<li class="next" style="display: inline-block;"><button class="fnpage" onclick="goPage('+(data.startPage+10)+')">다음</button></li>';
+                                }
+                                sentence2+='</ol>';
+                                $('#ftable_content').html(sentence1);
+                                $('#ft_pagelist').html(sentence2);
+                            });  
+                        },
+                        error:function(){
+                            alert('go page 오류');
                         }
-                        if(paging.next){
-                            sentence2+='<li class="next" style="display: inline-block;"><button class="fnpage" onclick="goPage('+(paging.startPage+10)+')">다음</button></li>';
-                        }
-                        sentence2+='</ol>';
-                        $('#ftable_content').html(sentence1);
-                        $('#ft_pagelist').html(sentence2);
-                    },
-                    error:function(){
-                        alert('오류오류');
-                    }
-                })
+                    })
+                });
+                
+                
             }
             
             $('#ftinsert').click(()=>{
                 let templist=$('.ftchk');
                 $.each(templist,function(index){
                     if($(this).is(":checked")==true){
-                        if(fnsellist.length<6){
-                            fnsellist.push(foodnlist[$(this).val()].food_name);
-                            let tempjson=btoa(encodeURIComponent(JSON.stringify(foodnlist[$(this).val()])));
-                            $('#sel_food').append(foodnlist[$(this).val()].food_name+' '+`<input type="hidden" name="Foodlist" value='${tempjson}'>`);
+                        if(fseleclist.length<6){
+                            fseleclist.push(fcurrlist[$(this).val()].food_name);
+                            let tempjson=btoa(encodeURIComponent(JSON.stringify(fcurrlist[$(this).val()])));
+                            $('#sel_food').append(fcurrlist[$(this).val()].food_name+' '+`<input type="hidden" name="Foodlist" value='${tempjson}'>`);
                         }
                     }
                 })
                 $('#ftable_content').html('');
                 $('#ft_pagelist').html('');
-                $("#ftype").text('');
+                $("#fword").text('');
             })
 
             function save(){
+                if(document.getElementsByName('goal_type')[0].value=='none' || document.getElementsByName('plan_type')[0].value=='none'){
+                    alert('필수 항목을 채워주세요');
+                    return;
+                }
                 let foodlist = Array.from(document.getElementsByName('Foodlist')).map(input =>
                     JSON.parse(decodeURIComponent(atob(input.value)))
                 );
@@ -237,29 +233,52 @@
                     window.location.href = data.url;
                 })
                 .catch(error => {
-                    alert('오류');
+                    alert('save 오류');
                 });
             }
 
-            async function getdata(foodname) {
-                let url=base+'/getFoodNtrCpntDbInq02?serviceKey='+servicekey+'&pageNo=1&numOfRows=3&type=json&FOOD_NM_KR='+foodname+'&DB_CLASS_NM=품목대표';
+            async function getpage(foodname) {
+                let url=base+'/getFoodNtrCpntDbInq02?serviceKey='+servicekey+'&numOfRows=15&type=json&FOOD_NM_KR='+foodname+'&DB_CLASS_NM=품목대표';
                 try {
                     const response= await fetch(url);
                     const inform= await response.json();
-                    const item=inform.response.body.items;
-
-                    let nutrition={
-                        foodname:data[i],
-                        calories:item[0].AMT_NUM1,
-                        carbohydrate:item[0].AMT_NUM6,
-                        protein:item[0].AMT_NUM3,
-                        fat:item[0].AMT_NUM4,
-                        sodium:item[0].AMT_NUM13,
-                        sugar:item[0].AMT_NUM7
+                    const item=inform.body;
+                    if(item.totalCount==0){
+                        $("#fword").text('해당 음식 관련 데이터 없음');
+                        return null;
                     }
-                    foodnlist.push(nutrition);
+                    let pageinfo={
+                        page:item.pageNo,
+                        totalCount: item.totalCount,
+                        perPageNum:item.numOfRows
+                    }
+                    return pageinfo;
                 } catch (error) {
-                    alert('오류');
+                    alert('get page 오류');
+                }
+            }
+            async function getdata(page,foodname) {
+                let url=base+'/getFoodNtrCpntDbInq02?serviceKey='+servicekey+'&pageNo='+page.page+'&numOfRows='+page.perPageNum+'&type=json&FOOD_NM_KR='+foodname+'&DB_CLASS_NM=품목대표';
+                try {
+                    let tempdata=[];
+                    const response= await fetch(url);
+                    const inform= await response.json();
+                    const items=inform.body.items;
+                    $.each(items,function(index,item){
+                        let nutrition={
+                            food_name:item.FOOD_NM_KR,
+                            calories:parseInt(item.AMT_NUM1),
+                            carbohydrate:item.AMT_NUM6,
+                            protein:item.AMT_NUM3,
+                            fat:item.AMT_NUM4,
+                            sugar:item.AMT_NUM7,
+                            sodium:item.AMT_NUM13
+                        }
+                        tempdata.push(nutrition);
+                    })
+                    return tempdata;
+                } catch (error) {
+                    alert('get data 오류');
                 }
             }
         </script>

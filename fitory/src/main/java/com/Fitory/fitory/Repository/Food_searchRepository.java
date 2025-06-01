@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.Fitory.fitory.Entity.Food_search;
-import com.Fitory.fitory.VO.FoodlistVO;
+
 
 
 

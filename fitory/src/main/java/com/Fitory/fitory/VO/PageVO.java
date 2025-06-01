@@ -6,7 +6,7 @@ public class PageVO {
 	private int perPageNum=15;
 	private int pageBox=10;
 	private Integer page; // Integer 웹에서 받은 페이지 정보(String)가 없으면 null인데 int는 null을 저장할 수 없다. 오류방지
-	private int totalCount;
+	private Integer totalCount;
 	private int endPage;
 	private int startPage;
 	private boolean prev;

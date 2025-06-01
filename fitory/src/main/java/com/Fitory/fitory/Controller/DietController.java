@@ -20,6 +20,7 @@ import com.Fitory.fitory.Service.Food_nutritionService;
 import com.Fitory.fitory.Service.Food_searchService;
 import com.Fitory.fitory.VO.DietsaveVO;
 import com.Fitory.fitory.VO.FoodlistVO;
+import com.Fitory.fitory.VO.PageVO;
 
 import lombok.RequiredArgsConstructor;
 
@@ -69,10 +70,12 @@ public class DietController {
 	
 	@GetMapping("/diet/foodlist")
 	@ResponseBody
-	public Map<String,Object> flist(@RequestParam(name="foodtype", required = false) String foodtype, 
+	public PageVO flist(@RequestParam(name="totalCount", required = false) int totalCount, 
 										@RequestParam(name="page") int currpage) {
-		Map<String,Object> fmap=fsservice.getList(foodtype, currpage);
-		return fmap;
+		PageVO pvo=new PageVO();
+		pvo.setPage(currpage);
+		pvo.setTotalCount(totalCount);
+		return pvo;
 	}
 	
 	@GetMapping("/diet/selectfood")

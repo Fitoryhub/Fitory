@@ -23,7 +23,6 @@ public class Food_searchService {
 	public Map<String, Object> getList(String ftype, int p){
 		PageVO pg=new PageVO();
 		pg.setPage(p);
-		System.out.println(fsrepo.countByclassification(ftype));
 		pg.setTotalCount(fsrepo.countByclassification(ftype));
 		int start=pg.getStartNo();
 		int end=pg.getEndNo();
