@@ -2,38 +2,45 @@
 <html layout:decorate="~{common}">
     <section layout:fragment="content">
         <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
-        <h2>영양정보 분석</h2>
-        <br>
-        <h4>먹은 음식</h4>
-        <input type="text" name="atefd" id="atefd" style="display: inline-block;">
-        <input type="button" value="검색" onclick="search()">
-        <section id="searchlist"></section>
-        <br>
-        <br>
-        <table id="atefd_title" style="width: 600px;">
-            <tr>
-                <th style="width: 200px;">음식명</th>
-                <th style="width: 65px;">칼로리</th>
-                <th style="width: 65px;">탄수화물</th>
-                <th style="width: 65px;">단백질</th>
-                <th style="width: 65px;">지방</th>
-                <th style="width: 65px;">당류</th>
-                <th>염분</th>
-            </tr>
-        </table>
-        <table id="atefd_content" style="width: 600px; height: 400px;">
-        </table>
-        <table id="total" style="width: 600px;">
-            <tr>
-                <th style="width: 200px;">총성분</th>
-                <th style="width: 65px;" id="tcal">0</th>
-                <th style="width: 65px;" id="tcarbo">0</th>
-                <th style="width: 65px;" id="tpro">0</th>
-                <th style="width: 65px;" id="tfat">0</th>
-                <th style="width: 65px;" id="tsugar">0</th>
-                <th id="tsod">0</th>
-            </tr>
-        </table>
+        
+        <section id="body2">
+            <div id="body2title">
+                <h2>영양정보 분석</h2>
+            </div>
+            <div style="background: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); width: 1000px; margin: 0 auto;">
+                <div style="margin-bottom: 20px;">
+                    <h3 style="margin-bottom: 10px;">먹은 음식</h3>
+                    <input type="text" name="atefd" id="atefd" placeholder="음식명을 입력하세요" style="padding: 8px; width: 250px;">
+                    <input type="button" value="검색" onclick="search()" style="padding: 8px 15px; background-color: #10b981; color: white; border: none; border-radius: 5px; font-weight: bold;">
+                </div>
+                <div id="searchlist" style="margin-bottom: 30px;"></div>
+                <table id="atefd_title" style="width: 100%; background-color: #f0fdf4; font-size: 20px; margin-bottom: 0;">
+                    <tr>
+                        <th style="width: 400px;">음식명</th>
+                        <th style="width: 100px;">칼로리</th>
+                        <th style="width: 100px;">탄수화물</th>
+                        <th style="width: 100px;">단백질</th>
+                        <th style="width: 100px;">지방</th>
+                        <th style="width: 100px;">당류</th>
+                        <th style="width: 100px;">염분</th> 
+                    </tr>
+                </table>
+                <div style="max-height: 300px; overflow-y: auto;">
+                    <table id="atefd_content" style="width: 100%; font-size: 14px; text-align: center;"></table>
+                </div>
+                <table id="total" style="width: 100%; font-size: 20px; background-color: #f0fdf4; margin-top: 20px;">
+                    <tr>
+                        <th style="width: 400px;">총성분</th>
+                        <th style="width: 100px;" id="tcal">0</th>
+                        <th style="width: 100px;" id="tcarbo">0</th>
+                        <th style="width: 100px;" id="tpro">0</th>
+                        <th style="width: 100px;" id="tfat">0</th>
+                        <th style="width: 100px;" id="tsugar">0</th>
+                        <th style="width: 100px;" id="tsod">0</th> 
+                    </tr>
+                </table>
+            </div>
+        </section>
         <script>
             const servicekey='jL8PHgOttipXdQtu%2BF4YntDmduAIvBCSdB7OP5VHXLcT8zpvkYvHRaPOAiwsFhAZVTG9hy%2FiVtBt%2Bqn7aQmT0w%3D%3D';
             const base='https://apis.data.go.kr/1471000/FoodNtrCpntDbInfo02';
@@ -48,13 +55,13 @@
                 let data=document.getElementsByName("tmplist")[index].value;
                 let item=JSON.parse(decodeURIComponent(atob(data)));
                 let sentence1='<tr>';
-                sentence1+='<td style="font-size: 13px; width: 170px;">'+item.FOOD_NM_KR+'</td>';
-                sentence1+='<td style="font-size: 13px; width: 65px;">'+item.AMT_NUM1+'</td>';
-                sentence1+='<td style="font-size: 13px; width: 65px;">'+item.AMT_NUM6+'</td>';
-                sentence1+='<td style="font-size: 13px; width: 65px;">'+item.AMT_NUM3+'</td>';
-                sentence1+='<td style="font-size: 13px; width: 65px;">'+item.AMT_NUM4+'</td>';
-                sentence1+='<td style="font-size: 13px; width: 65px;">'+item.AMT_NUM7+'</td>';
-                sentence1+='<td style="font-size: 13px; width: 65px;">'+item.AMT_NUM13+'</td></tr>';
+                sentence1+='<td style="font-size: 16px; width: 400px;">'+item.FOOD_NM_KR+'</td>';
+                sentence1+='<td style="font-size: 16px; width: 100px;">'+item.AMT_NUM1+'</td>';
+                sentence1+='<td style="font-size: 16px; width: 100px;">'+item.AMT_NUM6+'</td>';
+                sentence1+='<td style="font-size: 16px; width: 100px;">'+item.AMT_NUM3+'</td>';
+                sentence1+='<td style="font-size: 16px; width: 100px;">'+item.AMT_NUM4+'</td>';
+                sentence1+='<td style="font-size: 16px; width: 100px;">'+item.AMT_NUM7+'</td>';
+                sentence1+='<td style="font-size: 16px; width: 100px;">'+item.AMT_NUM13+'</td></tr>';
                 $('#atefd_content').append(sentence1);
                 let tcal=Number($("#tcal").html())+Number(item.AMT_NUM1);
                 $('#tcal').html(tcal);
@@ -79,11 +86,11 @@
                     const items=inform.body.items;
                     let tempsnt='';
                     $.each(items,function(index,item){
-                        tempsnt+='<span onclick="add('+index+')" style="border: 2px solid; cursor: pointer; display: inline-block;">'+item.FOOD_NM_KR+'('+item.FOOD_OR_NM+')'+'</span>&ensp;';
+                        tempsnt+='<span onclick="add('+index+')" style="border: 2px solid #10b981; background-color: #ecfdf5; padding: 6px 10px; border-radius: 6px; margin: 5px; cursor: pointer; display: inline-block;">'+item.FOOD_NM_KR+'('+item.FOOD_OR_NM+')'+'</span>&ensp;';
                         tempsnt+='<input type="hidden" name="tmplist" value='+btoa(encodeURIComponent(JSON.stringify(item)))+'>';
                     })
                     if(tempsnt==''){
-                        tempsnt='해당 검색어에 대한 정보가 없습니다.';
+                        tempsnt='<div style="color: red;">해당 검색어에 대한 정보가 없습니다.</div>';;
                     }
                     $('#searchlist').html(tempsnt);
                 } catch (error) {

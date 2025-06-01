@@ -2,74 +2,85 @@
 <html layout:decorate="~{common}">
     <section layout:fragment="content">
         <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
-        <h2>식단 등록</h2>
-        <table id="resist_form" style="width: 645px; display: inline-block;">
-            <tr>
-                <td>제목</td>
-                <td><input type="text" name="title"></td>
-            </tr>
-            <tr>
-                <td style="vertical-align: text-top;">설명</td>
-                <td><textarea name="explanation" style="width: 600px; height: 500px;"></textarea></td>
-            </tr>
-            <tr style="height: 50px;">
-                <td style="vertical-align: top;">식단&ensp;</td>
-                <td style="vertical-align: top;"><span id="sel_food"></span></td>
-            </tr>
-            <tr>
-                <td>목표</td>
-                <td>
-                    <select name="goal_type">
-                        <option value="none">---</option>
-                        <option value="WEIGHT_LOSS">감량</option>
-                        <option value="MAINTAIN">유지</option>
-                        <option value="MUSCLE_GAIN">증량</option>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td>시간</td>
-                <td>
-                    <select name="plan_type">
-                        <option value="none">---</option>
-                        <option value="DAY">하루</option>
-                        <option value="WEEK">주간</option>
-                    </select>
-                </td>
-            </tr>
-        </table>
-        <table id="ftable" style="display: inline-block; height: 663px;">
-            <tr>
-                <td><h4>■음식 선택</h4></td>
-            </tr>
-            <tr>
-                <td style="vertical-align: text-top;">
-                    음식 검색:
-                    <input type="text" name="food_name" id="food_name" placeholder="원하는 음식명을 입력하세요" style="display: inline-block;">
-                    <button id="search">검색</button>
-                    <span id="fword"></span>
-                    <br> &nbsp; <button id="ftinsert">선택</button><br>
-                    <table id="ftable_title" style="width: 600px;">
-                        <tr>
-                            <th></th>
-                            <th style="width: 200px;">음식명</th>
-                            <th style="width: 65px;">칼로리</th>
-                            <th style="width: 65px;">탄수화물</th>
-                            <th style="width: 65px;">단백질</th>
-                            <th style="width: 65px;">지방</th>
-                            <th style="width: 65px;">당류</th>
-                            <th>염분</th>
-                        </tr>
-                    </table>
-                    <table id="ftable_content" style="width: 600px; height: 422px;">
-                    </table>
-                </td>
-                <tr>
-                    <td id="ft_pagelist"></td>
-                </tr>
-            </tr>
-        </table>
-         <input type="button" value="등록" onclick="save()" style="display: inline-block;">
+        <section id="body2">
+            <div id="body2title">
+                <h2>식단 등록</h2>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+                 <table id="resist_form" style="width: 48%; background: #ffffff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.06);">
+                    <tr>
+                        <td>제목</td>
+                        <td><input type="text" name="title" style="width: 100%;"></td>
+                    </tr>
+                    <tr>
+                        <td style="vertical-align: text-top;">설명</td>
+                        <td><textarea name="explanation" style="width: 100%; height: 300px;"></textarea></td>
+                    </tr>
+                    <tr>
+                        <td style="vertical-align: top;">식단</td>
+                        <td><span id="sel_food"></span></td>
+                    </tr>
+                    <tr>
+                        <td>목표</td>
+                        <td>
+                            <select name="goal_type" style="width: 100%;">
+                                <option value="none">---</option>
+                                <option value="WEIGHT_LOSS">감량</option>
+                                <option value="MAINTAIN">유지</option>
+                                <option value="MUSCLE_GAIN">증량</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>시간</td>
+                        <td>
+                            <select name="plan_type" style="width: 100%;">
+                                <option value="none">---</option>
+                                <option value="DAY">하루</option>
+                                <option value="WEEK">주간</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="text-align: center; padding-top: 20px;">
+                            <input type="button" value="등록" onclick="save()" style="padding: 10px 30px; background-color: #10b981; color: white; border: none; border-radius: 5px; font-weight: bold;">
+                        </td>
+                    </tr>
+                </table>
+                <table id="ftable" style="width: 48%; background: #ffffff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.06);">
+                    <tr>
+                        <td><h4 style="margin-bottom: 10px;">■ 음식 선택</h4></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div style="margin-bottom: 10px;">
+                                음식 검색:
+                                <input type="text" name="food_name" id="food_name" placeholder="원하는 음식명을 입력하세요" style="display: inline-block;">
+                                <button id="search" style="margin-left: 5px;">검색</button>
+                                <button id="ftinsert" style="margin-left: 10px;">선택</button>
+                            </div>
+                            <div id="fword" style="margin-bottom: 10px; color: #065f46; font-weight: bold;"></div>
+                            <table id="ftable" style="width: 100%; font-size: 13px; background-color: #f0fdf4;">
+                                <tr>
+                                    <th></th>
+                                    <th style="width: 120px;">음식명</th>
+                                    <th style="width: 50px;">칼로리</th>
+                                    <th style="width: 50px;">탄수화물</th>
+                                    <th style="width: 50px;">단백질</th>
+                                    <th style="width: 50px;">지방</th>
+                                    <th style="width: 45px;">당류</th>
+                                    <th>염분</th>
+                                </tr>
+                            </table>
+                            <div style="height: 300px; overflow-y: auto;">
+                                <table id="ftable_content" style="width: 100%; font-size: 13px;"></table>
+                            </div>
+                            <div id="ft_pagelist" style="margin-top: 15px; text-align: center;"></div>
+                        </td>
+                    </tr>
+                </table>  
+            </div>
+        </section>
         <script>
             let tttttp=null;
             let fseleclist=[];
