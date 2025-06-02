@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Fitory 마이페이지</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet"/>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+
+        body {
+            background-color: #f9fafb;
+            color: #333;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 220px;
+            background-color: #10b981;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .sidebar img {
+            width: 120px;
+            margin-bottom: 40px;
+        }
+
+        .sidebar nav {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+        }
+
+        .sidebar nav a {
+            text-decoration: none;
+            font-size: 16px;
+            color: black;
+            font-weight: 600;
+            padding: 10px 15px;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .sidebar nav a:hover, .sidebar nav a.active {
+            background-color: #60C693;
+        }
+
+        .main-container {
+            flex: 1;
+            display: flex;
+            flex-direction: row;
+        }
+
+        .main-content {
+            flex: 3;
+            padding: 40px 60px;
+            background-color: #fff;
+        }
+
+        .section-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #111827;
+            margin-bottom: 30px;
+        }
+
+        .info-box, .exercise-box {
+            background-color: #f0fdf4;
+            border: 1px solid #d1fae5;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .info-item span {
+            font-weight: 600;
+            color: #065f46;
+            display: inline-block;
+            width: 100px;
+        }
+
+        .exercise-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .exercise-list li {
+            padding: 8px 0;
+            font-size: 16px;
+            border-bottom: 1px solid #d1fae5;
+        }
+
+        #sort-buttons {
+            margin-bottom: 20px;
+            text-align: right;
+        }
+
+        #sort-buttons button {
+            padding: 8px 12px;
+            margin-right: 2px;
+            background-color: #33ad86;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 10px;
+        }
+
+        #sort-buttons button:hover {
+            background-color: #059669;
+        }
+
+        .profile-summary {
+            flex: 1;
+            background-color: #f3f4f6;
+            padding: 40px 20px;
+            border-left: 1px solid #e5e7eb;
+        }
+
+        .profile-summary img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-bottom: 20px;
+        }
+
+        .profile-summary .username {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 10px;
+        }
+
+        .profile-summary .menu-group {
+            margin-top: 30px;
+        }
+
+        .profile-summary .menu-group h4 {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 10px;
+        }
+
+        .profile-summary .menu-group ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .profile-summary .menu-group ul li {
+            padding: 5px 0;
+            font-size: 14px;
+            color: #374151;
+            cursor: pointer;
+        }
+
+        .profile-summary .menu-group ul li:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<!-- 사이드바 -->
+<aside class="sidebar">
+    <img src="/image/logo2.png" alt="Fitory 로고">
+    <nav>
+        <a href="/">홈</a>
+        <a href="/mypage" class="active">마이페이지</a>
+        <a href="#">스케줄러</a>
+        <a href="/logOut">로그아웃</a>
+    </nav>
+</aside>
+
+<!-- 메인 콘텐츠 -->
+<div class="main-container">
+
+    <main class="main-content">
+        <div class="section-title">마이페이지</div>
+
+        <!-- 회원 정보 -->
+        <div class="info-box">
+            <h3>회원 정보</h3>
+            <div class="info-grid" th:if="${user != null}">
+                <div class="info-item"><span>이름:</span> <span th:text="${user.name}"></span></div>
+                <div class="info-item"><span>성별:</span> <span th:text="${user.gender}"></span></div>
+                <div class="info-item"><span>생년월일:</span> <span th:text="${user.birth}"></span></div>
+                <div class="info-item"><span>몸무게:</span> <span th:text="${user.weight}">kg</span></div>
+                <div class="info-item"><span>키:</span> <span th:text="${user.height}">cm</span></div>
+                <div class="info-item"><span>아이디:</span> <span id="uid" th:text="${user.uid}"></span></div>
+                <div class="info-item"><span>이메일:</span> <span th:text="${user.email}"></span></div>
+            </div>
+        </div>
+
+        <table>
+            <tbody class="board-box">
+
+
+            </tbody>
+        </table>
+    </main>
+
+    <!-- 사용자 요약 -->
+    <aside class="profile-summary">
+        <div class="username" th:text="${user.name}">홍길동</div>
+        <div class="user-desc">닉네임 : ~~~~</div>
+
+        <div class="menu-group">
+            <h4>계정</h4>
+            <ul>
+                <li>내 정보 관리</li>
+            </ul>
+        </div>
+
+        <div class="menu-group">
+            <h4>글 관리</h4>
+            <ul>
+                <li id="board">내가 쓴 글</li>
+                <li id="comment">댓글 단 글</li>
+            </ul>
+        </div>
+    </aside>
+
+</div>
+</body>
+<script>
+    let temp;
+    $(document).ready(function () {
+        $('#board').click(function () {
+            let uid = $('#uid').text();
+            let url = "/myboard"
+            $.ajax({
+                dataType: 'json',
+                data: {
+                    uid: uid
+                },
+                method: 'get',
+                url: url,
+
+                success(data) {  
+                    temp = data;
+
+                    $('.board-box').empty();
+                    $.each(data.list, function (index, board) {
+                        console.log(board.ptitle);
+                        $('.board-box').append(
+                            '<tr><td>' + board.ptitle + '</td><td>' + board.plook + '</td><td>' + board.plike + '</td></tr>')
+                    });
+                },
+                error: function () {
+                    alert("통신에러")
+
+                }
+            })
+        })
+
+        $('#comment').click(function (){
+            let uid = $('#uid').text();
+            let url = "/mycomment"
+            $.ajax({
+                dataType: 'json',
+                data: {
+                    uid:uid
+                },
+                type:'get',
+                url:url,
+                success(data) {
+                    $('.board-box').empty();
+                    $.each(data.list, function (index ,comment){
+                        $('.board-box').append(
+                            '<tr><td>' + comment.cbody + '</td><td>' + comment.date + '</td><td>' + comment.clike + '</td></tr>'
+                        )
+                    })
+
+                },
+                error:function (){
+                    alert("통신오류")
+                }
+            })
+        })
+    })
+</script>
+</html>

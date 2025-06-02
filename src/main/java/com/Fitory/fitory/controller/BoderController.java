@@ -23,9 +23,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 
 @Controller
@@ -43,10 +41,11 @@ public class BoderController {
     @Autowired
     private ClikeService clikeService;
     @Autowired
-    private  ReplieService replieService;
+    private ReplieService replieService;
     @Autowired
-    private  RlikeService rlikeService;
+    private RlikeService rlikeService;
 
+    //게시판 들어온창(검색기준으로 출력될수있게 구현)
     @GetMapping("/boardlist")
     public String boardlist(Model model, @PageableDefault(page = 0, size = 10, sort = "pnum"
                                     , direction = Sort.Direction.DESC) Pageable pageable
@@ -82,6 +81,7 @@ public class BoderController {
     }
 
 
+    // 게시글 저장 메서드
     @PostMapping("/submit_post")
     public String submitPost(@ModelAttribute("board") Board board,
                              @RequestParam("files") MultipartFile[] filelist) throws Exception {
@@ -111,20 +111,19 @@ public class BoderController {
 
     }
 
+    //게시글 상세보기 메서드
     @GetMapping("/detailview")
     public String detailview(@RequestParam("pnum") Integer pnum, Model model, HttpSession session) {
 
         boardService.updateplook(pnum);
         Board board = boardService.searchoneboard(pnum);
         String uid = session.getAttribute("uid").toString();
-        Plike plike=plikeService.findplike(uid , pnum );
+        Plike plike = plikeService.findplike(uid, pnum);
         List<Files> files = fileService.findfile(pnum);
-
 
 
         Integer num = board.getPnum();
         List<Comment> comments = commentService.findcomment(num);
-
 
 
         List<CommentDTO> commentDTOS = new ArrayList<>();
@@ -153,8 +152,6 @@ public class BoderController {
         List<Replies> replie = replieService.findreplies(num);
 
 
-
-
         List<RepliesDTO> replies = new ArrayList<>();
 
         for (Replies onereplie : replie) {
@@ -172,7 +169,6 @@ public class BoderController {
         }
 
         List<Rlikes> rlikes = rlikeService.findrlike(num);
-
 
 
         for (RepliesDTO repliesDTO : replies) {
@@ -194,6 +190,8 @@ public class BoderController {
         return "/detailview";
     }
 
+
+    //게시글작성창으로 넘어가는 메서드
     @GetMapping("/write")
     public String write(Board board, Model model) {
         model.addAttribute("board", board);
@@ -202,6 +200,7 @@ public class BoderController {
     }
 
 
+    //비동기통신으로 게시글 좋아요 누르는 메서드 (return값은 게시글 좋아요 갯수)
     @PostMapping("/plike")
     @ResponseBody
     public Integer plike(@ModelAttribute Plike plike) {
@@ -214,6 +213,7 @@ public class BoderController {
 
     }
 
+    // 비동기 통신으로 게시글 좋아요 취소하는 메서드 (return값은 게시글 좋아요갯수)
     @PostMapping("/phate")
     @ResponseBody
     public Integer phate(@ModelAttribute Plike plike, Model model) {
@@ -221,22 +221,24 @@ public class BoderController {
         Integer pnum = plike.getPnum();
         Board board = boardService.bhate(pnum);
         String uid = plike.getUid();
-        plikeService.phate(pnum,uid);
+        plikeService.phate(pnum, uid);
         Integer num = board.getPlike();
         return num;
 
     }
 
+    //게시글에 댓글작성구현 메서드
     @PostMapping("comment")
     public String comment(@ModelAttribute Comment comment, Model model) {
 
         commentService.commentsave(comment);
 
 
-
         return "redirect:/detailview?pnum=" + comment.getPnum();
     }
 
+
+    //댓글 좋아요 비동기 통신으로 누르는 메서드(return 은 좋아요 갯수)
     @PostMapping("/clike")
     @ResponseBody
     public int clike(@ModelAttribute Clike clike) {
@@ -251,12 +253,7 @@ public class BoderController {
     }
 
 
-
-
-
-
-
-
+    //댓글 좋아요 비동기 통신으로 취소하는 메서드(return 은 좋아요 갯수)
 
     @PostMapping("/chate")
     @ResponseBody
@@ -269,9 +266,7 @@ public class BoderController {
     }
 
 
-
-
-
+    //대댓글 작성구현 메서드
 
     @PostMapping("/replies")
     public String replies(@ModelAttribute Replies replies) {
@@ -280,7 +275,7 @@ public class BoderController {
     }
 
 
-
+    //대댓글 좋아요 비동기 통신으로 누르는 메서드 (return 좋아요 갯수)
 
     @PostMapping("/rlike")
     @ResponseBody
@@ -296,7 +291,7 @@ public class BoderController {
     }
 
 
-
+    //대댓글 좋아요 비동기통신으로 취소하는 메서드 ( return은 좋아요 갯수)
 
     @PostMapping("/rhate")
     @ResponseBody
@@ -310,6 +305,7 @@ public class BoderController {
     }
 
 
+    //게시글 수정창으로 넘어가는 메서드
 
     @GetMapping("/boardmod")
     public String boardmod(Model model, @RequestParam("pnum") Integer pnum) {
@@ -320,6 +316,8 @@ public class BoderController {
         model.addAttribute("board", board);
         return "write";
     }
+
+    //게시글 수정내용을 저장하는 메서드
 
     @PostMapping("/mod_post")
     public String modpost(@ModelAttribute Board board,
@@ -345,22 +343,23 @@ public class BoderController {
         return "redirect:/detailview?pnum=" + board.getPnum();
     }
 
+
+    // 게시글 삭제 구현 메서드
     @GetMapping("/boarddelete")
     public String boarddelete(@RequestParam("pnum") Integer pnum) {
         boardService.boarddelete(pnum);
         return "redirect:/boardlist";
     }
 
-
-
+    // 댓글 삭제 구현 메서드
 
     @PostMapping("/commentdelete")
     public String commentdelete(@RequestParam("pnum") Integer pnum, @RequestParam("cnum") Integer cnum) {
         commentService.commentdelete(cnum);
-                return "redirect:/detailview?pnum=" + pnum;
+        return "redirect:/detailview?pnum=" + pnum;
     }
 
-
+    //댓글 수정 구현 메서드
     @PostMapping("/commentmod")
     public String commentmod(@ModelAttribute Comment comment) {
 
@@ -370,19 +369,44 @@ public class BoderController {
     }
 
 
-
-
-
+    //대댓글 삭제 구현 메서드
     @PostMapping("/repliedelete")
     public String repliedelete(@RequestParam("rnum") Integer rnum, @RequestParam("pnum") Integer pnum) {
 
         replieService.repliedelete(rnum);
-                return "redirect:/detailview?pnum=" + pnum;
+        return "redirect:/detailview?pnum=" + pnum;
     }
 
+    //대댓글 수정 구현 메서드
     @PostMapping("/replymod")
     public String replymod(@ModelAttribute Replies replie) {
         replieService.replymod(replie);
         return "redirect:/detailview?pnum=" + replie.getPnum();
+    }
+    @GetMapping("/myboard")
+    @ResponseBody
+    public  Map<String, Object> myboard(@RequestParam("uid")String uid) {
+
+        System.out.println(uid);
+
+        List<Board> list= boardService.myboardlist(uid);
+
+        System.out.println(list);
+
+        Map<String, Object> boardlist = new HashMap<>();
+
+        boardlist.put("list", list);
+
+        System.out.println(boardlist);
+
+        return boardlist;
+    }
+    @GetMapping("/mycomment")
+    @ResponseBody
+    public  Map<String, Object> mycomment(@RequestParam("uid")String uid) {
+        List<Comment> comments = commentService.mycomment(uid);
+        Map<String , Object> commentlist = new HashMap<>();
+        commentlist.put("list", comments);
+        return commentlist;
     }
 }

@@ -15,11 +15,13 @@ public class CommentService implements IF_CommentService{
     @Autowired
     private CommentRepository commentRepository;
 
+    //댓글 작성시 저장하는 메서드
     @Override
     public void commentsave(Comment comment) {
         commentRepository.save(comment);
     }
 
+    //댓글 좋아요 눌렀을시 댓글 테이블 좋아요 컬럼에 +1을 해주고 좋아요 수를 RETURN 해주는 메서드
     @Transactional
     @Override
     public Comment clike(Clike clike) {
@@ -28,6 +30,7 @@ public class CommentService implements IF_CommentService{
         return commentRepository.findByCnum(cnum);
     }
 
+    //댓글 좋아요 취소시 댓글 테이블 좋아요 컬럼에 -1을 해주고 좋아요 수를 RETURN 해주는 메서드
     @Transactional
     @Override
     public Comment chate(Clike clike) {
@@ -36,12 +39,14 @@ public class CommentService implements IF_CommentService{
         return comment;
     }
 
+    // 댓글 삭제 메서드 구현
     @Transactional
     @Override
     public void commentdelete(Integer cnum) {
         commentRepository.deleteById(cnum);
     }
 
+    //댓글 수정 메서드
     @Transactional
     @Override
     public void commentmod(Comment comment) {
@@ -50,7 +55,12 @@ public class CommentService implements IF_CommentService{
         commentRepository.commentmod(cnum, cbody);
     }
 
+    @Override
+    public List<Comment> mycomment(String uid) {
+        return commentRepository.findByUid(uid);
+    }
 
+    //게시글 상세보기 했을시 글번호에 작성한 댓글 리스트를 가져오는 메서드
     @Override
     public List<Comment> findcomment(Integer num) {
          return commentRepository.findByPnumOrderByCnumAsc(num);

@@ -1,4 +1,4 @@
 package com.Fitory.fitory.service;
 
-public interface IF_LoginService {
+public interface  IF_LoginService {
 }

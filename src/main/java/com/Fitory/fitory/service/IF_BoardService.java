@@ -29,4 +29,6 @@ public interface IF_BoardService {
 
     void boarddelete(Integer pnum);
 
+    List<Board> myboardlist(String uid);
+
 }

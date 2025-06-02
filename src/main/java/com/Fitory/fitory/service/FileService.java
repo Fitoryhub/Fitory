@@ -13,14 +13,15 @@ public class FileService implements IF_FileService{
 
     @Autowired
     private FileRepository fileRepository;
-    @Autowired
-    private View error;
 
+
+    //파일 정보를 저장하는 메서드
     @Override
     public void filesave(Files files) {
         fileRepository.save(files);
     }
 
+    //글번호에 맞는 파일정보를 가져오는 메서드
     @Override
     public List<Files> findfile(Integer pnum) {
         return fileRepository.findByPnum(pnum);

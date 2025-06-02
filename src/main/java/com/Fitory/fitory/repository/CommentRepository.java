@@ -29,4 +29,6 @@ public interface CommentRepository extends JpaRepository<Comment, Integer> {
     void commentmod(Integer cnum, String cbody);
 
     Comment findByCnum(Integer cnum);
+
+    List<Comment> findByUid(String uid);
 }

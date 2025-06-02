@@ -18,4 +18,6 @@ public interface IF_CommentService {
     void commentdelete(Integer cnum);
 
     void commentmod(Comment comment);
+
+    List<Comment> mycomment(String uid);
 }
