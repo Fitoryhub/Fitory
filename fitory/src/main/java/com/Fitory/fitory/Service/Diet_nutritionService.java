@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Service
-public class Diet_nutritionService {
+public class Diet_nutritionService implements IF_Diet_nutritionService{
 	
 	private final Diet_nutritionRepository dnrepo;
 	

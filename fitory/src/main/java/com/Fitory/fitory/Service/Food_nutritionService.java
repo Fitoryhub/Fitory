@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Service
-public class Food_nutritionService {
+public class Food_nutritionService implements IF_Food_nutritionService{
 	
 	private final Food_nutritionRepository fnrepo; 
 	

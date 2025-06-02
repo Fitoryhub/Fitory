@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Service
-public class Diet_foodService {
+public class Diet_foodService implements IF_DIet_foodService{
 	
 	private final Diet_foodRepository dfrepo;
 	
