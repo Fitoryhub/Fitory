@@ -20,4 +20,8 @@ public class DietService {
 	public int getid(String title) {
 		return dietrespo.findBytitle(title);
 	}
+	
+	public void delete() {
+		dietrespo.delete(null);
+	}
 }

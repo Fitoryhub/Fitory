@@ -18,7 +18,18 @@
                     </tr>
                     <tr>
                         <td style="vertical-align: top;">식단</td>
-                        <td><span id="sel_food"></span></td>
+                        <td style="overflow-y: auto; max-height: 25px;"><span id="sel_food"></span></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">
+                            <button onclick="del()" style="margin-left: 5px; background-color: #10b981; color: white; cursor: pointer; border: none; border-radius: 5px; width: 30px;">
+                                제외
+                            </button>
+                        </td>
+                        <td>
+                            총칼로리:
+                            <span id="sel_cal" style="display: inline-block;">0</span>kcal
+                        </td>
                     </tr>
                     <tr>
                         <td>목표</td>
@@ -43,23 +54,23 @@
                     </tr>
                     <tr>
                         <td colspan="2" style="text-align: center; padding-top: 20px;">
-                            <input type="button" value="등록" onclick="save()" style="padding: 10px 30px; background-color: #10b981; color: white; border: none; border-radius: 5px; font-weight: bold;">
+                            <input type="button" value="등록" onclick="save()" style="padding: 10px 30px; background-color: #10b981; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer;">
                         </td>
                     </tr>
                 </table>
                 <table id="ftable" style="width: 48%; background: #ffffff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.06);">
                     <tr>
-                        <td><h4 style="margin-bottom: 10px;">■ 음식 선택</h4></td>
+                        <td><h4 style="margin-bottom: 5px;">■ 음식 선택</h4></td>
                     </tr>
                     <tr>
                         <td>
                             <div style="margin-bottom: 10px;">
                                 음식 검색:
                                 <input type="text" name="food_name" id="food_name" placeholder="원하는 음식명을 입력하세요" style="display: inline-block;">
-                                <button id="search" style="margin-left: 5px;">검색</button>
-                                <button id="ftinsert" style="margin-left: 10px;">선택</button>
+                                <button id="search" style="margin-left: 5px; background-color: #10b981; color: white; cursor: pointer; border: none; border-radius: 5px; width: 40px;" >검색</button>
+                                <button id="ftinsert" style="margin-left: 10px; background-color: #10b981; color: white; cursor: pointer; border: none; border-radius: 5px; width: 40px;">선택</button>
                             </div>
-                            <div id="fword" style="margin-bottom: 10px; color: #065f46; font-weight: bold;"></div>
+                            <div id="fword" style="margin-bottom: 10px; color: #065f46; font-weight: bold; height: 25px;"></div>
                             <table id="ftable" style="width: 100%; font-size: 13px; background-color: #f0fdf4;">
                                 <tr>
                                     <th></th>
@@ -72,7 +83,7 @@
                                     <th>염분</th>
                                 </tr>
                             </table>
-                            <div style="height: 300px; overflow-y: auto;">
+                            <div style="height: 350px; overflow-y: auto;">
                                 <table id="ftable_content" style="width: 100%; font-size: 13px;"></table>
                             </div>
                             <div id="ft_pagelist" style="margin-top: 15px; text-align: center;"></div>
@@ -207,9 +218,12 @@
                 $.each(templist,function(index){
                     if($(this).is(":checked")==true){
                         if(fseleclist.length<6){
-                            fseleclist.push(fcurrlist[$(this).val()].food_name);
+                            fseleclist.push(fcurrlist[$(this).val()]);
                             let tempjson=btoa(encodeURIComponent(JSON.stringify(fcurrlist[$(this).val()])));
+                            $('#sel_food').append('<input type="checkbox" name="selchk" value='+fcurrlist[$(this).val()].calories+'>')
                             $('#sel_food').append(fcurrlist[$(this).val()].food_name+' '+`<input type="hidden" name="Foodlist" value='${tempjson}'>`);
+                            let scal=parseInt($('#sel_cal').text())+fcurrlist[$(this).val()].calories;
+                            $('#sel_cal').text(scal);
                         }
                     }
                 })
@@ -217,6 +231,30 @@
                 $('#ft_pagelist').html('');
                 $("#fword").text('');
             })
+
+            function del(){
+                let chklist=document.getElementsByName('selchk');
+                let templist=JSON.parse(JSON.stringify(fseleclist));
+                for(let i=0; i<chklist.length; i++){
+                    if(chklist[i].checked==true){
+                        let scal=parseInt($('#sel_cal').text())-chklist[i].value;
+                        $('#sel_cal').text(scal);
+                        for(let j=0; j<fseleclist.length; j++){
+                            if(fseleclist[j].food_name==templist[i].food_name){
+                                fseleclist.splice(j,1);
+                                console.log(j);
+                                j--;
+                            }
+                        }
+                    }
+                }
+                $('#sel_food').text('');
+                for(let i=0; i<fseleclist.length; i++){
+                    let tempjson=btoa(encodeURIComponent(JSON.stringify(fseleclist[i])));
+                    $('#sel_food').append('<input type="checkbox" name="selchk" value="'+fseleclist[i].calories+'">')
+                    $('#sel_food').append(fseleclist[i].food_name+' '+`<input type="hidden" name="Foodlist" value='${tempjson}'>`);
+                }
+            }
 
             function save(){
                 if(document.getElementsByName('goal_type')[0].value=='none' || document.getElementsByName('plan_type')[0].value=='none'){

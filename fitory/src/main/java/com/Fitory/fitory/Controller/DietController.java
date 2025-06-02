@@ -12,12 +12,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.Fitory.fitory.Entity.Diet_food;
-import com.Fitory.fitory.Repository.Food_searchRepository.Foodlist;
 import com.Fitory.fitory.Service.DietService;
 import com.Fitory.fitory.Service.Diet_foodService;
 import com.Fitory.fitory.Service.Diet_nutritionService;
 import com.Fitory.fitory.Service.Food_nutritionService;
-import com.Fitory.fitory.Service.Food_searchService;
 import com.Fitory.fitory.VO.DietsaveVO;
 import com.Fitory.fitory.VO.FoodlistVO;
 import com.Fitory.fitory.VO.PageVO;
@@ -34,7 +32,6 @@ public class DietController {
 	private final DietService dservice;
 	private final Diet_foodService dfservice;
 	private final Diet_nutritionService dnservice;
-	private final Food_searchService fsservice;
 	private final Food_nutritionService fnservice;
 	
 	
@@ -77,14 +74,5 @@ public class DietController {
 		pvo.setTotalCount(totalCount);
 		return pvo;
 	}
-	
-	@GetMapping("/diet/selectfood")
-	@ResponseBody
-	public Foodlist fselect(@RequestParam(name="food_name") String fname) {
-		Foodlist fvo=fsservice.getOne(fname);
-		return fvo;
-	}
-	
-	
-	
+		
 }

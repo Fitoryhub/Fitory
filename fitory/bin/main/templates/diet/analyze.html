@@ -11,12 +11,13 @@
                 <div style="margin-bottom: 20px;">
                     <h3 style="margin-bottom: 10px;">먹은 음식</h3>
                     <input type="text" name="atefd" id="atefd" placeholder="음식명을 입력하세요" style="padding: 8px; width: 250px;">
-                    <input type="button" value="검색" onclick="search()" style="padding: 8px 15px; background-color: #10b981; color: white; border: none; border-radius: 5px; font-weight: bold;">
+                    <input type="button" value="검색" onclick="search()" style="padding: 8px 15px; background-color: #10b981; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer;">
                 </div>
                 <div id="searchlist" style="margin-bottom: 30px;"></div>
                 <table id="atefd_title" style="width: 100%; background-color: #f0fdf4; font-size: 20px; margin-bottom: 0;">
                     <tr>
-                        <th style="width: 400px;">음식명</th>
+                        <th ><button style="padding-top: 5px; padding-bottom: 5px; background-color: #10b981; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; width: 40px;" onclick="del()">삭제</button></th>
+                        <th style="width: 360px;">음식명</th>
                         <th style="width: 100px;">칼로리</th>
                         <th style="width: 100px;">탄수화물</th>
                         <th style="width: 100px;">단백질</th>
@@ -25,11 +26,12 @@
                         <th style="width: 100px;">염분</th> 
                     </tr>
                 </table>
-                <div style="max-height: 300px; overflow-y: auto;">
+                <div style="height: 300px; overflow-y: auto;">
                     <table id="atefd_content" style="width: 100%; font-size: 14px; text-align: center;"></table>
                 </div>
                 <table id="total" style="width: 100%; font-size: 20px; background-color: #f0fdf4; margin-top: 20px;">
                     <tr>
+                        <th><input type="checkbox" id="allchk"></th>
                         <th style="width: 400px;">총성분</th>
                         <th style="width: 100px;" id="tcal">0</th>
                         <th style="width: 100px;" id="tcarbo">0</th>
@@ -51,11 +53,36 @@
                 getname(selectfd);
             }
 
+            function del(){
+                let chklist=document.getElementsByName('chklist');
+                let table=document.getElementById('atefd_content');
+                for(let i=0; i<chklist.length; i++){
+                    if(chklist[i].checked==true){
+                        let item=JSON.parse(decodeURIComponent(atob(chklist[i].value)));
+                        let tcal=Number($("#tcal").html())-Number(item.AMT_NUM1);
+                        $('#tcal').html(tcal);
+                        let tcarbo=Number($("#tcarbo").html())-Number(item.AMT_NUM6);
+                        $('#tcarbo').html(tcarbo.toFixed(2));
+                        let tpro=Number($("#tpro").html())-Number(item.AMT_NUM3);
+                        $('#tpro').html(tpro.toFixed(2));
+                        let tfat=Number($("#tfat").html())-Number(item.AMT_NUM4);
+                        $('#tfat').html(tfat.toFixed(2));
+                        let tsugar=Number($("#tsugar").html())-Number(item.AMT_NUM7);
+                        $('#tsugar').html(tsugar.toFixed(2));
+                        let tsod=Number($("#tsod").html())-Number(item.AMT_NUM13);
+                        $('#tsod').html(tsod.toFixed(2));
+                        table.deleteRow(i);
+                        i--;
+                    }
+                }
+            }
+
             function add(index){
                 let data=document.getElementsByName("tmplist")[index].value;
                 let item=JSON.parse(decodeURIComponent(atob(data)));
                 let sentence1='<tr>';
-                sentence1+='<td style="font-size: 16px; width: 400px;">'+item.FOOD_NM_KR+'</td>';
+                sentence1+='<td style="width: 30px;"><input type="checkbox" name="chklist" value="'+btoa(encodeURIComponent(JSON.stringify(item)))+'"></td>'
+                sentence1+='<td style="font-size: 16px; width: 370px;">'+item.FOOD_NM_KR+'</td>';
                 sentence1+='<td style="font-size: 16px; width: 100px;">'+item.AMT_NUM1+'</td>';
                 sentence1+='<td style="font-size: 16px; width: 100px;">'+item.AMT_NUM6+'</td>';
                 sentence1+='<td style="font-size: 16px; width: 100px;">'+item.AMT_NUM3+'</td>';
@@ -76,6 +103,7 @@
                 let tsod=Number($("#tsod").html())+Number(item.AMT_NUM13);
                 $('#tsod').html(tsod.toFixed(2));
                 $('#searchlist').html('');
+                $('#atefd').val('');
             }
 
             async function getname(foodname) {
@@ -98,7 +126,6 @@
                     console.log(error);
                 }
             }
-
         </script>
     </section>
 </html>
