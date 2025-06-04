@@ -147,9 +147,9 @@
     <div id="logo">
       <img src="/files/logo2.png" alt="Fitory 로고" />
     </div>
-    <div th:if="${session.nickname!= null}">
+    <div th:if="${session.nickname != null}">
       <span th:text="${session.nickname}"></span>
-        <a href="/logout">로그아웃</a>
+      <a href="/logout">로그아웃</a>
     </div>
     <nav class="headMenu">
       <a href="#">홈</a>
@@ -157,7 +157,7 @@
       <a href="#">식단</a>
       <a href="#">운동</a>
       <a href="#">건강정보</a>
-      <a href="/Mypage">마이페이지</a>
+      <a href="/mypage">마이페이지</a>
       <a href="http://localhost:8080/login">로그인</a>
     </nav>
   </header>

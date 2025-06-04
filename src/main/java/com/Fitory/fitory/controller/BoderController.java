@@ -401,6 +401,30 @@ public class BoderController {
 
         return boardlist;
     }
+    @PostMapping("/dellistcomment")
+    @ResponseBody
+    public Map<String, Object> dellistcomment(@RequestParam List<Integer> list , @RequestParam String uid) {
+
+       for (Integer i : list) {
+           commentService.commentdelete(i);
+       }
+       List<Comment> newlist =commentService.mycomment(uid);
+       Map<String, Object> map = new HashMap<>();
+       map.put("list", newlist);
+        return map;
+    }
+    @PostMapping("/dellistboard")
+    @ResponseBody
+    public Map<String, Object> dellistboard(@RequestParam List<Integer> list , @RequestParam String uid) {
+        for (Integer i : list) {
+            boardService.boarddelete(i);
+        }
+        List<Board> newlist =boardService.myboardlist(uid);
+        Map<String, Object> map = new HashMap<>();
+        map.put("list", newlist);
+        return map;
+    }
+
     @GetMapping("/mycomment")
     @ResponseBody
     public  Map<String, Object> mycomment(@RequestParam("uid")String uid) {
@@ -409,4 +433,5 @@ public class BoderController {
         commentlist.put("list", comments);
         return commentlist;
     }
+
 }

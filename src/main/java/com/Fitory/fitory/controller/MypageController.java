@@ -14,7 +14,7 @@ public class MypageController {
     @Autowired
     UserRepository userRepository;
 
-    @GetMapping("/Mypage")
+    @GetMapping("/mypage")
     public String Mypage(Model model , HttpSession session) {
         if(session!=null) {
 

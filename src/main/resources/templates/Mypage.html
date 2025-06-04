@@ -15,7 +15,7 @@
             margin-top: 20px;
             background-color: #f0fdf4;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            max-height: 300px;
+            max-height: 450px;
             display: block;
             overflow-y: auto;
 
@@ -46,7 +46,7 @@
         .board-box td:first-child, .board-box th:first-child {
             font-weight: 600;
             color: #065f46;
-            width: 60%;
+            width: 50%;
         }
 
         .board-box td:nth-child(2), .board-box td:nth-child(3),
@@ -290,7 +290,7 @@
             <h4>글 관리</h4>
             <ul>
                 <li id="board">내가 쓴 글</li>
-                <li id="comment">댓글 단 글</li>
+                <li id="comment">댓글</li>
             </ul>
         </div>
     </aside>
@@ -312,19 +312,29 @@
                 url: url,
 
                 success(data) {
-                    temp = data;
-
                     $('.board-box').empty();
-                    $('.board-box').append('<tr><td>제목</td><td>작성일</td><td>좋아요</td></tr>')
+                    if(data.list.length<1){
+                        $('.board-box').append('<tr><td>등록하신 게시글이 없습니다.</td></tr>')
+                    }else{
+                    $('.board-box').append('<tr>' +
+                        '<td>제목</td>' +
+                        '<td>작성일</td>' +
+                        '<td>좋아요</td>' +
+                        '<td><input class="deleteb" type="button" value="삭제"></td>' +
+                        '<td><input style="display:none" type="button" value="취소" id="nob"></td>' +
+                        '</tr>')
                     $.each(data.list, function (index, board) {
                         console.log(board.ptitle);
                         $('.board-box').append(
                             '<tr onclick="window.location.href=\'/detailview?pnum=' + board.pnum + '\'">' +
+
                             '<td>' + board.ptitle + '</td>' +
                             '<td>' + board.pdate + '</td>' +
                             '<td>' + board.plike + '</td>' +
+                            '<td><input style="display: none" type="checkbox" class="check" data-num="' + board.pnum + '" onclick="event.stopPropagation();"></td>' +
                             '</tr>')
                     });
+                    }
                 },
                 error: function () {
                     alert("통신에러")
@@ -343,21 +353,154 @@
                 },
                 type: 'get',
                 url: url,
+                error: function () {
+                    alert("통신오류")
+                },
                 success(data) {
                     $('.board-box').empty();
-                    $('.board-box').append('<tr><td>댓글내용</td><td>작성일</td><td>좋아요</td></tr>')
+                    if (data.list.length<1){
+                        $('.board-box').append('<tr><td>등록하신 댓글이 없습니다.</td></tr>')
+                    }else {
+                    $('.board-box').append('<tr>' +
+                        '<td>댓글내용</td>' +
+                        '<td>작성일</td>' +
+                        '<td>좋아요</td>' +
+                        '<td><input type="button" value="삭제" class="deletec"></td>' +
+                        '<td><input style="display:none" type="button" value="취소" id="noc"></td>' +
+                        '</tr>')
                     $.each(data.list, function (index, comment) {
-                        $('.board-box').append(
-                            '<tr onclick="window.location.href=\'/detailview?pnum=' + comment.pnum + '\'">' +
-                            '<td>' + comment.cbody + '</td>' +
-                            '<td>' + comment.cdate + '</td>' +
-                            '<td>' + comment.clike + '</td>' +
-                            '</tr>'
-                        )
-                    })
+                            $('.board-box').append(
+                                '<tr onclick="window.location.href=\'/detailview?pnum=' + comment.pnum + '\'">' +
+                                '<td>' + comment.cbody + '</td>' +
+                                '<td>' + comment.cdate + '</td>' +
+                                '<td>' + comment.clike + '</td>' +
+                                '<td>' +
+                                '<input style="display: none" type="checkbox" class="check" data-num="' + comment.cnum + '" onclick="event.stopPropagation();">'+
+                                '</td>' +
+                                '</tr>'
+                            )
+                        })
+                    }
 
+
+                }
+            })
+        })
+        $(document).on('click', '.deletec', function () {
+            $('.check').css('display', 'inline-block');
+            $('#noc').css('display', 'inline-block');
+            $(this).replaceWith('<input type="button" value="확인" id="okc">');
+        })
+        $(document).on('click', '.deleteb', function () {
+            $('.check').css('display', 'inline-block');
+            $('#nob').css('display', 'inline-block');
+            $(this).replaceWith('<input type="button" value="확인" id="okb">');
+        })
+
+        $(document).on('click','#nob',function (){
+            $(this).css('display', 'none');
+            $('.check').css('display', 'none');
+            $('#okb').replaceWith('<input type="button" value="삭제" class="deleteb">');
+        })
+
+        $(document).on('click','#noc',function (){
+            $(this).css('display', 'none');
+            $('.check').css('display', 'none');
+            $('#okc').replaceWith('<input type="button" value="삭제" class="deletec">');
+        })
+
+        $(document).on('click','#okc',function (){
+            alert("들어옴")
+        let list=[];
+        $('.check:checked').each(function (){
+            list.push($(this).data('num'))
+        })
+            let uid= $('#uid').text();
+            $.ajax({
+                url:'/dellistcomment',
+                dataType:'json' ,
+                method: 'post',
+                data:{
+                    uid:uid,
+                    list:list
                 },
-                error: function () {
+                success:function (data) {
+                    $('.board-box').empty();
+                    if(data.list.length<1){
+                        $('.board-box').append('<tr><td>등록하신 댓글이 없습니다.</td></tr>')
+                    }else{
+                    $('.board-box').append('<tr>' +
+                        '<td>댓글내용</td>' +
+                        '<td>작성일</td>' +
+                        '<td>좋아요</td>' +
+                        '<td><input type="button" value="삭제" class="deletebtn"></td>' +
+                        '<td><input style="display:none" type="button" value="취소" id="no"></td>' +
+                        '</tr>')
+                    $.each(data.list, function (index, comment) {
+                            $('.board-box').append(
+                                '<tr onclick="window.location.href=\'/detailview?pnum=' + comment.pnum + '\'">' +
+                                '<td>' + comment.cbody + '</td>' +
+                                '<td>' + comment.cdate + '</td>' +
+                                '<td>' + comment.clike + '</td>' +
+                                '<td>' +
+                                '<input style="display: none" type="checkbox" class="check" data-num="' + comment.cnum + '" onclick="event.stopPropagation();">'+
+                                '</td>' +
+                                '</tr>'
+                            )
+                        }
+                    )
+
+                    }
+                },
+                error:function (){
+                    alert("통신오류")
+                }
+            })
+        })
+        $(document).on('click','#okb',function (){
+            alert("들어옴")
+            let list=[];
+            $('.check:checked').each(function (){
+                list.push($(this).data('num'))
+            })
+            let uid= $('#uid').text();
+            $.ajax({
+                url:'/dellistboard',
+                dataType:'json' ,
+                method: 'post',
+                data:{
+                    uid:uid,
+                    list:list
+                },
+                success:function (data) {
+                    $('.board-box').empty();
+                    if(data.list.length<1){
+                        $('.board-box').append('<tr><td>등록하신 게시글이 없습니다.</td></tr>')
+                    }else{
+
+                    $('.board-box').append('<tr>' +
+                        '<td>제목</td>' +
+                        '<td>작성일</td>' +
+                        '<td>좋아요</td>' +
+                        '<td><input type="button" value="삭제" class="deleteb"></td>' +
+                        '<td><input style="display:none" type="button" value="취소" id="no"></td>' +
+                        '</tr>')
+                    $.each(data.list, function (index, board) {
+                            $('.board-box').append(
+                                '<tr onclick="window.location.href=\'/detailview?pnum=' + board.pnum + '\'">' +
+                                '<td>' + board.ptitle + '</td>' +
+                                '<td>' + board.pdate + '</td>' +
+                                '<td>' + board.plike + '</td>' +
+                                '<td>' +
+                                '<input style="display: none" type="checkbox" class="check" data-num="' + board.pnum + '" onclick="event.stopPropagation();">'+
+                                '</td>' +
+                                '</tr>'
+                            )
+                        }
+                    )
+                    }
+                },
+                error:function (){
                     alert("통신오류")
                 }
             })
