@@ -7,6 +7,62 @@
     <title>Fitory 마이페이지</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet"/>
     <style>
+        /* Table styling for board-box */
+        .board-box {
+            width: 800px;
+            border: 1px solid #d1fae5;
+            border-radius: 12px;
+            margin-top: 20px;
+            background-color: #f0fdf4;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            max-height: 300px;
+            display: block;
+            overflow-y: auto;
+
+        }
+
+        .board-box thead, .board-box tbody {
+            display: table;
+
+            table-layout: fixed; /* Fix column widths for consistency */
+        }
+
+        .board-box tr {
+            border-bottom: 1px solid #d1fae5;
+            transition: background-color 0.2s;
+        }
+
+        .board-box tr:hover {
+            background-color: #e6f4ea;
+        }
+
+        .board-box td, .board-box th {
+            padding: 15px 20px;
+            font-size: 16px;
+            color: #1f2937;
+            text-align: left;
+        }
+
+        .board-box td:first-child, .board-box th:first-child {
+            font-weight: 600;
+            color: #065f46;
+            width: 60%;
+        }
+
+        .board-box td:nth-child(2), .board-box td:nth-child(3),
+        .board-box th:nth-child(2), .board-box th:nth-child(3) {
+            color: #374151;
+            text-align: center;
+        }
+
+        .board-box tr:last-child {
+            border-bottom: none;
+        }
+
+        .board-box tr[onclick] {
+            cursor: pointer;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -75,7 +131,7 @@
             margin-bottom: 30px;
         }
 
-        .info-box, .exercise-box {
+        .info-box {
             background-color: #f0fdf4;
             border: 1px solid #d1fae5;
             border-radius: 12px;
@@ -186,7 +242,7 @@
         <a href="/">홈</a>
         <a href="/mypage" class="active">마이페이지</a>
         <a href="#">스케줄러</a>
-        <a href="/logOut">로그아웃</a>
+        <a href="/logout">로그아웃</a>
     </nav>
 </aside>
 
@@ -255,14 +311,19 @@
                 method: 'get',
                 url: url,
 
-                success(data) {  
+                success(data) {
                     temp = data;
 
                     $('.board-box').empty();
+                    $('.board-box').append('<tr><td>제목</td><td>작성일</td><td>좋아요</td></tr>')
                     $.each(data.list, function (index, board) {
                         console.log(board.ptitle);
                         $('.board-box').append(
-                            '<tr><td>' + board.ptitle + '</td><td>' + board.plook + '</td><td>' + board.plike + '</td></tr>')
+                            '<tr onclick="window.location.href=\'/detailview?pnum=' + board.pnum + '\'">' +
+                            '<td>' + board.ptitle + '</td>' +
+                            '<td>' + board.pdate + '</td>' +
+                            '<td>' + board.plike + '</td>' +
+                            '</tr>')
                     });
                 },
                 error: function () {
@@ -272,26 +333,31 @@
             })
         })
 
-        $('#comment').click(function (){
+        $('#comment').click(function () {
             let uid = $('#uid').text();
             let url = "/mycomment"
             $.ajax({
                 dataType: 'json',
                 data: {
-                    uid:uid
+                    uid: uid
                 },
-                type:'get',
-                url:url,
+                type: 'get',
+                url: url,
                 success(data) {
                     $('.board-box').empty();
-                    $.each(data.list, function (index ,comment){
+                    $('.board-box').append('<tr><td>댓글내용</td><td>작성일</td><td>좋아요</td></tr>')
+                    $.each(data.list, function (index, comment) {
                         $('.board-box').append(
-                            '<tr><td>' + comment.cbody + '</td><td>' + comment.date + '</td><td>' + comment.clike + '</td></tr>'
+                            '<tr onclick="window.location.href=\'/detailview?pnum=' + comment.pnum + '\'">' +
+                            '<td>' + comment.cbody + '</td>' +
+                            '<td>' + comment.cdate + '</td>' +
+                            '<td>' + comment.clike + '</td>' +
+                            '</tr>'
                         )
                     })
 
                 },
-                error:function (){
+                error: function () {
                     alert("통신오류")
                 }
             })
