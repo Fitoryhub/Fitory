@@ -32,6 +32,9 @@ public class ExerciseController {
 
     @GetMapping("/exercise")
     public String exercise(HttpSession session, Model model) {
+        if (session.getAttribute("user") == null) {
+            return "redirect:loginForm";
+        }
         List<ExerciseDTO> elist = (List<ExerciseDTO>) model.getAttribute("elist");
         Object time = model.getAttribute("time");
         Object cal = model.getAttribute("cal");

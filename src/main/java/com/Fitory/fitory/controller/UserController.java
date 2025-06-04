@@ -1,5 +1,6 @@
 package com.Fitory.fitory.controller;
 
+import com.Fitory.fitory.dto.UserDTO;
 import com.Fitory.fitory.entity.ExerciseRoutine;
 import com.Fitory.fitory.entity.User;
 import com.Fitory.fitory.repository.UserRepository;
@@ -46,11 +47,14 @@ public class UserController {
     @PostMapping("/login")
     public String login(@RequestParam String id, String password, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
        Optional<User> user = userService.findById(id);
+
         if(user.isPresent()) {
             User u = user.get();
             if(u.getPassword().equals(password)) {
-                session.setAttribute("user_id", id);
-                model.addAttribute("user", u);
+                UserDTO udto = new UserDTO();
+                udto.setUser_id(u.getId());
+                udto.setNickname(u.getNickname());
+                session.setAttribute("user", udto);
                 System.out.println("로그인 성공"+id);
                 return "main";
             }else{
@@ -65,12 +69,12 @@ public class UserController {
 
     @GetMapping("/mypage")
     public String mypage(HttpSession session, Model model) {
-        String uid = session.getAttribute("user_id").toString();
+       UserDTO uid = (UserDTO) session.getAttribute("user");
        if(uid==null) {
-           return "redirect:/login";
+           return "redirect:/loginForm";
        }
-        List<ExerciseRoutine> routineList = exerciseRoutineService.findByUserID(uid);
-        Optional<User> user = userService.findById(uid);
+        List<ExerciseRoutine> routineList = exerciseRoutineService.findByUserID(uid.getUser_id());
+        Optional<User> user = userService.findById(uid.getUser_id());
         user.ifPresent(u -> model.addAttribute("user", u));
         model.addAttribute("routineList", routineList);
         return "/mypage";

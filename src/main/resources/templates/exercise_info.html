@@ -219,8 +219,8 @@
             <form id="filter-form">
                 <div class="form-group">
                     <label for="exerciseTime">운동 시간 선택</label>
-                    <select name="time" id="exerciseTime">
-                        <option value="">전체</option>
+                    <select name="time" id="exerciseTime" required>
+                        <option value="" disabled selected>-----</option>
                         <script>
                             for (let i = 30; i <= 120; i += 30) {
                                 document.write(`<option value="${i}">${i}분</option>`);
@@ -231,8 +231,8 @@
 
                 <div class="form-group">
                     <label for="calories">목표 칼로리</label>
-                    <select name="cal" id="calories">
-                        <option value="">전체</option>
+                    <select name="cal" id="calories" required>
+                        <option value="" disabled selected>-----</option>
                         <script>
                             for (let i = 50; i <= 600; i += 50) {
                                 document.write(`<option value="${i}">${i} kcal</option>`);

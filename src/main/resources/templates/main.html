@@ -148,14 +148,14 @@
         <img alt="Fitory 로고" src="/image/logo2.png"/>
     </div>
     <nav class="headMenu">
-        <span th:if="${user != null}" th:text="${user.name} + '님, 환영합니다!'"></span>
+        <span th:if="${session.user != null}" th:text="${session.user.nickname} + '님, 환영합니다!'"></span>
         <a href="#">홈</a>
         <a href="#">식단</a>
         <a href="#">운동</a>
         <a href="#">건강정보</a>
         <a href="/mypage" id="myPage">마이페이지</a>
-        <a href="/loginForm" th:if="${session.user_id == null}">로그인</a>
-        <a href="/logOut" th:if="${session.user_id != null}">로그아웃</a>
+        <a href="/loginForm" th:if="${session.user == null}">로그인</a>
+        <a href="/logOut" th:if="${session.user != null}">로그아웃</a>
     </nav>
 </header>
 
@@ -188,7 +188,7 @@
         <h3>섭취한 식단의 영양을 빠르게 분석합니다.</h3>
     </a>
 
-    <a class="menu" href="/exercise">
+    <a class="menu" href="/exercise" id="exercise">
         <h2>운동 루틴 추천</h2>
         <h3>목표에 맞는 루틴을 <br> 계획해드립니다.</h3>
     </a>
@@ -207,11 +207,18 @@
 </body>
 </html>
 <script th:inline="javascript">
-  /*  document.getElementById("myPage").addEventListener("click", ()=>{
-       let userId= [[${session.user_id}]] null;
+    document.getElementById("myPage").addEventListener("click", ()=>{
+       let userId= [[${session.user}]];
        if(userId==null){
            alert("로그인이 필요합니다.")
        }
     })
-  */
+
+    document.getElementById("exercise").addEventListener("click", ()=>{
+        let userId= [[${session.user}]];
+        if(userId==null){
+            alert("로그인이 필요합니다.")
+        }
+    })
+
 </script>
