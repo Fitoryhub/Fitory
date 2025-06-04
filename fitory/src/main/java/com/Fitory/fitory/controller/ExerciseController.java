@@ -1,6 +1,7 @@
 package com.Fitory.fitory.controller;
 
 import com.Fitory.fitory.dto.ExerciseDTO;
+import com.Fitory.fitory.dto.SessionUserDTO;
 import com.Fitory.fitory.dto.UserSetDTO;
 import com.Fitory.fitory.entity.ExerciseRoutine;
 import com.Fitory.fitory.entity.Exercises;
@@ -36,7 +37,8 @@ public class ExerciseController {
         List<ExerciseDTO> elist = (List<ExerciseDTO>) model.getAttribute("elist");
         Object time = model.getAttribute("time");
         Object cal = model.getAttribute("cal");
-        String user_id = (String) session.getAttribute("user_id");
+        SessionUserDTO userInfo = (SessionUserDTO) session.getAttribute("userInfo");
+        String user_id = userInfo.getId();
         if (user_id != null) {
             Optional<User> user = userService.findById(user_id);
             user.ifPresent(value -> model.addAttribute("user", value));
@@ -56,7 +58,8 @@ public class ExerciseController {
 
     @PostMapping("/set")
     public String handleForm(@ModelAttribute UserSetDTO userset, HttpSession session) {
-        String id = session.getAttribute("user_id").toString();
+        SessionUserDTO userInfo = (SessionUserDTO) session.getAttribute("userInfo");
+        String id = userInfo.getId();
         User user = userService.findById(id).orElseThrow(() -> new NoSuchElementException("user not found"));
         int weight = Integer.getInteger(user.getWeight());
         int cal = userset.getCal();
@@ -102,7 +105,8 @@ public class ExerciseController {
 
         int time = (int) routineData.get("time");
         int cal = (int) routineData.get("cal");
-        String id = session.getAttribute("user_id").toString();
+        SessionUserDTO userInfo = (SessionUserDTO) session.getAttribute("userInfo");
+        String id = userInfo.getId();
         List<String> exercise = (List<String>) routineData.get("selectExercises");
 
         for(int i=0; i<exercise.size(); i++){
