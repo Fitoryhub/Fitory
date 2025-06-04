@@ -197,7 +197,7 @@
     <a href="#">식단</a>
     <a href="#">운동</a>
     <a href="#">건강정보</a>
-    <a href="/mypage" onclick="">마이페이지</a>
+    <a href="/mypage" id="myPage">마이페이지</a>
 
     <div class="user-info" th:if="${userInfo != null}">
       <p class="nickname" th:text="${userInfo.nickname} + '님'"></p>
@@ -252,14 +252,14 @@
 </html>
 <script th:inline="javascript">
   document.getElementById("myPage").addEventListener("click", ()=>{
-     let userId= [[${session.user}]];
+     let userId= [[${userInfo}]];
      if(userId==null){
          alert("로그인이 필요합니다.")
      }
   })
 
   document.getElementById("exercise").addEventListener("click", ()=>{
-      let userId= [[${session.user}]];
+      let userId= [[${userInfo}]];
       if(userId==null){
           alert("로그인이 필요합니다.")
       }

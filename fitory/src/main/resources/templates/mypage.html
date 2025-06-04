@@ -279,6 +279,7 @@
     </style>
 </head>
 <body>
+
 <!-- 사이드바 -->
 <aside class="sidebar">
     <img src="/image/logo2.png" alt="Fitory 로고">
@@ -292,6 +293,7 @@
 
 <!-- 메인 콘텐츠 -->
 <div class="main-container">
+
     <main class="main-content">
         <div class="section-title">마이페이지</div>
 
@@ -311,90 +313,96 @@
             </div>
         </div>
 
-<!--        &lt;!&ndash; 추가 정보 &ndash;&gt;-->
-<!--        <div class="additional-info-box">-->
-<!--            <h3>추가 정보</h3>-->
-<!--            <div id="viewAdditionalInfo" th:if="${userInfo != null}">-->
-<!--                <div><b>기초대사량:</b> <span id="bmr1" th:text="${user.bmr}"></span></div>-->
-<!--                <div><b>권장칼로리:</b> <span th:text="${user.recommendedCalorie}"></span></div>-->
-<!--                <div><b>목표체중:</b> <span th:text="${user.targetWeight}"></span></div>-->
-<!--                <div><b>혈압:</b> <span th:text="${user.bloodPressure}"></span></div>-->
-<!--                <div><b>당뇨여부:</b> <span th:text="${user.diabetes}"></span></div>-->
-<!--                <div><b>흡연여부:</b> <span th:text="${user.smoking}"></span></div>-->
-<!--                <div><b>체지방률:</b> <span th:text="${user.bodyFat}"></span></div>-->
-<!--                <div><b>근육량:</b> <span th:text="${user.muscleMass}"></span></div>-->
-<!--                <div><b>활동 수준:</b> <span th:text="${user.activityLevel}"></span></div>-->
-<!--                <div><b>질병 이력:</b> <span th:text="${user.medicalHistory}"></span></div>-->
-<!--                <div><b>알레르기:</b> <span th:text="${user.allergy}"></span></div>-->
-<!--                <button id="editBtn" type="button">추가 정보 설정하기</button>-->
-<!--            </div>-->
-<!--            <form id="editAdditionalInfo" th:action="@{/updateInfo}" method="post" style="display:none; margin-top: 20px;">-->
-<!--                <div class="info-row"><label for="bmr">기초대사량:</label><input id="bmr" type="number" name="bmr" th:value="${user.bmr}" required/></div>-->
-<!--                <div class="info-row"><label for="recommendedCalorie">권장칼로리:</label><input id="recommendedCalorie" type="number" name="recommendedCalorie" th:value="${user.recommendedCalorie}" required/></div>-->
-<!--                <div class="info-row"><label for="targetWeight">목표체중:</label><input id="targetWeight" type="number" name="targetWeight" th:value="${user.targetWeight}" required/></div>-->
-<!--                <div class="info-row"><label for="bloodPressure">혈압:</label><input id="bloodPressure" type="text" name="bloodPressure" th:value="${user.bloodPressure}" required/></div>-->
-<!--                <div class="info-row"><label for="diabetes">당뇨여부:</label>-->
-<!--                    <select id="diabetes" name="diabetes" th:value="${user.diabetes}">-->
-<!--                        <option value="없음" th:selected="${user.diabetes == '없음'}">없음</option>-->
-<!--                        <option value="있음" th:selected="${user.diabetes == '있음'}">있음</option>-->
-<!--                    </select>-->
-<!--                </div>-->
-<!--                <div class="info-row"><label for="smoking">흡연여부:</label>-->
-<!--                    <select id="smoking" name="smoking" th:value="${user.smoking}">-->
-<!--                        <option value="비흡연" th:selected="${user.smoking == '비흡연'}">비흡연</option>-->
-<!--                        <option value="흡연" th:selected="${user.smoking == '흡연'}">흡연</option>-->
-<!--                    </select>-->
-<!--                </div>-->
-<!--                <div class="info-row"><label for="bodyFat">체지방률:</label><input id="bodyFat" type="number" step="0.1" name="bodyFat" th:value="${user.bodyFat}" required/></div>-->
-<!--                <div class="info-row"><label for="muscleMass">근육량:</label><input id="muscleMass" type="number" step="0.1" name="muscleMass" th:value="${user.muscleMass}" required/></div>-->
-<!--                <div class="info-row"><label for="activityLevel">활동 수준:</label>-->
-<!--                    <select id="activityLevel" name="activityLevel" th:value="${user.activityLevel}">-->
-<!--                        <option value="낮음" th:selected="${user.activityLevel == '낮음'}">낮음</option>-->
-<!--                        <option value="보통" th:selected="${user.activityLevel == '보통'}">보통</option>-->
-<!--                        <option value="높음" th:selected="${user.activityLevel == '높음'}">높음</option>-->
-<!--                    </select>-->
-<!--                </div>-->
-<!--                <div class="info-row"><label for="medicalHistory">질병 이력:</label><textarea id="medicalHistory" name="medicalHistory" rows="2" th:text="${user.medicalHistory}"></textarea></div>-->
-<!--                <div class="info-row"><label for="allergy">알레르기:</label><textarea id="allergy" name="allergy" rows="2" th:text="${user.allergy}"></textarea></div>-->
-<!--                <div style="text-align: right; margin-top: 10px;">-->
-<!--                    <button type="button" id="cancelBtn">취소</button>-->
-<!--                    <input type="submit" value="저장" style="padding: 8px 16px; background-color: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer;">-->
-<!--                </div>-->
-<!--            </form>-->
-<!--        </div>-->
+        <!--        &lt;!&ndash; 추가 정보 &ndash;&gt;-->
+        <!--        <div class="additional-info-box">-->
+        <!--            <h3>추가 정보</h3>-->
+        <!--            <div id="viewAdditionalInfo" th:if="${userInfo != null}">-->
+        <!--                <div><b>기초대사량:</b> <span id="bmr1" th:text="${user.bmr}"></span></div>-->
+        <!--                <div><b>권장칼로리:</b> <span th:text="${user.recommendedCalorie}"></span></div>-->
+        <!--                <div><b>목표체중:</b> <span th:text="${user.targetWeight}"></span></div>-->
+        <!--                <div><b>혈압:</b> <span th:text="${user.bloodPressure}"></span></div>-->
+        <!--                <div><b>당뇨여부:</b> <span th:text="${user.diabetes}"></span></div>-->
+        <!--                <div><b>흡연여부:</b> <span th:text="${user.smoking}"></span></div>-->
+        <!--                <div><b>체지방률:</b> <span th:text="${user.bodyFat}"></span></div>-->
+        <!--                <div><b>근육량:</b> <span th:text="${user.muscleMass}"></span></div>-->
+        <!--                <div><b>활동 수준:</b> <span th:text="${user.activityLevel}"></span></div>-->
+        <!--                <div><b>질병 이력:</b> <span th:text="${user.medicalHistory}"></span></div>-->
+        <!--                <div><b>알레르기:</b> <span th:text="${user.allergy}"></span></div>-->
+        <!--                <button id="editBtn" type="button">추가 정보 설정하기</button>-->
+        <!--            </div>-->
+        <!--            <form id="editAdditionalInfo" th:action="@{/updateInfo}" method="post" style="display:none; margin-top: 20px;">-->
+        <!--                <div class="info-row"><label for="bmr">기초대사량:</label><input id="bmr" type="number" name="bmr" th:value="${user.bmr}" required/></div>-->
+        <!--                <div class="info-row"><label for="recommendedCalorie">권장칼로리:</label><input id="recommendedCalorie" type="number" name="recommendedCalorie" th:value="${user.recommendedCalorie}" required/></div>-->
+        <!--                <div class="info-row"><label for="targetWeight">목표체중:</label><input id="targetWeight" type="number" name="targetWeight" th:value="${user.targetWeight}" required/></div>-->
+        <!--                <div class="info-row"><label for="bloodPressure">혈압:</label><input id="bloodPressure" type="text" name="bloodPressure" th:value="${user.bloodPressure}" required/></div>-->
+        <!--                <div class="info-row"><label for="diabetes">당뇨여부:</label>-->
+        <!--                    <select id="diabetes" name="diabetes" th:value="${user.diabetes}">-->
+        <!--                        <option value="없음" th:selected="${user.diabetes == '없음'}">없음</option>-->
+        <!--                        <option value="있음" th:selected="${user.diabetes == '있음'}">있음</option>-->
+        <!--                    </select>-->
+        <!--                </div>-->
+        <!--                <div class="info-row"><label for="smoking">흡연여부:</label>-->
+        <!--                    <select id="smoking" name="smoking" th:value="${user.smoking}">-->
+        <!--                        <option value="비흡연" th:selected="${user.smoking == '비흡연'}">비흡연</option>-->
+        <!--                        <option value="흡연" th:selected="${user.smoking == '흡연'}">흡연</option>-->
+        <!--                    </select>-->
+        <!--                </div>-->
+        <!--                <div class="info-row"><label for="bodyFat">체지방률:</label><input id="bodyFat" type="number" step="0.1" name="bodyFat" th:value="${user.bodyFat}" required/></div>-->
+        <!--                <div class="info-row"><label for="muscleMass">근육량:</label><input id="muscleMass" type="number" step="0.1" name="muscleMass" th:value="${user.muscleMass}" required/></div>-->
+        <!--                <div class="info-row"><label for="activityLevel">활동 수준:</label>-->
+        <!--                    <select id="activityLevel" name="activityLevel" th:value="${user.activityLevel}">-->
+        <!--                        <option value="낮음" th:selected="${user.activityLevel == '낮음'}">낮음</option>-->
+        <!--                        <option value="보통" th:selected="${user.activityLevel == '보통'}">보통</option>-->
+        <!--                        <option value="높음" th:selected="${user.activityLevel == '높음'}">높음</option>-->
+        <!--                    </select>-->
+        <!--                </div>-->
+        <!--                <div class="info-row"><label for="medicalHistory">질병 이력:</label><textarea id="medicalHistory" name="medicalHistory" rows="2" th:text="${user.medicalHistory}"></textarea></div>-->
+        <!--                <div class="info-row"><label for="allergy">알레르기:</label><textarea id="allergy" name="allergy" rows="2" th:text="${user.allergy}"></textarea></div>-->
+        <!--                <div style="text-align: right; margin-top: 10px;">-->
+        <!--                    <button type="button" id="cancelBtn">취소</button>-->
+        <!--                    <input type="submit" value="저장" style="padding: 8px 16px; background-color: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer;">-->
+        <!--                </div>-->
+        <!--            </form>-->
+        <!--        </div>-->
+
 
         <!-- 추천 운동 -->
         <div class="exercise-box">
             <h3>저장한 운동</h3>
+
+            <!-- 정렬 버튼 -->
             <div class="sort-buttons">
-                <button id="sort_cal">칼로리별</button>
-                <button id="sort_time">시간별</button>
+                <button id="sort_cal"> 칼로리별</button>
+                <button id="sort_time"> 시간별</button>
                 <button id="delete">삭제</button>
-                <button id="delete_all" style="display: none;">확인</button>
             </div>
+
             <ul class="exercise-list" id="exerciseList">
-                <li th:if="${#lists.isEmpty(routineList)}">
-                    <span>저장한 운동이 없습니다.</span>
-                </li>
+                <li th:if="${#lists.isEmpty(routineList)}"
+                >   <span>저장한 운동이 없습니다.</span></li>
                 <li th:each="routine : ${routineList}">
-                    <input type="checkbox" class="checkbox" th:attr="data-id=${routine.routineid}" style="display: none;">
-                    <span th:text="'운동명 : ' + ${routine.routineName != null} ? ${routine.routineName} : ${routine.routine} + ' / ' + ${routine.totalTime != null} ? ${routine.totalTime} : ${routine.time} + '분 / ' + ${routine.totalCalorie != null} ? ${routine.totalCalorie} : ${routine.calorie} + 'kcal'"></span>
+                    <input type="checkbox" class="checkbox">
+                    <span th:text="'운동명 : ' + ${routine.routine} + ' / ' + ${routine.time} + '분 / ' + ${routine.calorie} + 'kcal'"></span>
                 </li>
             </ul>
+            <div class="sort-buttons">
+                <button id="delete_all">확인</button>
+            </div>
         </div>
     </main>
 
-    <!-- 프로필 요약 -->
+    <!-- 사용자 요약 -->
     <aside class="profile-summary">
-        <img src="/image/profile_icon.png" alt="프로필 아이콘">
         <div class="username" th:text="${user.name}">홍길동</div>
-        <div class="user-desc"><span>닉네임:</span> <span th:text="${user.nickname}"></span></div>
+        <div class="user-desc" ><span>닉네임:</span> <span th:text="${user.nickname}"></span></div>
+
         <div class="menu-group">
             <h4>계정</h4>
             <ul>
                 <li>내 정보 관리</li>
             </ul>
         </div>
+
         <div class="menu-group">
             <h4>글 관리</h4>
             <ul>
@@ -403,13 +411,15 @@
             </ul>
         </div>
     </aside>
+
 </div>
 </body>
+</html>
 <script th:inline="javascript">
     let routines = [[${routineList}]];
     let deleteset = false;
 
-    // BMR 계산
+     // BMR 계산
     window.onload = function() {
         let gender = [[${user.gender}]];
         let weight = [[${user.weight_kg != null} ? ${user.weight_kg} : ${user.weight}]];
@@ -417,7 +427,6 @@
         let birth = [[${user.birth}]];
         let currentYear = new Date().getFullYear();
         let age = currentYear - parseInt(birth.substr(0, 4));
-        alert("zz")
         let bmr;  // 여기서 선언
         if (gender === "female") {
             bmr = (10 * weight) + (6.25 * height) - (5 * age) - 161;
@@ -429,32 +438,42 @@
 
         // 삭제 버튼 초기 설정
         document.getElementById("delete_all").style.display = 'none';
+
+        let deleteset = false;
+        let deletebtn = document.getElementById("delete_all");
+        deletebtn.style.display = 'none';
+
+        document.getElementById("delete").addEventListener("click", ()=>{
+            deleteset = !deleteset;
+            const checkboxes = document.querySelectorAll('.checkbox');
+            checkboxes.forEach(cb=>{
+                cb.style.display = deleteset ? 'inline-block' : 'none';
+            })
+            if(deleteset===false){
+                document.getElementById('delete').innerText = "삭제";
+            }else{
+                document.getElementById('delete').innerText = "취소";
+            }
+            deletebtn.style.display = deleteset ? 'inline-block' : 'none';
+        })
     };
 
     function renderRoutineList() {
         const ul = document.getElementById("exerciseList");
         ul.innerHTML = "";
 
-        if (routines.length === 0) {
-            const li = document.createElement("li");
-            li.innerHTML = "<span>저장한 운동이 없습니다.</span>";
-            ul.appendChild(li);
-            return;
-        }
-
         routines.forEach(routine => {
             const li = document.createElement("li");
+
             const checkbox = document.createElement("input");
             checkbox.type = "checkbox";
             checkbox.classList.add("checkbox");
             checkbox.style.display = deleteset ? "inline-block" : "none";
-            checkbox.setAttribute("data-id", routine.routineid || routine.id);
+
+            checkbox.setAttribute("data-id", routine.routineid);
 
             const span = document.createElement("span");
-            const routineName = routine.routineName || routine.routine;
-            const time = routine.totalTime || routine.time;
-            const calorie = routine.totalCalorie || routine.calorie;
-            span.textContent = `운동명 : ${routineName} / ${time}분 / ${calorie}kcal`;
+            span.textContent = `운동명 : ${routine.routine} / ${routine.time}분 / ${routine.calorie}kcal`;
 
             li.appendChild(checkbox);
             li.appendChild(span);
@@ -462,66 +481,52 @@
         });
     }
 
-    // 최초 렌더링
+    // 최초 렌더링 (서버에서 받아온 데이터 표시)
     renderRoutineList();
 
-    // 칼로리 내림차순 정렬
+    // 칼로리 내림차순 정렬 버튼
     document.getElementById("sort_cal").addEventListener("click", () => {
-        routines.sort((a, b) => (b.totalCalorie || b.calorie) - (a.totalCalorie || a.calorie));
+        routines.sort((a, b) => b.calorie - a.calorie);
         renderRoutineList();
     });
 
-    // 시간 내림차순 정렬
+    // 시간 내림차순 정렬 버튼
     document.getElementById("sort_time").addEventListener("click", () => {
-        routines.sort((a, b) => (b.totalTime || b.time) - (a.totalTime || a.time));
+        routines.sort((a, b) => b.time - a.time);
         renderRoutineList();
     });
-
-    // 삭제 토글
-    document.getElementById("delete").addEventListener("click", () => {
-        deleteset = !deleteset;
-        const checkboxes = document.querySelectorAll('.checkbox');
-        checkboxes.forEach(cb => {
-            cb.style.display = deleteset ? 'inline-block' : 'none';
-        });
-        document.getElementById('delete').innerText = deleteset ? "취소" : "삭제";
-        document.getElementById('delete_all').style.display = deleteset ? 'inline-block' : 'none';
-        renderRoutineList();
-    });
-
-    // 삭제 확인
-    document.getElementById("delete_all").addEventListener("click", () => {
-        if (confirm("선택한 운동루틴을 삭제하시겠습니까?")) {
-            const selected = document.querySelectorAll('.checkbox:checked');
-            const deletelist = Array.from(selected).map(cb => cb.getAttribute('data-id'));
-
-            $.ajax({
-                type: "POST",
-                url: "/api/exercise/deleteList",
-                traditional: true,
-                data: { deletelist: deletelist },
-                dataType: "json",
-                success: function(res) {
-                    console.log("응답내용", res);
-                    if (res === true) {
-                        alert("삭제했습니다.");
-                        routines = routines.filter(r => !deletelist.includes(r.routineid || r.id));
-                        renderRoutineList();
-                        document.getElementById('delete').innerText = "삭제";
-                        document.getElementById('delete_all').style.display = 'none';
-                        deleteset = false;
-                    } else {
-                        alert("삭제 실패");
-                    }
-                },
-                error: function() {
-                    alert("서버 오류가 발생했습니다.");
-                }
-            });
-        } else {
-            alert("취소했습니다.");
+    document.getElementById("delete_all").addEventListener("click", ()=>{
+        if(confirm("선택한 운동루틴을 삭제하시겠습니까?")){
+        const selected = document.querySelectorAll('.checkbox:checked');
+       const deletelist = [];
+       for(let i=0; i<selected.length; i++){
+           let cb = selected[i];
+           let id = cb.getAttribute('data-id');
+           deletelist.push(id);
         }
-    });
+       $.ajax({
+           type: "POST",
+           url : "/api/exercise/deleteList",
+           traditional: true,
+           data: { deletelist: deletelist },
+           dataType : "json",
+           success : function (res) {
+
+               console.log("응답내용",res)
+               if(res === true){
+                   alert("삭제했습니다.")
+                   location.reload();
+               }else{
+                   alert("실패");
+               }
+           }
+       })
+
+        }else{
+            alert("취소했습니다.")
+        }
+
+    })
 
     // 추가 정보 편집 토글
     document.getElementById('editBtn').addEventListener('click', () => {
@@ -534,4 +539,5 @@
         document.getElementById('editAdditionalInfo').style.display = 'none';
         document.getElementById('viewAdditionalInfo').style.display = 'block';
     });
+
 </script>

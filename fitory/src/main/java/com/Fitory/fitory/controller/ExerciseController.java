@@ -61,7 +61,7 @@ public class ExerciseController {
         SessionUserDTO userInfo = (SessionUserDTO) session.getAttribute("userInfo");
         String id = userInfo.getId();
         User user = userService.findById(id).orElseThrow(() -> new NoSuchElementException("user not found"));
-        int weight = Integer.getInteger(user.getWeight());
+        int weight = Integer.parseInt(user.getWeight());
         int cal = userset.getCal();
         int e_time = userset.getTime();
 

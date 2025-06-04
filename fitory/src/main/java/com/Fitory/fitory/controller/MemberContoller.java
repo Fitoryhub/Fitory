@@ -2,7 +2,11 @@ package com.Fitory.fitory.controller;
 
 import com.Fitory.fitory.dto.SessionUserDTO;
 import com.Fitory.fitory.dto.UserDTO;
+import com.Fitory.fitory.entity.ExerciseRoutine;
+import com.Fitory.fitory.entity.User;
 import com.Fitory.fitory.repository.UserRepository;
+import com.Fitory.fitory.service.ExerciseRoutineService;
+import com.Fitory.fitory.service.UserService;
 import com.Fitory.fitory.service.UserServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -13,7 +17,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -21,8 +28,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class MemberContoller {
 
     @Autowired
-    UserRepository userRepository;
-
+    UserService userService;
+    @Autowired
+    ExerciseRoutineService exerciseRoutineService;
     @Autowired
     UserServiceImpl userServiceImpl;
 
@@ -76,6 +84,11 @@ public class MemberContoller {
         if (userInfo == null) {
             return "redirect:/login"; // 로그인 안 된 상태일 경우
         }
+
+        List<ExerciseRoutine> routineList = exerciseRoutineService.findByUserID(userInfo.getId());
+        Optional<User> user = userService.findById(userInfo.getId());
+        user.ifPresent(u -> model.addAttribute("user", u));
+        model.addAttribute("routineList", routineList);
         udto = userServiceImpl.userInfo(userInfo.getId());
         model.addAttribute("user", udto);
         return "mypage";
