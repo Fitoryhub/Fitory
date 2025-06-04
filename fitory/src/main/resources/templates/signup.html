@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>회원가입 - Fitory</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Noto Sans KR', sans-serif;
+    }
+
+    body {
+      background-color: rgb(249, 250, 251); 
+      min-width: 1200px;
+    }
+
+    header {
+      height: 80px;
+      background-color: rgb(16, 185, 129); 
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      color: rgb(255, 255, 255);
+    }
+
+    #logo img {
+      height: 60px;
+    }
+
+    header a {
+      color: rgb(255, 255, 255);
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    main {
+      max-width: 600px;
+      margin: 60px auto;
+      background-color: rgb(255, 255, 255);
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    }
+
+    main h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: rgb(6, 95, 70); 
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    label {
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    input, select {
+      padding: 12px;
+      margin-bottom: 20px;
+      border: 1px solid rgb(209, 213, 219); 
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: rgb(16, 185, 129); 
+      box-shadow: 0 0 0 2px rgb(167, 243, 208); 
+    }
+
+    .radio-group {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 20px;
+      align-items: center;
+    }
+
+    .radio-group input {
+      margin-right: 6px;
+    }
+
+    .submit-btn {
+      background-color: rgb(16, 185, 129); 
+      color: rgb(255, 255, 255);
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .submit-btn:hover {
+      background-color: rgb(5, 150, 105); 
+    }
+
+    .footer {
+      margin-top: 80px;
+      background-color: rgb(31, 41, 55); 
+      height: 150px;
+      color: rgb(209, 213, 219); 
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+
+  </style>
+</head>
+<body>
+
+  <header>
+    <div id="logo">
+      <img src="/image/logo2.png" alt="Fitory 로고" />
+    </div>
+    <a href="/">홈으로</a>
+  </header>
+
+  <main>
+    <h2>회원가입</h2>
+    <form action="/user" method="post" onsubmit="return sighup();" >
+      <label for="userid">아이디</label>
+      <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 20px;">
+        <input type="text" id="userid" name="id" placeholder="아이디를 입력해주세요 ( 영문 + 숫자 6~20글자 )" required style="flex: 1;" />
+        <button type="button" onclick="idChk()" style="padding: 12px 16px; margin-top: -20px; background-color: #10b981; color: white; border: none; border-radius: 8px; font-size: 14px; cursor: pointer;">
+          중복확인
+        </button>
+      </div>
+      <p id="idCheckResult" style="color: red; font-size: 14px; margin-top: -30px; margin-bottom: 10px;"></p>
+
+      <label for="password">비밀번호</label>
+      <input type="password" id="password" name="password" placeholder="비밀번호를 입력해주세요 (영문 + 숫자 8~16글자)" onchange="passChk()" required minlength="6" />
+      <p id="passchk1" style="color: red; font-size: 14px; margin-top: -15px; margin-bottom: 10px;"></p>
+
+      <label for="confirm">비밀번호 확인</label>
+      <input type="password" id="confirm" name="confirm" placeholder="비밀번호를 입력해주세요 (영문 + 숫자 8~16글자)" onchange="passChk()" required />
+      
+      <p id="passchk2" style="color: red; font-size: 14px; margin-top: -15px; margin-bottom: 10px;"></p>
+
+      <label for="email">이메일</label>
+      <input type="email" id="email" name="email" placeholder="이메일을 입력해주세요" onchange="emailChk()" />
+      <p id="emailChk" style="color: red; font-size: 14px; margin-top: -15px; margin-bottom: 10px;"></p>
+
+      <label for="nickname">별명</label>
+      <input type="text" id="nickname" name="nickname" placeholder="사용하실 별명을 입력해주세요" onchange="nickChk()" required />
+      <p id="nickCheckResult" style="color: red; font-size: 14px; margin-top: -15px; margin-bottom: 10px;"></p>
+
+      <label for="name">이름</label>
+      <input type="text" id="name" name="name" placeholder="이름을 입력해주세요" required />
+
+      <label>성별</label>
+      <div class="radio-group">
+        <label><input type="radio" name="gender" value="남성" required /> 남성</label>
+        <label><input type="radio" name="gender" value="여성" /> 여성</label>
+      </div>
+
+      <label for="birth">생년월일</label>
+      <input type="date" id="birth" name="birth" required />
+
+      <label for="height">키 (cm)</label>
+      <input type="number" id="height" name="height_cm" required min="0" step="0.1" />
+
+      <label for="weight">몸무게 (kg)</label>
+      <input type="number" id="weight" name="weight_kg" required min="0" step="0.1" />
+
+      <button type="submit" class="submit-btn">가입하기</button>
+    </form>
+  </main>
+
+
+  <footer class="footer">
+    © 2025 Fitory. 건강한 삶을 위한 파트너
+  </footer>
+
+</body>
+</html>
+
+<script>
+  let chk = [false,false,false,false,false];
+  
+  function passChk(){
+    let a = document.getElementById("password").value;
+    let b = document.getElementById("confirm").value;
+    let c = document.getElementById("passchk1");
+    let d = document.getElementById("passchk2");
+
+    const pass_Chk = /^(?=.*\d)(?=.*[A-Za-z])([a-zA-Z\d]{8,16})$/;
+
+    if(!pass_Chk.test(a)){
+      c.style.color = "red";
+      c.textContent = "※ 비밀번호가 형식에 맞지 않습니다. 다시 입력해주세요.";
+      chk[1] = false;
+    }else{
+       c.textContent = "";
+       chk[1] = true;
+    }
+
+    if(a!="" && b!=""){
+      if(a==b){
+        d.textContent = ""
+        chk[2] = true;
+      }else{
+        d.textContent = "※ 비밀번호가 일치하지 않습니다"
+        chk[2] = false;
+      }
+    }else{
+      d.textContent = ""
+      chk[2] = false;
+    }
+  }
+
+
+  function nickChk(){
+    const inputnick = document.getElementById("nickname").value.trim();
+    const result = document.getElementById("nickCheckResult");
+    if (!inputnick) {
+      result.style.color = "red";
+      result.textContent = "※ 별명을 입력해주세요.";
+      chk[4] = false;
+      return;
+    }
+
+    fetch(`/nickChk?nickname=${inputnick}`)
+    .then(res => res.json())
+    .then(data => {
+      if (data.exists) {
+        result.style.color = "red";
+        result.textContent = "이미 사용중인 별명입니다.";
+        chk[4] = false;
+      } else {
+        result.style.color = "green";
+        result.textContent = "사용가능한 별명 입니다.";
+        chk[4] = true;
+      }
+    });
+  }
+
+  function emailChk(){
+    const inputEmail = document.getElementById("email").value.trim();
+    const result = document.getElementById("emailChk");
+    const email_Check = /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/;
+   
+    if (!inputEmail) {
+      result.style.color = "red";
+      result.textContent = "이메일을 입력해주세요.";
+      chk[3] = false;
+      return;
+    } else if(!email_Check.test(inputEmail)){
+      result.style.color = "red";
+      result.textContent = "※ 이메일 형식이 올바르지 않습니다. 다시 입력해 주세요";
+      chk[3] = false;
+      return;
+    } else{
+      result.textContent = "";
+      chk[3] = true;
+    }
+  }
+
+
+  function idChk() {
+    const inputId = document.getElementById("userid").value.trim();
+    const result = document.getElementById("idCheckResult");
+    const id_Check = /^[a-zA-Z0-9]{6,20}$/;
+
+
+    if (!inputId) {
+      result.style.color = "red";
+      result.textContent = "아이디를 입력해주세요.";
+      chk[0] = false;
+      return;
+    } else if(!id_Check.test(inputId)){
+      result.style.color = "red";
+      result.textContent = "※ 아이디 형식이 올바르지 않습니다. 다시 입력해 주세요";
+      chk[0] = false;
+      return;
+    }
+
+  
+  // 비동기 요청
+  fetch(`/idChk?id=${inputId}`)
+    .then(res => res.json())
+    .then(data => {
+      if (data.exists) {
+        result.style.color = "red";
+        result.textContent = "이미 사용중인 아이디입니다.";
+        chk[0] = false;
+      } else {
+        result.style.color = "green";
+        result.textContent = "사용가능한 아이디 입니다.";
+        chk[0] = true;
+      }
+    });
+
+  }
+  
+  function sighup(){
+    if(!chk[0]){
+      document.getElementById('userid').focus();
+      return false;
+    } else if(!chk[1]){
+      document.getElementById('password').focus();
+       return false;
+    } else if(!chk[2]){
+      document.getElementById('confirm').focus();
+       return false;
+    } else if(!chk[3]){
+      document.getElementById('email').focus();
+       return false;
+    } else if(!chk[4]){
+      document.getElementById('nickname').focus();
+       return false;
+    } else{
+      return true;
+    }
+  }
+
+</script>
