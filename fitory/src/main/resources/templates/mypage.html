@@ -378,12 +378,7 @@
             </div>
 
             <ul class="exercise-list" id="exerciseList">
-                <li th:if="${#lists.isEmpty(routineList)}"
-                >   <span>저장한 운동이 없습니다.</span></li>
-                <li th:each="routine : ${routineList}">
-                    <input type="checkbox" class="checkbox">
-                    <span th:text="'운동명 : ' + ${routine.routine} + ' / ' + ${routine.time} + '분 / ' + ${routine.calorie} + 'kcal'"></span>
-                </li>
+
             </ul>
             <div class="sort-buttons">
                 <button id="delete_all">확인</button>
@@ -421,25 +416,9 @@
 
      // BMR 계산
     window.onload = function() {
-        let gender = [[${user.gender}]];
-        let weight = [[${user.weight_kg != null} ? ${user.weight_kg} : ${user.weight}]];
-        let height = [[${user.height_cm != null} ? ${user.height_cm} : ${user.height}]];
-        let birth = [[${user.birth}]];
-        let currentYear = new Date().getFullYear();
-        let age = currentYear - parseInt(birth.substr(0, 4));
-        let bmr;  // 여기서 선언
-        if (gender === "female") {
-            bmr = (10 * weight) + (6.25 * height) - (5 * age) - 161;
-        } else {
-            bmr = (10 * weight) + (6.25 * height) - (5 * age) + 5;
-        }
-        document.getElementById('bmr1').textContent = bmr.toFixed(2);
-        alert(bmr.toFixed(2));
 
         // 삭제 버튼 초기 설정
         document.getElementById("delete_all").style.display = 'none';
-
-        let deleteset = false;
         let deletebtn = document.getElementById("delete_all");
         deletebtn.style.display = 'none';
 
@@ -456,15 +435,38 @@
             }
             deletebtn.style.display = deleteset ? 'inline-block' : 'none';
         })
+
+
+
+        let gender = [[${user.gender}]];
+        let weight = [[${user.weight_kg != null} ? ${user.weight_kg} : ${user.weight}]];
+        let height = [[${user.height_cm != null} ? ${user.height_cm} : ${user.height}]];
+        let birth = [[${user.birth}]];
+        let currentYear = new Date().getFullYear();
+        let age = currentYear - parseInt(birth.substr(0, 4));
+        let bmr;  // 여기서 선언
+        if (gender === "female") {
+            bmr = (10 * weight) + (6.25 * height) - (5 * age) - 161;
+        } else {
+            bmr = (10 * weight) + (6.25 * height) - (5 * age) + 5;
+        }
+        document.getElementById('bmr1').textContent = bmr.toFixed(2);
+        alert(bmr.toFixed(2));
     };
 
     function renderRoutineList() {
         const ul = document.getElementById("exerciseList");
         ul.innerHTML = "";
+        if(routines.length===0){
+            const li = document.createElement("li");
+            const h2 = document.createElement("h2");
+            h2.textContent="저장한 운동이 없습니다.";
+            li.appendChild(h2);
+            ul.appendChild(li);
+        }
 
         routines.forEach(routine => {
             const li = document.createElement("li");
-
             const checkbox = document.createElement("input");
             checkbox.type = "checkbox";
             checkbox.classList.add("checkbox");
