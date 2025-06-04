@@ -9,8 +9,31 @@
             </div>
             <div style="background: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); width: 1000px; margin: 0 auto;">
                 <div style="margin-bottom: 20px;">
-                    <h3 style="margin-bottom: 10px;">먹은 음식</h3>
+                    <h3 style="margin-bottom: 10px;">음식명/대분류명(필수 X)</h3>
                     <input type="text" name="atefd" id="atefd" placeholder="음식명을 입력하세요" style="padding: 8px; width: 250px;">
+                    <select name="classification" id="classification" style="height: 35px; width: 100px;">
+                        <option value="none">---------------</option>
+                        <option value="튀김류">튀김류</option>
+                        <option value="찜류">찜류</option>
+                        <option value="찌개 및 전골류">찌개 및 전골류</option>
+                        <option value="죽 및 스프류">죽 및 스프류</option>
+                        <option value="밥류">밥류</option>
+                        <option value="면 및 만두류">면 및 만두류</option>
+                        <option value="국 및 탕류">국 및 탕류</option>
+                        <option value="전·적 및 부침류">전·적 및 부침류</option>
+                        <option value="볶음류">볶음류</option>
+                        <option value="조림류">조림류</option>
+                        <option value="나물·숙채류">나물·숙채류</option>
+                        <option value="생채·무침류">생채·무침류</option>
+                        <option value="장아찌·절임류">장아찌·절임류</option>
+                        <option value="음료 및 차류">음료 및 차류</option>
+                        <option value="수·조·어·육류">수·조·어·육류</option>
+                        <option value="장류, 양념류">장류, 양념류</option>
+                        <option value="과일류">과일류</option>
+                        <option value="유제품류 및 빙과류">유제품류 및 빙과류</option>
+                        <option value="두류, 견과 및 종실류">두류, 견과 및 종실류</option>
+                        <option value="곡류, 서류 제품">곡류, 서류 제품</option>
+                    </select>
                     <input type="button" value="검색" onclick="search()" style="padding: 8px 15px; background-color: #10b981; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer;">
                 </div>
                 <div id="searchlist" style="margin-bottom: 30px;"></div>
@@ -31,7 +54,7 @@
                 </div>
                 <table id="total" style="width: 100%; font-size: 20px; background-color: #f0fdf4; margin-top: 20px;">
                     <tr>
-                        <th><input type="checkbox" id="allchk"></th>
+                        <th><input type="checkbox" id="allchk" onclick="chkall()"></th>
                         <th style="width: 400px;">총성분</th>
                         <th style="width: 100px;" id="tcal">0</th>
                         <th style="width: 100px;" id="tcarbo">0</th>
@@ -49,8 +72,8 @@
 
             function search(){
                 let selectfd=$('#atefd').val();
-                console.log(selectfd);
-                getname(selectfd);
+                let selectclasification=$('#classification').val();
+                getname(selectfd,selectclasification);
             }
 
             function del(){
@@ -77,11 +100,35 @@
                 }
             }
 
+            function chkall(){
+                let chklist=document.getElementsByName('chklist');
+                let allchk=document.getElementById('allchk');
+                for(let i=0; i<chklist.length; i++){
+                    chklist[i].checked=allchk.checked;
+                }
+            }
+
+            function chkone(){
+                let chklist=document.getElementsByName('chklist');
+                let allchk=document.getElementById('allchk');
+                let checkedbox=0;
+                for(let i=0; i<chklist.length; i++){
+                    if(chklist[i].checked==true){
+                        checkedbox++;
+                    }
+                }
+                if(chklist.length==checkedbox){
+                    allchk.checked=true;
+                }else{
+                    allchk.checked=false;
+                }
+            }
+
             function add(index){
                 let data=document.getElementsByName("tmplist")[index].value;
                 let item=JSON.parse(decodeURIComponent(atob(data)));
                 let sentence1='<tr>';
-                sentence1+='<td style="width: 30px;"><input type="checkbox" name="chklist" value="'+btoa(encodeURIComponent(JSON.stringify(item)))+'"></td>'
+                sentence1+='<td style="width: 30px;"><input type="checkbox" name="chklist" value="'+btoa(encodeURIComponent(JSON.stringify(item)))+'" onclick="chkone()"></td>'
                 sentence1+='<td style="font-size: 16px; width: 370px;">'+item.FOOD_NM_KR+'</td>';
                 sentence1+='<td style="font-size: 16px; width: 100px;">'+item.AMT_NUM1+'</td>';
                 sentence1+='<td style="font-size: 16px; width: 100px;">'+item.AMT_NUM6+'</td>';
@@ -104,10 +151,16 @@
                 $('#tsod').html(tsod.toFixed(2));
                 $('#searchlist').html('');
                 $('#atefd').val('');
+                $('#classification').val('none');
             }
-
-            async function getname(foodname) {
-                let url=base+'/getFoodNtrCpntDbInq02?serviceKey='+servicekey+'&type=json&FOOD_NM_KR='+foodname+'&DB_CLASS_NM=품목대표';
+            
+            async function getname(foodname,selectclasification) {
+                let url=base+'/getFoodNtrCpntDbInq02?serviceKey='+servicekey
+                if(selectclasification=='none'){
+                    url+='&type=json&FOOD_NM_KR='+foodname+'&DB_CLASS_NM=품목대표';
+                }else{
+                    url+='&type=json&FOOD_NM_KR='+foodname+'&FOOD_CAT1_NM='+selectclasification+'&DB_CLASS_NM=품목대표';
+                }
                 try {
                     const response= await fetch(url);
                     const inform= await response.json();
