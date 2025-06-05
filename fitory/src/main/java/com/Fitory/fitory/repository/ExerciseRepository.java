@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
+
 public interface ExerciseRepository extends JpaRepository<Exercises, Integer> {
 
     List<Exercises> findByMetrank(int metrank);
