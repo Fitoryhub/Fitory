@@ -1,0 +1,20 @@
+
+<header th:fragment="header">
+    <link rel="stylesheet" href="/image/css/header.css" />
+    <div id="logo">
+        <img src="/image/logo2.png" alt="Fitory 로고" />
+    </div>
+    <nav class="headMenu">
+        <a href="/">홈</a>
+        <a href="#">식단</a>
+        <a href="#">운동</a>
+        <a href="#">건강정보</a>
+        <a href="/mypage" id="myPage">마이페이지</a>
+
+        <div class="user-info" th:if="${userInfo != null}">
+            <p class="nickname" th:text="${userInfo.nickname} + '님'"></p>
+            <a href="/logout" class="logout">로그아웃</a>
+        </div>
+        <a href="/login" th:if="${userInfo == null}">로그인</a>
+    </nav>
+</header>

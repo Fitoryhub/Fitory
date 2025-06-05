@@ -17,10 +17,9 @@
 
         body {
             background-color: #f9fafb;
-            padding: 40px 20px;
+            padding: 0;
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
+            margin: 0;
         }
 
         .container {
@@ -28,6 +27,11 @@
             gap: 40px;
             width: 100%;
             max-width: 1200px;
+            margin: 0 auto;
+        }
+        header{
+            margin-bottom: 50px;
+            overflow: hidden;
         }
 
         .left-panel {
@@ -197,8 +201,8 @@
 </head>
 
 <body>
+<div th:replace="~{top :: topHeader}"></div>
 <div class="container">
-
     <!-- 좌측 패널 -->
     <div class="left-panel">
         <!-- 유저 정보 -->
