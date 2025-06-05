@@ -33,6 +33,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDTO userInfo(String id) {
+        Optional<User> optionalUser2 = userRepository.findById(id);
+        UserDTO udto = new UserDTO();
+        if (optionalUser2.isPresent()) {
+            User user = optionalUser2.get();
+            udto.update_user(user);
+            return udto;
+        } else {
+            return null;
+        }
+    }
+
+    @Override
     public UserDTO login(String id) {
         Optional<User> optionalUser = userRepository.findById(id);
         UserDTO udto = new UserDTO();
@@ -43,5 +56,10 @@ public class UserServiceImpl implements UserService {
         } else {
             return null;
         }
+    }
+
+    @Override
+    public Optional<User> findById(String id) {
+        return userRepository.findById(id);
     }
 }

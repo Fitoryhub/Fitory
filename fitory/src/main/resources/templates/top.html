@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fitory 건강한 삶을 위한 첫 걸음</title>
+
+    <!-- 구글 폰트 또는 pretendard 사용 -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet" />
+
+    <style>
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+          font-family: 'Noto Sans KR', sans-serif;
+        }
+
+        header {
+          height: 80px;
+          background-color: #10b981; /* emerald-500 */
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 0 40px;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        #logo img {
+          height: 60px;
+        }
+
+        nav.headMenu {
+          display: flex;
+          gap: 25px;
+          align-items: center; /* 세로 가운데 정렬 */
+        }
+
+        nav.headMenu a {
+          color: white;
+          font-weight: 600;
+          text-decoration: none;
+          font-size: 18px;
+          transition: color 0.2s;
+          line-height: 1;
+          padding: 8px 0;
+        }
+
+        nav.headMenu a:hover {
+          color: #d1fae5; /* 밝은 그린 */
+        }
+
+        .user-info {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+
+        .user-info {
+          font-weight: 700;
+          font-size: 18px;
+          line-height: 1;
+          padding: 8px 0;
+          color: white;
+          white-space: nowrap;
+        }
+        .nickname {
+          text-decoration: underline;
+          font-weight: 700;
+          font-size: 18px;
+          line-height: 1;
+          padding: 8px 0;
+          color: white;
+          white-space: nowrap;
+        }
+
+        .user-info .logout {
+          font-weight: 500;
+          font-size: 16px;
+          color: white;
+          border: 1px solid white;
+          border-radius: 4px;
+          padding: 4px 10px;
+          transition: background-color 0.3s, color 0.3s;
+          cursor: pointer;
+        }
+
+        .user-info .logout:hover {
+          background-color: white;
+          color: #10b981;
+          text-decoration: none;
+        }
+
+    </style>
+</head>
+<body>
+
+<!-- 헤더 -->
+<header>
+    <div id="logo">
+        <img src="/image/logo2.png" alt="Fitory 로고" />
+    </div>
+    <nav class="headMenu">
+        <a href="/">홈</a>
+        <a href="/boardlist">게시판</a>
+        <a href="#">식단</a>
+        <a href="#">운동</a>
+        <a href="#">건강정보</a>
+        <a href="/mypage" id="myPage">마이페이지</a>
+
+        <div class="user-info" th:if="${userInfo != null}">
+            <p class="nickname" th:text="${userInfo.nickname} + '님'"></p>
+            <a href="/logout" class="logout">로그아웃</a>
+        </div>
+        <a href="/login" th:if="${userInfo == null}">로그인</a>
+    </nav>
+</header>
+</body>
+</html>

@@ -1,6 +1,9 @@
 package com.Fitory.fitory.service;
 
 import com.Fitory.fitory.dto.UserDTO;
+import com.Fitory.fitory.entity.User;
+
+import java.util.Optional;
 
 public interface UserService {
     public void usersave(UserDTO udto);
@@ -11,4 +14,7 @@ public interface UserService {
 
     public UserDTO login(String id);
 
+    public UserDTO userInfo(String id);
+
+    public Optional<User> findById(String id);
 }
