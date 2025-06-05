@@ -434,12 +434,6 @@
             </div>
 
             <ul class="exercise-list" id="exerciseList">
-                <li th:if="${#lists.isEmpty(routineList)}"
-                >   <span>저장한 운동이 없습니다.</span></li>
-                <li th:each="routine : ${routineList}">
-                    <input type="checkbox" class="checkbox">
-                    <span th:text="'운동명 : ' + ${routine.routine} + ' / ' + ${routine.time} + '분 / ' + ${routine.calorie} + 'kcal'"></span>
-                </li>
             </ul>
             <div class="sort-buttons">
                 <button id="delete_all">확인</button>
@@ -736,10 +730,16 @@
     function renderRoutineList() {
         const ul = document.getElementById("exerciseList");
         ul.innerHTML = "";
+        if(routines.length===0){
+            const li = document.createElement("li");
+            const h2 = document.createElement("h2");
+            h2.textContent="저장한 운동이 없습니다.";
+            li.appendChild(h2);
+            ul.appendChild(li);
+        }
 
         routines.forEach(routine => {
             const li = document.createElement("li");
-
             const checkbox = document.createElement("input");
             checkbox.type = "checkbox";
             checkbox.classList.add("checkbox");
