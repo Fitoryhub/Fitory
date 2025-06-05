@@ -1,0 +1,173 @@
+<section xmlns:th="http://www.thymeleaf.org"
+         xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+         layout:decorate="~{common}"
+         layout:fragment="content">
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
+    <style>
+        #diet_board {
+            min-height: 700px;
+            padding: 60px 5%;
+            background-color: #ffffff;
+        }
+
+        #diet_board h2 {
+            font-size: 32px;
+            margin-bottom: 20px;
+            color: #111827;
+        }
+
+        #resist{
+            background-color: #10b981; 
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-left: 30px;
+            transition: background-color 0.2s ease;
+        }
+
+        #diet_board button:hover {
+            background-color: #059669;
+        }
+
+        #diet_board table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 16px;
+            color: #374151;
+        }
+
+        #diet_board th,
+        #diet_board td {
+            padding: 14px 10px;
+            border-bottom: 1px solid #e5e7eb;
+            text-align: left;
+        }
+
+        #diet_board th {
+            background-color: #f0fdf4;
+            color: #065f46;
+            font-weight: 600;
+        }
+
+        #diet_board td {
+            background-color: #ffffff;
+        }
+
+        #title_table,
+        #content_table{
+            margin-top: 30px;
+            margin-left: 20px;
+            border-bottom: 2px solid #10b981;
+        }
+    
+        #content_table tr:hover {
+            background-color: #f9fafb;
+        }
+        .pagelist {
+            margin-top: 30px;
+            text-align: center;
+        }
+        .pagelist li {
+            display: inline-block;
+            padding: 8px 12px;            
+            margin: 0 5px;               
+            color: #10b981;
+            background-color: #f0fdf4;
+            border: 1px solid #d1fae5;
+            border-radius: 	6px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.2s, color 0.2s;
+            cursor: pointer;
+        }
+        .pagelist li:hover {
+            background-color: #10b981;
+            color: white;
+        }
+        .pagelist li.active {
+            background-color: #10b981;
+            color: white;
+            font-weight: bold;
+        }
+
+    </style>
+    <section id="diet_board">
+        <h2 style="font-size: 35px; margin-left: 30px;">식단게시판</h2>
+        <button id="resist" onclick="location.href='/diet/resist'">식단 등록</button>
+        
+        <table id="title_table">
+            <tr>
+                <th style="width: 30px;">번호</th>
+                <th style="width: 320px; text-align: center;">제목</th>
+                <th style="width: 70px;">작성자</th>
+                <th style="width: 200px; text-align: center;">작성일</th>
+                <th style="width: 70px;">추천수</th>
+                <th style="width: 70px; text-align: center;">조회수</th>
+            </tr>
+        </table>
+        <table id="content_table">
+        </table>
+        <div class="pagination">
+        </div>
+    </section>
+    <script>
+        window.onload=function(){
+            goPage(1);
+        }
+
+        function goPage(e){
+            let currpage=e;
+            $.ajax({
+                async:true,
+                url: '/diet/page',
+                method:'GET',
+                dataType:'json',
+                data:{
+                    page:e
+                },
+                success:function(data){
+                    let page=data.page;
+                    let dlist=data.dlist;
+                    let sentence1='';
+                    let sentence2='';
+                    $.each(dlist,function(index,item){
+                        sentence1+='<tr>';
+                        sentence1+='<td style="font-size: 15px; width: 30px;">'+item.diet_id+'</td>';
+                        sentence1+='<td style="font-size: 15px; width: 320px; text-decoration: none;">'+item.title+'</td>';
+                        sentence1+='<td style="font-size: 15px; width: 70px;">'+item.user_id+'</td>';
+                        sentence1+='<td style="font-size: 15px; width: 200px; text-align: center;">'+item.created_at+'</td>';
+                        sentence1+='<td style="font-size: 15px; width: 70px; text-align: center;">'+item.diet_like+'</td>';
+                        sentence1+='<td style="font-size: 15px; width: 70px; text-align: center;">'+item.diet_view+'</td>';
+                        sentence1+='</tr>';
+                    })
+                    sentence2+='<ol class="pagelist" id="pagebox">';
+                    if(page.prev){
+                        sentence2+='<li class="prev" style="display: inline-block;" onclick="goPage('+(page.startPage-10)+')">이전</li>';
+                    }
+                    for(let i=page.startPage; i<=page.endPage; i++){
+                        if(i==e){
+                             sentence2+='<li class="active" style="display: inline-block;" onclick="goPage('+i+')">'+i+'</li>';
+                        }else{
+                             sentence2+='<li class="page" style="display: inline-block;" onclick="goPage('+i+')">'+i+'</li>';
+                        }
+                    }
+                    if(page.next){
+                        sentence2+='<li class="next" style="display: inline-block;" onclick="goPage('+(page.startPage+10)+')">다음</li>';
+                    }
+                    sentence2+='</ol>';
+                    $('#content_table').html(sentence1);
+                    $('.pagination').html(sentence2);
+                },
+                error:function(data){
+                    console.log(data);
+                    alert('오류');
+                }
+            })
+        }
+    </script>
+</section>
