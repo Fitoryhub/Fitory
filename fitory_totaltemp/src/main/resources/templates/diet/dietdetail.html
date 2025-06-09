@@ -79,7 +79,7 @@
     <section id="detail_view">
         <table id="detail_content">
             <tr>
-                <td><h2 th:text="${diet.title}" >제목</h2></td>
+                <td colspan="4"><h2 th:text="${diet.title}" >제목</h2></td>
             </tr>
             <tr>
                 <td th:text="'작성자: '+${diet.user_id}">작성자</td>
@@ -102,7 +102,7 @@
                 <td th:if="${diet.goal_type=='MAINTAIN'}">목표: 유지</td>
             </tr>
             <tr>
-                <td colspan="3" style="vertical-align: top;" th:text="${diet.explanation}">작성내용</td>
+                <td colspan="3" style="vertical-align: top; width: 510px;" th:text="${diet.explanation}">작성내용</td>
                 <td>
                     <table id="diet_list">
                         <tr>

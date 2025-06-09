@@ -222,7 +222,7 @@
             let templist=$('.ftchk');
             $.each(templist,function(index){
                 if($(this).is(":checked")==true){
-                    if(fseleclist.length<6){
+                    if(fseleclist.length<20){
                         fseleclist.push(fcurrlist[$(this).val()]);
                         let tempjson=btoa(encodeURIComponent(JSON.stringify(fcurrlist[$(this).val()])));
                         $('#sel_food').append('<input type="checkbox" name="selchk" value='+fcurrlist[$(this).val()].calories+'>')
