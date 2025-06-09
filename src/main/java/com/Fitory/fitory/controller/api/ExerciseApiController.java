@@ -27,7 +27,6 @@ public class ExerciseApiController {
         Integer time = (Integer) session.getAttribute("time");
         if (session.getAttribute("elist") != null) {
         elist = (List<Exercises>) session.getAttribute("elist");
-        System.out.println(elist.size()+"elist size");
         }else{
             System.out.println("elist는 null입니당 헤헤");
         }
@@ -40,9 +39,6 @@ public class ExerciseApiController {
 
     @PostMapping("/deleteList") //
     public boolean deleteList(@RequestParam List<Integer> deletelist) {
-
-        System.out.println("삭제할 ID들: " + deletelist);
-
         for(int i=0;i<deletelist.size();i++){
            boolean result = exerciseRoutineService.deleteByroutineid(deletelist.get(i));
            if(!result){

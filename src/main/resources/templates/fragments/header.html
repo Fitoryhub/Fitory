@@ -1,0 +1,52 @@
+<!-- /templates/fragments/header.html -->
+<header>
+    <style>
+        header {
+            height: 80px;
+            background-color: #10b981;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            flex-shrink: 0;
+            position: relative;
+            z-index: 10;
+        }
+        #logo img {
+            height: 60px;
+        }
+        nav.headMenu {
+            display: flex;
+            gap: 25px;
+        }
+        nav.headMenu a,
+        nav.headMenu span {
+            color: white;
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 18px;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+        }
+        nav.headMenu a:hover {
+            color: #d1fae5;
+        }
+    </style>
+
+    <div id="logo">
+        <img alt="Fitory 로고" src="/image/logo2.png" />
+    </div>
+    <nav class="headMenu">
+        <span th:if="${session.user != null}" th:text="${session.user.nickname} + '님, 환영합니다!'"></span>
+        <a href="#">홈</a>
+        <a href="#">식단</a>
+        <a href="#">운동</a>
+        <a href="#">건강정보</a>
+        <a href="/mypage" id="myPage">마이페이지</a>
+        <a href="/loginForm" th:if="${session.user == null}">로그인</a>
+        <a href="/logOut" th:if="${session.user != null}">로그아웃</a>
+        <a href="/joinForm" th:if="${session.user == null}">회원가입</a>
+    </nav>
+</header>

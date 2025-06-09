@@ -10,24 +10,47 @@
     <style>
         * {
             box-sizing: border-box;
+            font-family: 'Noto Sans KR', sans-serif;
             margin: 0;
             padding: 0;
-            font-family: 'Noto Sans KR', sans-serif;
         }
 
+        /* body에서 flex 제거 */
         body {
-            background-color: #f9fafb;
-            padding: 40px 20px;
+            background-color: white;
+            padding: 0;
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
         }
 
+        /* 헤더 고정, 상단 전체 너비 */
+        header {
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 100;
+            height: 80px;
+            background-color: #10b981;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            flex-shrink: 0;
+            color: white;
+            font-weight: bold;
+            font-size: 24px;
+        }
+
+        /* 본문 컨테이너는 헤더 아래로 위치 */
         .container {
+            margin-top: 10px;
             display: flex;
             gap: 40px;
             width: 100%;
-            max-width: 1200px;
+            max-width: 1300px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .left-panel {
@@ -37,45 +60,37 @@
             gap: 30px;
         }
 
-        .right-panel {
-            flex: 3;
+        .card {
             background-color: #ffffff;
-            border-radius: 16px;
             padding: 30px;
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
-            height: 930px;
+            border-radius: 20px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
         }
 
-        .user-info {
-            background-color: #e0f2fe;
-            border-radius: 16px;
-            padding: 30px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        .user-info.card {
+            background-color: #F9FAFB;
+        }
+
+        .filter-box.card {
+            background-color: #ffffff;
         }
 
         .user-info h2 {
             font-size: 24px;
-            color: #0369a1;
-            margin-bottom: 20px;
+            color: #111;
+            margin-bottom: 16px;
         }
 
         .user-info p {
             font-size: 18px;
             margin-bottom: 10px;
-            color: #1e3a8a;
-        }
-
-        .filter-box {
-            background-color: white;
-            border-radius: 16px;
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
-            padding: 30px;
+            color: #222;
         }
 
         .filter-box h2 {
-            font-size: 26px;
-            color: #111827;
-            margin-bottom: 30px;
+            font-size: 22px;
+            color: #333;
+            margin-bottom: 24px;
             text-align: center;
         }
 
@@ -86,17 +101,18 @@
         label {
             display: block;
             margin-bottom: 8px;
-            font-weight: 600;
-            color: #374151;
+            font-weight: bold;
+            color: #444;
         }
 
         select {
             width: 100%;
             padding: 12px;
-            border-radius: 10px;
-            border: 1px solid #d1d5db;
-            background-color: #f9fafb;
+            border-radius: 12px;
+            border: 1px solid #ccc;
+            background-color: #F1F9FF;
             font-size: 16px;
+            color: #333;
         }
 
         button {
@@ -104,36 +120,49 @@
             padding: 14px;
             background-color: #10b981;
             color: white;
-            font-weight: 600;
+            font-weight: bold;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             font-size: 16px;
             cursor: pointer;
-            transition: background-color 0.2s ease;
-            margin-top: 10px;
+            transition: background-color 0.2s, transform 0.2s;
         }
 
         button:hover {
             background-color: #059669;
+            transform: translateY(-2px);
+        }
+
+        .right-panel {
+            flex: 3;
+            background-color: #ffffff;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+            height: 930px;
+            position: relative;
         }
 
         .recommendation-results h3 {
             font-size: 26px;
-            color: #1f2937;
-            margin-bottom: 16px;
+            color: #111;
+            text-align: center;
+            margin-bottom: 24px;
         }
 
         .recommendation-header {
             display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background-color: #E7F6FF;
+            padding: 14px 20px;
+            border-radius: 12px;
+            font-size: 17px;
+            color: #333;
             font-weight: bold;
-            font-size: 20px;
             margin-bottom: 16px;
-            padding: 8px 0;
-            border-bottom: 2px solid #d1d5db;
-        }
-
-        .recommendation-header > div {
-            flex: 1;
+            border: 2px solid #BEE3F8;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.06);
         }
 
         .recommendation-list {
@@ -142,85 +171,79 @@
             gap: 16px;
             max-height: 650px;
             overflow-y: auto;
-            padding-right: 10px;
+            padding: 8px;
         }
 
         .recommendation-item {
-            padding: 12px;
-            border-radius: 10px;
-            background-color: #f3f4f6;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+            background-color: #F5FBFF;
+            border-radius: 12px;
+            padding: 14px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            transition: transform 0.2s;
+        }
+
+        .recommendation-item:hover {
+            transform: scale(1.02);
         }
 
         .recommendation-item label {
             display: flex;
             align-items: center;
             gap: 10px;
-            font-size: 18px;
-        }
-
-        hr {
-            margin: 20px 0;
-            border: none;
-            border-top: 1px solid #d1d5db;
-        }
-        .right-panel {
-            position: relative; /* 자식 요소를 절대 위치로 배치하기 위해 필요 */
+            font-size: 17px;
+            color: #333;
         }
 
         .save-button-wrapper {
             position: absolute;
-            bottom: 20px;
+            bottom: 30px;
             right: 30px;
         }
 
         .save-button {
-            width: 20%; /* 가로 크기 줄이기 (전체의 20%) */
-            min-width: 150px; /* 너무 작아지지 않도록 최소 너비 지정 */
-            padding: 12px;
             background-color: #10b981;
-            color: white;
-            font-weight: 600;
+            color: #fff;
             border: none;
-            border-radius: 10px;
+            padding: 14px 20px;
+            border-radius: 14px;
             font-size: 16px;
+            font-weight: bold;
             cursor: pointer;
-            transition: background-color 0.2s ease;
+            transition: background-color 0.2s;
         }
 
         .save-button:hover {
             background-color: #059669;
         }
-
-
     </style>
 </head>
 
 <body>
+<header>
+    <div th:replace="fragments/header :: header"></div>
+
+</header>
+
 <div class="container">
 
     <!-- 좌측 패널 -->
     <div class="left-panel">
         <!-- 유저 정보 -->
-        <div class="user-info" th:if="${user != null}">
+        <div class="user-info card" th:if="${user != null}">
             <h2 th:text="'환영합니다, ' + ${user.name} + '님!'"></h2>
             <p><strong>나이:</strong> <span th:text="${user.birth}"></span>세</p>
             <p><strong>몸무게:</strong> <span th:text="${user.weight}"></span>kg</p>
             <p><strong>신장:</strong> <span th:text="${user.height}"></span>cm</p>
         </div>
 
-        <div class="user-info" th:if="${user == null}">
-            <h2>환영합니다, Guest 님!</h2>
-        </div>
-
         <!-- 운동 필터 -->
-        <div class="filter-box">
+        <div class="filter-box card">
             <h2>운동 필터</h2>
             <form id="filter-form">
                 <div class="form-group">
                     <label for="exerciseTime">운동 시간 선택</label>
-                    <select name="time" id="exerciseTime">
-                        <option value="">전체</option>
+                    <select name="time" id="exerciseTime" required>
+                        <option value="" disabled selected>-----</option>
                         <script>
                             for (let i = 30; i <= 120; i += 30) {
                                 document.write(`<option value="${i}">${i}분</option>`);
@@ -231,8 +254,8 @@
 
                 <div class="form-group">
                     <label for="calories">목표 칼로리</label>
-                    <select name="cal" id="calories">
-                        <option value="">전체</option>
+                    <select name="cal" id="calories" required>
+                        <option value="" disabled selected>-----</option>
                         <script>
                             for (let i = 50; i <= 600; i += 50) {
                                 document.write(`<option value="${i}">${i} kcal</option>`);
@@ -269,31 +292,25 @@
         <div class="recommendation-results">
             <h3>추천 운동 목록</h3>
 
-
-
-                <!-- 제목 1회 출력 -->
-                <div class="recommendation-header">
-
-                </div>
-
-                <hr />
-
-                <!-- 리스트 출력 -->
-                <div class="recommendation-list">
-
-                </div>
+            <div class="recommendation-header">
+                <!-- JS로 동적 출력 -->
             </div>
+
+            <hr />
+
+            <div class="recommendation-list">
+                <!-- JS로 동적 출력 -->
+            </div>
+        </div>
         <div class="save-button-wrapper">
             <button class="save-button" id="exerciseRoutine">저장</button>
         </div>
-        </div>
     </div>
+</div>
 
-</body>
-</html>
 <script>
     document.getElementById("filter-form").addEventListener("submit", function (e) {
-        e.preventDefault(); // 기본 제출 방지
+        e.preventDefault();
 
         const formData = new FormData(e.target);
 
@@ -301,77 +318,76 @@
             method: 'POST',
             body: formData
         })
-            .then(() => {
-                // POST 성공 후 바로 운동 리스트 fetch
-                return fetch('/api/exercise/set');
-            })
+            .then(() => fetch('/api/exercise/set'))
             .then(res => res.json())
             .then(data => {
                 console.log("서버 응답:", data);
                 const header = document.getElementsByClassName("recommendation-header")[0];
                 const list = document.getElementsByClassName("recommendation-list")[0];
                 header.innerHTML = `
-          <div id="setTime">선택 시간: ${data.time}분</div>
-          <div id="setCal">목표 칼로리: ${data.cal}kcal</div>
-        `;
+                    <div id="setTime">선택 시간: ${data.time}분</div>
+                    <div id="setCal">목표 칼로리: ${data.cal}kcal</div>
+                `;
                 list.innerHTML = '';
-
                 data.elist.forEach(exercise => {
                     const div = document.createElement('div');
                     div.classList.add('recommendation-item');
                     div.innerHTML = `
-              <label>
-                <input type="checkbox" name="selectExercise" value="${exercise.name}">
-                <span>${exercise.name}</span>
-              </label>
-            `;
+                        <label>
+                            <input type="checkbox" name="selectExercise" value="${exercise.name}">
+                            <span>${exercise.name}</span>
+                        </label>
+                    `;
                     list.appendChild(div);
                 });
             })
             .catch(error => console.error("요청 실패", error));
     });
 
-    document.getElementById("exerciseRoutine").addEventListener("click", ()=>{
+    document.getElementById("exerciseRoutine").addEventListener("click", () => {
         const timeText = document.getElementById("setTime").textContent;
-        const timeMatch = timeText.match(/\d+/);  // 숫자만 추출
+        const timeMatch = timeText.match(/\d+/);
         const time = timeMatch ? parseInt(timeMatch[0]) : null;
 
         const calText = document.getElementById("setCal").textContent;
         const calMatch = calText.match(/\d+/);
         const cal = calMatch ? parseInt(calMatch[0]) : null;
 
-        let selectExercises =[];
+        let selectExercises = [];
         const list = document.getElementsByName("selectExercise");
-        for(let i=0; i<list.length; i++){
-            if(list[i].checked){
+        for (let i = 0; i < list.length; i++) {
+            if (list[i].checked) {
+                
                 selectExercises.push(list[i].value);
             }
         }
 
         const routineData = {
-            time : time,
-            cal : cal,
-            selectExercises : selectExercises
+            time: time,
+            cal: cal,
+            selectExercises: selectExercises
         };
 
         fetch('/routines', {
-            method : 'POST',
+            method: 'POST',
             headers: {
-                'Content-Type' : 'application/json'
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify(routineData)
         })
             .then(response => response.json())
-            .then(success =>{
-                if(!success){
-                    alert("저장 실패")
-                }else{
-                    alert("선택한 운동을 저장했습니다.")
+            .then(success => {
+                if (!success) {
+                    alert("저장 실패");
+                } else {
+                    alert("선택한 운동을 저장했습니다.");
                 }
             });
-                for(let i=0; i<list.length; i++){
-                 list[i].checked = false;
-                }
-    })
 
+        for (let i = 0; i < list.length; i++) {
+            list[i].checked = false;
+        }
+    });
 </script>
+</body>
+</html>

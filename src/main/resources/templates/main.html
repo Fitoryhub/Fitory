@@ -156,6 +156,7 @@
         <a href="/mypage" id="myPage">마이페이지</a>
         <a href="/loginForm" th:if="${session.user == null}">로그인</a>
         <a href="/logOut" th:if="${session.user != null}">로그아웃</a>
+        <a href="/joinForm" th:if="${session.user == null}">회원가입</a>
     </nav>
 </header>
 

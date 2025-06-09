@@ -2,6 +2,7 @@ package com.Fitory.fitory.controller;
 
 import com.Fitory.fitory.dto.ExerciseDTO;
 import com.Fitory.fitory.dto.ExerciseRoutineDTO;
+import com.Fitory.fitory.dto.UserDTO;
 import com.Fitory.fitory.dto.UserSetDTO;
 import com.Fitory.fitory.entity.ExerciseRoutine;
 import com.Fitory.fitory.entity.Exercises;
@@ -38,7 +39,8 @@ public class ExerciseController {
         List<ExerciseDTO> elist = (List<ExerciseDTO>) model.getAttribute("elist");
         Object time = model.getAttribute("time");
         Object cal = model.getAttribute("cal");
-        String user_id = (String) session.getAttribute("user_id");
+        UserDTO udto = (UserDTO) session.getAttribute("user");
+        String user_id = udto.getUser_id();
         if (user_id != null) {
             Optional<User> user = userService.findById(user_id);
             user.ifPresent(value -> model.addAttribute("user", value));
@@ -58,7 +60,8 @@ public class ExerciseController {
 
     @PostMapping("/set")
     public String handleForm(@ModelAttribute UserSetDTO userset, HttpSession session) {
-        String id = session.getAttribute("user_id").toString();
+       UserDTO udto = (UserDTO) session.getAttribute("user");
+        String id = udto.getUser_id();
         User user = userService.findById(id).orElseThrow(() -> new NoSuchElementException("user not found"));
         int weight = user.getWeight();
         int cal = userset.getCal();
@@ -104,19 +107,20 @@ public class ExerciseController {
 
         int time = (int) routineData.get("time");
         int cal = (int) routineData.get("cal");
-        String id = session.getAttribute("user_id").toString();
+        UserDTO udto = (UserDTO) session.getAttribute("user");
+        String id = udto.getUser_id();
         List<String> exercise = (List<String>) routineData.get("selectExercises");
 
         for(int i=0; i<exercise.size(); i++){
-            boolean resutl;
+            boolean result;
             ExerciseRoutine e = new ExerciseRoutine();
             e.setUserid(id);
             e.setRoutine(exercise.get(i));
             e.setTime(time);
             e.setCalorie(cal);
 
-            resutl=exerciseRoutineService.save(e);
-            if(!resutl){
+            result=exerciseRoutineService.save(e);
+            if(!result){
                 return false;
             }
         }

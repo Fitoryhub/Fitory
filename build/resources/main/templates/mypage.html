@@ -80,6 +80,9 @@
             border: 1px solid #d1fae5;
             border-radius: 12px;
             padding: 25px;
+
+
+
             margin-bottom: 30px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
@@ -210,8 +213,10 @@
                 <div class="info-item"><span>키:</span> <span th:text="${user.height+'cm'}"></span></div>
                 <div class="info-item"><span>아이디:</span> <span th:text="${user.id}"></span></div>
                 <div class="info-item"><span>이메일:</span> <span th:text="${user.email}"></span></div>
+                <div class="info-item"><span>닉네임:</span> <span th:text="${user.nickname}"></span></div>
             </div>
         </div>
+
 
         <!-- 추천 운동 -->
         <div class="exercise-box">
@@ -225,12 +230,7 @@
             </div>
 
             <ul class="exercise-list" id="exerciseList">
-                <li th:if="${#lists.isEmpty(routineList)}"
-                >   <span>저장한 운동이 없습니다.</span></li>
-                <li th:each="routine : ${routineList}">
-                    <input type="checkbox" class="checkbox">
-                    <span th:text="'운동명 : ' + ${routine.routine} + ' / ' + ${routine.time} + '분 / ' + ${routine.calorie} + 'kcal'"></span>
-                </li>
+
             </ul>
             <div class="sort-buttons">
             <button id="delete_all">확인</button>
@@ -269,15 +269,21 @@
     function renderRoutineList() {
         const ul = document.getElementById("exerciseList");
         ul.innerHTML = "";
+            if(routines.length===0){
+                const li = document.createElement("li");
+                const h2 = document.createElement("h2");
+                h2.textContent="저장한 운동이 없습니다.";
+                li.appendChild(h2);
+                ul.appendChild(li);
+            }
 
         routines.forEach(routine => {
-            const li = document.createElement("li");
 
+            const li = document.createElement("li");
             const checkbox = document.createElement("input");
             checkbox.type = "checkbox";
             checkbox.classList.add("checkbox");
             checkbox.style.display = deleteset ? "inline-block" : "none";
-
             checkbox.setAttribute("data-id", routine.routineid);
 
             const span = document.createElement("span");
@@ -336,7 +342,7 @@
 
     })
     window.onload = function (){
-        let deleteset = false;
+
         let deletebtn = document.getElementById("delete_all");
         deletebtn.style.display = 'none';
 
