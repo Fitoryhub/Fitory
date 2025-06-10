@@ -28,4 +28,8 @@ public class MainController {
 
         return "redirect:/";
     }
+    @GetMapping("/scheduler")
+    public String scheduler(Model model) {
+        return "scheduler";
+    }
 }
