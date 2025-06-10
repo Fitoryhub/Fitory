@@ -12,4 +12,6 @@ public interface IF_PlikeService {
     public Plike findplike2(String uid, int dnum);
 
     public void deletdplike(Plike plike);
+
+    public void deletdplike(int did);
 }

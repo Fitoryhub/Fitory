@@ -38,4 +38,8 @@ public class Diet_nutritionService implements IF_Diet_nutritionService{
 		Optional<Diet_nutrition> temp=dnrepo.findById(did);
         return temp.orElse(null);
 	}
+
+	public void delete(int did) {
+		dnrepo.deleteById(did);
+	}
 }

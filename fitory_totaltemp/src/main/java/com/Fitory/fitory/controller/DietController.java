@@ -9,6 +9,7 @@ import com.Fitory.fitory.entity.Diet_nutrition;
 import com.Fitory.fitory.entity.Plike;
 import com.Fitory.fitory.service.*;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,6 +42,7 @@ public class DietController {
 		model.addAttribute("userInfo", userInfo);
 		return "/diet/board";
 	}
+
 	@GetMapping("/dietdetail")
 	public String dietdetail(HttpSession session, Model model, @RequestParam(name="diet") int did){
 		SessionUserDTO userInfo = (SessionUserDTO) session.getAttribute("userInfo");
@@ -121,12 +123,23 @@ public class DietController {
 		List<FoodlistDTO> flist=dsv.getFoodlist();
 		int did=dservice.getid(dsv.getDiet().getTitle());
 		List<Diet_food> dflist=fnservice.insert(flist, did);
-		int[] fnid=fnservice.getidlist(did);
+		List<Integer> fnid=fnservice.getidlist(did);
 		dfservice.insert(did, fnid, dflist);
 		dnservice.insert(did,flist);
 		Map<String, String> response = new HashMap<>();
 	    response.put("url", "/diet/board");
 	    return response;
+	}
+	@Transactional
+	@GetMapping("/diet/delete")
+	@ResponseBody
+	public String delete(@RequestParam(name = "diet_id") int did){
+		plikeService.deletdplike(did);
+		dfservice.delete(did);
+		fnservice.delete(did);
+		dnservice.delete(did);
+		dservice.delete(did);
+		return "/diet/board";
 	}
 	
 	@GetMapping("/diet/foodlist")

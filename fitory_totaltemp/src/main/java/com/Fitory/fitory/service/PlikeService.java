@@ -39,5 +39,9 @@ public class PlikeService implements IF_PlikeService{
         plikeRepository.delete(plike);
     }
 
+    public void deletdplike(int did) {
+        plikeRepository.deleteAllByDnum(did);
+    }
+
 
 }

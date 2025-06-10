@@ -15,5 +15,7 @@ public interface Diet_foodRepository extends JpaRepository<Diet_food, Integer>{
             "       WHERE diet_id=:did"
             ,nativeQuery = true)
     public List<Diet_food> findAllByDiet_id(@Param("did") int did);
+
+    public void deleteAllByDietId(int did);
 }
 

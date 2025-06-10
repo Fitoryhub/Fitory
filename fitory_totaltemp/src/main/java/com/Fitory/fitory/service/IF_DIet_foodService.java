@@ -5,7 +5,9 @@ import java.util.List;
 import com.Fitory.fitory.entity.Diet_food;
 
 public interface IF_DIet_foodService {
-	public void insert(int did, int[] fnid, List<Diet_food> dflist);
+	public void insert(int did, List<Integer> fnid, List<Diet_food> dflist);
 
 	public List<Diet_food> getdflist(int did);
+
+    public void delete(int did);
 }

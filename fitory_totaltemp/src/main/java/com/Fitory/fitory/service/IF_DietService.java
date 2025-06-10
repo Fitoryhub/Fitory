@@ -7,6 +7,7 @@ import java.util.Map;
 public interface IF_DietService {
 	
 	public void insert(Diet diet);
+	public void delete(int did);
 	public void updatview(Diet diet);
 	public int getid(String title);
 	public Diet getone(int did);

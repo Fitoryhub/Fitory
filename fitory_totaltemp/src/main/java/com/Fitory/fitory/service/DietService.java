@@ -23,6 +23,8 @@ public class DietService implements IF_DietService{
 		dietrespo.save(diet);
 	}
 
+	public void delete(int did) { dietrespo.deleteById(did);}
+
 	public void updatview(Diet diet) { dietrespo.save(diet); }
 
 	public int getid(String title) {

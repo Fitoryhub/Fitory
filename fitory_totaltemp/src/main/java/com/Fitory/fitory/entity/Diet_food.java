@@ -1,13 +1,8 @@
 package com.Fitory.fitory.entity;
 
+import jakarta.persistence.*;
 import org.hibernate.annotations.DynamicInsert;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -23,7 +18,7 @@ public class Diet_food {
 	private int food_id;
 	
 	@Column(name="diet_id", columnDefinition = "BIGINT")
-	private int diet_id;
+	private int dietId;
 	
 	@Column(name="food_name", columnDefinition = "VARCHAR(100)")
 	private String food_name;

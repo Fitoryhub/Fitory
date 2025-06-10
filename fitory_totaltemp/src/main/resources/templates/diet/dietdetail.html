@@ -1,7 +1,8 @@
 <section xmlns:th="http://www.thymeleaf.org"
          xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
          layout:decorate="~{common}"
-         layout:fragment="content">
+         layout:fragment="content"
+         th:with="userInfo=${userInfo}">
     <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
     <style>
         #detail_view {
@@ -49,6 +50,19 @@
           font-weight: bold;
         }
 
+        #title td button{
+          background-color: #10b981; 
+          color: white;
+          font-size: 16px;
+          font-weight: 600;
+          padding: 10px 20px;
+          border: none;
+          border-radius: 8px;
+          cursor: pointer;
+          margin-left: 30px;
+          transition: background-color 0.2s ease;
+        }
+
         #diet_list {
           width: 100%;
           margin-top: 20px;
@@ -78,15 +92,20 @@
     </style>
     <section id="detail_view">
         <table id="detail_content">
-            <tr>
-                <td colspan="4"><h2 th:text="${diet.title}" >제목</h2></td>
+            <tr id="title">
+                <td colspan="3">
+                  <h2 th:text="${diet.title}" >제목</h2>
+                  <input type="hidden" id="diet_id" th:value="${diet.diet_id}">
+                </td>
+                <td th:if="${userInfo != null}">
+                  <button id="delete" th:text="삭제" th:if="${userInfo.id==diet.user_id}"></button>
+                </td>
             </tr>
             <tr>
                 <td th:text="'작성자: '+${diet.user_id}">작성자</td>
                 <td th:text="'작성일: '+${diet.created_at}">작성일</td>
                 <td th:text="'조회수: '+${diet.diet_view}">조회수</td>
                 <td>
-
                     <input type="hidden" id="uid" th:if="${userInfo != null}" th:value="${userInfo.id}">
                     <button id="like" th:value="${diet.diet_id}">
                         <span id="like_icon" th:text="${dplike != null ? '❤️' : '🤍'}"></span>
@@ -120,6 +139,16 @@
         </table>
     </section>
     <script>
+        $('#delete').click(()=>{
+          let delconfirm=confirm('삭제하시겠습니까?');
+          if(delconfirm){
+            let did=$('#diet_id').val()
+            $.get("/diet/delete?diet_id="+did,function(response){
+              window.location.href=response;
+            })
+          }
+        })
+
         $('#like').click(()=>{
             let did=$('#like').val();
             let uid=$('#uid').val();
