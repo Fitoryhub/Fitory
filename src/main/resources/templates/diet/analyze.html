@@ -1,0 +1,185 @@
+<section xmlns:th="http://www.thymeleaf.org" 
+         xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+         layout:decorate="~{common}" 
+         layout:fragment="content">
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
+    
+    <section id="body2">
+        <div id="body2title">
+            <h2>영양정보 분석</h2>
+        </div>
+        <div style="background: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); width: 1000px; margin: 0 auto;">
+            <div style="margin-bottom: 20px;">
+                <h3 style="margin-bottom: 10px;">음식명/대분류명(필수 X)</h3>
+                <input type="text" name="atefd" id="atefd" placeholder="음식명을 입력하세요" style="padding: 8px; width: 250px;">
+                <select name="classification" id="classification" style="height: 35px; width: 100px;">
+                    <option value="none">---------------</option>
+                    <option value="튀김류">튀김류</option>
+                    <option value="찜류">찜류</option>
+                    <option value="찌개 및 전골류">찌개 및 전골류</option>
+                    <option value="죽 및 스프류">죽 및 스프류</option>
+                    <option value="밥류">밥류</option>
+                    <option value="면 및 만두류">면 및 만두류</option>
+                    <option value="국 및 탕류">국 및 탕류</option>
+                    <option value="전·적 및 부침류">전·적 및 부침류</option>
+                    <option value="볶음류">볶음류</option>
+                    <option value="조림류">조림류</option>
+                    <option value="나물·숙채류">나물·숙채류</option>
+                    <option value="생채·무침류">생채·무침류</option>
+                    <option value="장아찌·절임류">장아찌·절임류</option>
+                    <option value="음료 및 차류">음료 및 차류</option>
+                    <option value="수·조·어·육류">수·조·어·육류</option>
+                    <option value="장류, 양념류">장류, 양념류</option>
+                    <option value="과일류">과일류</option>
+                    <option value="유제품류 및 빙과류">유제품류 및 빙과류</option>
+                    <option value="두류, 견과 및 종실류">두류, 견과 및 종실류</option>
+                    <option value="곡류, 서류 제품">곡류, 서류 제품</option>
+                </select>
+                <input type="button" value="검색" onclick="search()" style="padding: 8px 15px; background-color: #10b981; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer;">
+            </div>
+            <div id="searchlist" style="margin-bottom: 30px;"></div>
+            <table id="atefd_title" style="width: 100%; background-color: #f0fdf4; font-size: 20px; margin-bottom: 0;">
+                <tr>
+                    <th ><button style="padding-top: 5px; padding-bottom: 5px; background-color: #10b981; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; width: 40px;" onclick="del()">삭제</button></th>
+                    <th style="width: 360px;">음식명</th>
+                    <th style="width: 100px;">칼로리</th>
+                    <th style="width: 100px;">탄수화물</th>
+                    <th style="width: 100px;">단백질</th>
+                    <th style="width: 100px;">지방</th>
+                    <th style="width: 100px;">당류</th>
+                    <th style="width: 100px;">염분</th> 
+                </tr>
+            </table>
+            <div style="height: 300px; overflow-y: auto;">
+                <table id="atefd_content" style="width: 100%; font-size: 14px; text-align: center;"></table>
+            </div>
+            <table id="total" style="width: 100%; font-size: 20px; background-color: #f0fdf4; margin-top: 20px;">
+                <tr>
+                    <th><input type="checkbox" id="allchk" onclick="chkall()"></th>
+                    <th style="width: 400px;">총성분</th>
+                    <th style="width: 100px;" id="tcal">0</th>
+                    <th style="width: 100px;" id="tcarbo">0</th>
+                    <th style="width: 100px;" id="tpro">0</th>
+                    <th style="width: 100px;" id="tfat">0</th>
+                    <th style="width: 100px;" id="tsugar">0</th>
+                    <th style="width: 100px;" id="tsod">0</th> 
+                </tr>
+            </table>
+        </div>
+    </section>
+    <script>
+        const servicekey='jL8PHgOttipXdQtu%2BF4YntDmduAIvBCSdB7OP5VHXLcT8zpvkYvHRaPOAiwsFhAZVTG9hy%2FiVtBt%2Bqn7aQmT0w%3D%3D';
+        const base='https://apis.data.go.kr/1471000/FoodNtrCpntDbInfo02';
+
+        function search(){
+            let selectfd=$('#atefd').val();
+            let selectclasification=$('#classification').val();
+            getname(selectfd,selectclasification);
+        }
+
+        function del(){
+            let chklist=document.getElementsByName('chklist');
+            let table=document.getElementById('atefd_content');
+            for(let i=0; i<chklist.length; i++){
+                if(chklist[i].checked==true){
+                    let item=JSON.parse(decodeURIComponent(atob(chklist[i].value)));
+                    let tcal=Number($("#tcal").html())-Number(item.AMT_NUM1);
+                    $('#tcal').html(tcal);
+                    let tcarbo=Number($("#tcarbo").html())-Number(item.AMT_NUM6);
+                    $('#tcarbo').html(tcarbo.toFixed(2));
+                    let tpro=Number($("#tpro").html())-Number(item.AMT_NUM3);
+                    $('#tpro').html(tpro.toFixed(2));
+                    let tfat=Number($("#tfat").html())-Number(item.AMT_NUM4);
+                    $('#tfat').html(tfat.toFixed(2));
+                    let tsugar=Number($("#tsugar").html())-Number(item.AMT_NUM7);
+                    $('#tsugar').html(tsugar.toFixed(2));
+                    let tsod=Number($("#tsod").html())-Number(item.AMT_NUM13);
+                    $('#tsod').html(tsod.toFixed(2));
+                    table.deleteRow(i);
+                    i--;
+                }
+            }
+        }
+
+        function chkall(){
+            let chklist=document.getElementsByName('chklist');
+            let allchk=document.getElementById('allchk');
+            for(let i=0; i<chklist.length; i++){
+                chklist[i].checked=allchk.checked;
+            }
+        }
+
+        function chkone(){
+            let chklist=document.getElementsByName('chklist');
+            let allchk=document.getElementById('allchk');
+            let checkedbox=0;
+            for(let i=0; i<chklist.length; i++){
+                if(chklist[i].checked==true){
+                    checkedbox++;
+                }
+            }
+            if(chklist.length==checkedbox){
+                allchk.checked=true;
+            }else{
+                allchk.checked=false;
+            }
+        }
+
+        function add(index){
+            let data=document.getElementsByName("tmplist")[index].value;
+            let item=JSON.parse(decodeURIComponent(atob(data)));
+            let sentence1='<tr>';
+            sentence1+='<td style="width: 30px;"><input type="checkbox" name="chklist" value="'+btoa(encodeURIComponent(JSON.stringify(item)))+'" onclick="chkone()"></td>'
+            sentence1+='<td style="font-size: 16px; width: 370px;">'+item.FOOD_NM_KR+'</td>';
+            sentence1+='<td style="font-size: 16px; width: 100px;">'+item.AMT_NUM1+'</td>';
+            sentence1+='<td style="font-size: 16px; width: 100px;">'+item.AMT_NUM6+'</td>';
+            sentence1+='<td style="font-size: 16px; width: 100px;">'+item.AMT_NUM3+'</td>';
+            sentence1+='<td style="font-size: 16px; width: 100px;">'+item.AMT_NUM4+'</td>';
+            sentence1+='<td style="font-size: 16px; width: 100px;">'+item.AMT_NUM7+'</td>';
+            sentence1+='<td style="font-size: 16px; width: 100px;">'+item.AMT_NUM13+'</td></tr>';
+            $('#atefd_content').append(sentence1);
+            let tcal=Number($("#tcal").html())+Number(item.AMT_NUM1);
+            $('#tcal').html(tcal);
+            let tcarbo=Number($("#tcarbo").html())+Number(item.AMT_NUM6);
+            $('#tcarbo').html(tcarbo.toFixed(2));
+            let tpro=Number($("#tpro").html())+Number(item.AMT_NUM3);
+            $('#tpro').html(tpro.toFixed(2));
+            let tfat=Number($("#tfat").html())+Number(item.AMT_NUM4);
+            $('#tfat').html(tfat.toFixed(2));
+            let tsugar=Number($("#tsugar").html())+Number(item.AMT_NUM7);
+            $('#tsugar').html(tsugar.toFixed(2));
+            let tsod=Number($("#tsod").html())+Number(item.AMT_NUM13);
+            $('#tsod').html(tsod.toFixed(2));
+            $('#searchlist').html('');
+            $('#atefd').val('');
+            $('#classification').val('none');
+        }
+        
+        async function getname(foodname,selectclasification) {
+            let url=base+'/getFoodNtrCpntDbInq02?serviceKey='+servicekey
+            if(selectclasification=='none'){
+                url+='&type=json&FOOD_NM_KR='+foodname+'&DB_CLASS_NM=품목대표';
+            }else{
+                url+='&type=json&FOOD_NM_KR='+foodname+'&FOOD_CAT1_NM='+selectclasification+'&DB_CLASS_NM=품목대표';
+            }
+            try {
+                const response= await fetch(url);
+                const inform= await response.json();
+                const items=inform.body.items;
+                let tempsnt='';
+                $.each(items,function(index,item){
+                    tempsnt+='<span onclick="add('+index+')" style="border: 2px solid #10b981; background-color: #ecfdf5; padding: 6px 10px; border-radius: 6px; margin: 5px; cursor: pointer; display: inline-block;">'+item.FOOD_NM_KR+'('+item.FOOD_OR_NM+')'+'</span>&ensp;';
+                    tempsnt+='<input type="hidden" name="tmplist" value='+btoa(encodeURIComponent(JSON.stringify(item)))+'>';
+                })
+                if(tempsnt==''){
+                    tempsnt='<div style="color: red;">해당 검색어에 대한 정보가 없습니다.</div>';;
+                }
+                $('#searchlist').html(tempsnt);
+            } catch (error) {
+                alert('오류');
+                console.log(error);
+            }
+        }
+    </script>
+</section>
+

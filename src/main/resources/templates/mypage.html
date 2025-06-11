@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Fitory 마이페이지</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet"/>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+
+
+        body {
+            background-color: #f9fafb;
+            color: #333;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 220px;
+            background-color: #10b981;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .sidebar img {
+            width: 120px;
+            margin-bottom: 40px;
+        }
+
+        .sidebar nav {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+        }
+
+        .sidebar nav a {
+            text-decoration: none;
+            font-size: 16px;
+            color: black;
+            font-weight: 600;
+            padding: 10px 15px;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .sidebar nav a:hover, .sidebar nav a.active {
+            background-color: #60C693;
+        }
+
+        .main-container {
+            flex: 1;
+            display: flex;
+            flex-direction: row;
+        }
+
+        .main-content {
+            flex: 3;
+            padding: 40px 60px;
+            background-color: #fff;
+        }
+
+        .section-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #111827;
+            margin-bottom: 30px;
+        }
+
+        .info-box, .exercise-box, .additional-info-box {
+            background-color: #f0fdf4;
+            border: 1px solid #d1fae5;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .info-box h3,
+        .additional-info-box h3 {
+            font-size: 20px;
+            color: #065f46;
+            margin-bottom: 25px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .info-item span {
+            font-weight: 600;
+            color: #065f46;
+            display: inline-block;
+            width: 100px;
+        }
+
+        .info-box input[type="button"] {
+            margin-top: 20px;
+            padding: 10px 16px;
+            background-color: #10b981;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+
+        .info-box input[type="button"]:hover {
+            background-color: #059669;
+        }
+
+        .additional-info-box .info-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .additional-info-box label {
+            width: 120px;
+            font-weight: bold;
+            color: #065f46;
+            margin-right: 10px;
+        }
+
+        .additional-info-box input,
+        .additional-info-box select,
+        .additional-info-box textarea {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        .exercise-list {
+            list-style: none;
+            padding-left: 0;
+            overflow-y: auto;
+            max-height: 300px;
+        }
+
+        .exercise-list li {
+            padding: 8px 0;
+            font-size: 16px;
+            border-bottom: 1px solid #d1fae5;
+            display: flex;
+            align-items: center;
+        }
+
+        .sort-buttons {
+            margin-bottom: 20px;
+            text-align: right;
+        }
+
+        .sort-buttons button {
+            padding: 8px 12px;
+            margin-right: 2px;
+            background-color: #33ad86;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 10px;
+        }
+
+        .sort-buttons button:hover {
+            background-color: #059669;
+        }
+
+        .profile-summary {
+            flex: 1;
+            background-color: #f3f4f6;
+            padding: 40px 20px;
+            border-left: 1px solid #e5e7eb;
+        }
+
+        .profile-summary img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-bottom: 20px;
+        }
+
+        .profile-summary .username {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 10px;
+        }
+
+        .profile-summary .user-desc {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .profile-summary .menu-group {
+            margin-top: 30px;
+        }
+
+        .profile-summary .menu-group h4 {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 10px;
+        }
+
+        .profile-summary .menu-group ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .profile-summary .menu-group ul li {
+            padding: 5px 0;
+            font-size: 14px;
+            color: #374151;
+            cursor: pointer;
+        }
+
+        .profile-summary .menu-group ul li:hover {
+            text-decoration: underline;
+        }
+
+        #viewAdditionalInfo > div {
+            margin-bottom: 10px;
+        }
+
+        #viewAdditionalInfo b {
+            color: #065f46;
+            width: 120px;
+            display: inline-block;
+        }
+
+        #editBtn {
+            margin-top: 15px;
+            padding: 8px 16px;
+            background-color: #10b981;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+
+        #editBtn:hover {
+            background-color: #059669;
+        }
+
+        #cancelBtn {
+            padding: 8px 16px;
+            background-color: #ccc;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+
+        #cancelBtn:hover {
+            background-color: #999;
+        }
+
+        .checkbox {
+            margin-right: 10px;
+        }
+                /* Table styling for board-box */
+        .board-box {
+            width: 800px;
+            border: 1px solid #d1fae5;
+            border-radius: 12px;
+            margin-top: 20px;
+            background-color: #f0fdf4;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            max-height: 450px;
+            display: block;
+            overflow-y: auto;
+
+        }
+
+        .board-box thead, .board-box tbody {
+            display: table;
+
+            table-layout: fixed; /* Fix column widths for consistency */
+        }
+
+        .board-box tr {
+            border-bottom: 1px solid #d1fae5;
+            transition: background-color 0.2s;
+        }
+
+        .board-box tr:hover {
+            background-color: #e6f4ea;
+        }
+
+        .board-box td, .board-box th {
+            padding: 15px 20px;
+            font-size: 16px;
+            color: #1f2937;
+            text-align: left;
+        }
+
+        .board-box td:first-child, .board-box th:first-child {
+            font-weight: 600;
+            color: #065f46;
+            width: 50%;
+        }
+
+        .board-box td:nth-child(2), .board-box td:nth-child(3),
+        .board-box th:nth-child(2), .board-box th:nth-child(3) {
+            color: #374151;
+            text-align: center;
+        }
+
+        .board-box tr:last-child {
+            border-bottom: none;
+        }
+
+        .board-box tr[onclick] {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<!-- 사이드바 -->
+<aside class="sidebar">
+    <img src="/image/logo2.png" alt="Fitory 로고">
+    <nav>
+        <a href="/">홈</a>
+        <a href="/mypage" class="active">마이페이지</a>
+        <a href="/calendar">스케줄러</a>
+        <a href="/logOut">로그아웃</a>
+    </nav>
+</aside>
+
+<!-- 메인 콘텐츠 -->
+<div class="main-container">
+
+    <main class="main-content">
+        <div class="section-title">마이페이지</div>
+
+        <!-- 회원 정보 -->
+        <div class="info-box">
+            <h3>회원 정보</h3>
+            <div class="info-grid" th:if="${user != null}">
+                <div class="info-item"><span>이름:</span> <span th:text="${user.name}"></span></div>
+                <div class="info-item"><span>닉네임:</span> <span th:text="${user.nickname}"></span></div>
+                <div class="info-item"><span>성별:</span> <span th:text="${user.gender}"></span></div>
+                <div class="info-item"><span>생년월일:</span> <span th:text="${user.birth}"></span></div>
+                <div class="info-item"><span>몸무게:</span> <span th:text="${user.weight_kg != null} ? ${user.weight_kg + 'kg'} : ${user.weight + 'kg'}"></span></div>
+                <div class="info-item"><span>키:</span> <span th:text="${user.height_cm != null} ? ${user.height_cm + 'cm'} : ${user.height + 'cm'}"></span></div>
+                <div class="info-item"><span>아이디:</span> <span id = "uid" th:text="${user.id}"></span></div>
+                <div class="info-item"><span>이메일:</span> <span th:text="${user.email}"></span></div>
+                <div><input type="button" value="개인정보수정"></div>
+            </div>
+        </div>
+
+        <!--        &lt;!&ndash; 추가 정보 &ndash;&gt;-->
+        <!--        <div class="additional-info-box">-->
+        <!--            <h3>추가 정보</h3>-->
+        <!--            <div id="viewAdditionalInfo" th:if="${userInfo != null}">-->
+        <!--                <div><b>기초대사량:</b> <span id="bmr1" th:text="${user.bmr}"></span></div>-->
+        <!--                <div><b>권장칼로리:</b> <span th:text="${user.recommendedCalorie}"></span></div>-->
+        <!--                <div><b>목표체중:</b> <span th:text="${user.targetWeight}"></span></div>-->
+        <!--                <div><b>혈압:</b> <span th:text="${user.bloodPressure}"></span></div>-->
+        <!--                <div><b>당뇨여부:</b> <span th:text="${user.diabetes}"></span></div>-->
+        <!--                <div><b>흡연여부:</b> <span th:text="${user.smoking}"></span></div>-->
+        <!--                <div><b>체지방률:</b> <span th:text="${user.bodyFat}"></span></div>-->
+        <!--                <div><b>근육량:</b> <span th:text="${user.muscleMass}"></span></div>-->
+        <!--                <div><b>활동 수준:</b> <span th:text="${user.activityLevel}"></span></div>-->
+        <!--                <div><b>질병 이력:</b> <span th:text="${user.medicalHistory}"></span></div>-->
+        <!--                <div><b>알레르기:</b> <span th:text="${user.allergy}"></span></div>-->
+        <!--                <button id="editBtn" type="button">추가 정보 설정하기</button>-->
+        <!--            </div>-->
+        <!--            <form id="editAdditionalInfo" th:action="@{/updateInfo}" method="post" style="display:none; margin-top: 20px;">-->
+        <!--                <div class="info-row"><label for="bmr">기초대사량:</label><input id="bmr" type="number" name="bmr" th:value="${user.bmr}" required/></div>-->
+        <!--                <div class="info-row"><label for="recommendedCalorie">권장칼로리:</label><input id="recommendedCalorie" type="number" name="recommendedCalorie" th:value="${user.recommendedCalorie}" required/></div>-->
+        <!--                <div class="info-row"><label for="targetWeight">목표체중:</label><input id="targetWeight" type="number" name="targetWeight" th:value="${user.targetWeight}" required/></div>-->
+        <!--                <div class="info-row"><label for="bloodPressure">혈압:</label><input id="bloodPressure" type="text" name="bloodPressure" th:value="${user.bloodPressure}" required/></div>-->
+        <!--                <div class="info-row"><label for="diabetes">당뇨여부:</label>-->
+        <!--                    <select id="diabetes" name="diabetes" th:value="${user.diabetes}">-->
+        <!--                        <option value="없음" th:selected="${user.diabetes == '없음'}">없음</option>-->
+        <!--                        <option value="있음" th:selected="${user.diabetes == '있음'}">있음</option>-->
+        <!--                    </select>-->
+        <!--                </div>-->
+        <!--                <div class="info-row"><label for="smoking">흡연여부:</label>-->
+        <!--                    <select id="smoking" name="smoking" th:value="${user.smoking}">-->
+        <!--                        <option value="비흡연" th:selected="${user.smoking == '비흡연'}">비흡연</option>-->
+        <!--                        <option value="흡연" th:selected="${user.smoking == '흡연'}">흡연</option>-->
+        <!--                    </select>-->
+        <!--                </div>-->
+        <!--                <div class="info-row"><label for="bodyFat">체지방률:</label><input id="bodyFat" type="number" step="0.1" name="bodyFat" th:value="${user.bodyFat}" required/></div>-->
+        <!--                <div class="info-row"><label for="muscleMass">근육량:</label><input id="muscleMass" type="number" step="0.1" name="muscleMass" th:value="${user.muscleMass}" required/></div>-->
+        <!--                <div class="info-row"><label for="activityLevel">활동 수준:</label>-->
+        <!--                    <select id="activityLevel" name="activityLevel" th:value="${user.activityLevel}">-->
+        <!--                        <option value="낮음" th:selected="${user.activityLevel == '낮음'}">낮음</option>-->
+        <!--                        <option value="보통" th:selected="${user.activityLevel == '보통'}">보통</option>-->
+        <!--                        <option value="높음" th:selected="${user.activityLevel == '높음'}">높음</option>-->
+        <!--                    </select>-->
+        <!--                </div>-->
+        <!--                <div class="info-row"><label for="medicalHistory">질병 이력:</label><textarea id="medicalHistory" name="medicalHistory" rows="2" th:text="${user.medicalHistory}"></textarea></div>-->
+        <!--                <div class="info-row"><label for="allergy">알레르기:</label><textarea id="allergy" name="allergy" rows="2" th:text="${user.allergy}"></textarea></div>-->
+        <!--                <div style="text-align: right; margin-top: 10px;">-->
+        <!--                    <button type="button" id="cancelBtn">취소</button>-->
+        <!--                    <input type="submit" value="저장" style="padding: 8px 16px; background-color: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer;">-->
+        <!--                </div>-->
+        <!--            </form>-->
+        <!--        </div>-->
+
+
+        <!-- 추천 운동 -->
+        <div class="exercise-box">
+            <h3>저장한 운동</h3>
+
+            <!-- 정렬 버튼 -->
+            <div class="sort-buttons">
+                <button id="sort_cal"> 칼로리별</button>
+                <button id="sort_time"> 시간별</button>
+                <button id="delete">삭제</button>
+            </div>
+
+            <ul class="exercise-list" id="exerciseList">
+                <li th:if="${#lists.isEmpty(routineList)}"
+                >   <span>저장한 운동이 없습니다.</span></li>
+                <li th:each="routine : ${routineList}">
+                    <input type="checkbox" class="checkbox">
+                    <span th:text="'운동명 : ' + ${routine.routine} + ' / ' + ${routine.time} + '분 / ' + ${routine.calorie} + 'kcal'"></span>
+                </li>
+            </ul>
+            <div class="sort-buttons">
+                <button id="delete_all">확인</button>
+            </div>
+        </div>
+
+        <table>
+            <tbody class="board-box">
+
+
+            </tbody>
+        </table>
+    </main>
+
+    <!-- 사용자 요약 -->
+    <aside class="profile-summary">
+        <div class="username" th:text="${user.name}">홍길동</div>
+        <div class="user-desc" ><span>닉네임:</span> <span th:text="${user.nickname}"></span></div>
+
+        <div class="menu-group">
+            <h4>계정</h4>
+            <ul>
+                <li>내 정보 관리</li>
+            </ul>
+        </div>
+
+        <div class="menu-group">
+            <h4>글 관리</h4>
+            <ul>
+                <li id="board">내가 쓴 글</li>
+                <li id="comment">댓글</li>
+            </ul>
+        </div>
+    </aside>
+
+</div>
+</body>
+</html>
+<script th:inline="javascript">
+    let routines = [[${routineList}]];
+    let deleteset = false;
+
+     // BMR 계산
+    window.onload = function() {
+
+        let deleteset = false;
+        let deletebtn = document.getElementById("delete_all");
+        deletebtn.style.display = 'none';
+
+        document.getElementById("delete").addEventListener("click", ()=>{
+            deleteset = !deleteset;
+            const checkboxes = document.querySelectorAll('.checkbox');
+            checkboxes.forEach(cb=>{
+                cb.style.display = deleteset ? 'inline-block' : 'none';
+            })
+            if(deleteset===false){
+                document.getElementById('delete').innerText = "삭제";
+            }else{
+                document.getElementById('delete').innerText = "취소";
+            }
+            deletebtn.style.display = deleteset ? 'inline-block' : 'none';
+        })
+
+<!--        let gender = [[${user.gender}]];-->
+<!--        let weight = [[${user.weight_kg != null} ? ${user.weight_kg} : ${user.weight}]];-->
+<!--        let height = [[${user.height_cm != null} ? ${user.height_cm} : ${user.height}]];-->
+<!--        let birth = [[${user.birth}]];-->
+<!--        let currentYear = new Date().getFullYear();-->
+<!--        let age = currentYear - parseInt(birth.substr(0, 4));-->
+<!--        let bmr;  // 여기서 선언-->
+<!--        if (gender === "female") {-->
+<!--            bmr = (10 * weight) + (6.25 * height) - (5 * age) - 161;-->
+<!--        } else {-->
+<!--            bmr = (10 * weight) + (6.25 * height) - (5 * age) + 5;-->
+<!--        }-->
+<!--        document.getElementById('bmr1').textContent = bmr.toFixed(2);-->
+<!--        alert(bmr.toFixed(2));-->
+
+<!--        // 삭제 버튼 초기 설정-->
+<!--        document.getElementById("delete_all").style.display = 'none';-->
+    };
+
+    let temp;
+    $(document).ready(function () {
+        $('#board').click(function () {
+            let uid = $('#uid').text();
+            let url = "/myboard"
+            $.ajax({
+                dataType: 'json',
+                data: {
+                    uid: uid
+                },
+                method: 'get',
+                url: url,
+
+                success(data) {
+                    $('.board-box').empty();
+                    if(data.list.length<1){
+                        $('.board-box').append('<tr><td>등록하신 게시글이 없습니다.</td></tr>')
+                    }else{
+                    $('.board-box').append('<tr>' +
+                        '<td>제목</td>' +
+                        '<td>작성일</td>' +
+                        '<td>좋아요</td>' +
+                        '<td><input class="deleteb" type="button" value="삭제"></td>' +
+                        '<td><input style="display:none" type="button" value="취소" id="nob"></td>' +
+                        '</tr>')
+                    $.each(data.list, function (index, board) {
+                        console.log(board.ptitle);
+                        $('.board-box').append(
+                            '<tr onclick="window.location.href=\'/detailview?pnum=' + board.pnum + '\'">' +
+
+                            '<td>' + board.ptitle + '</td>' +
+                            '<td>' + board.pdate + '</td>' +
+                            '<td>' + board.plike + '</td>' +
+                            '<td><input style="display: none" type="checkbox" class="check" data-num="' + board.pnum + '" onclick="event.stopPropagation();"></td>' +
+                            '</tr>')
+                    });
+                    }
+                },
+                error: function () {
+                    alert("통신에러")
+
+                }
+            })
+        })
+
+        $('#comment').click(function () {
+            let uid = $('#uid').text();
+            let url = "/mycomment"
+            $.ajax({
+                dataType: 'json',
+                data: {
+                    uid: uid
+                },
+                type: 'get',
+                url: url,
+                error: function () {
+                    alert("통신오류")
+                },
+                success(data) {
+                    $('.board-box').empty();
+                    if (data.list.length<1){
+                        $('.board-box').append('<tr><td>등록하신 댓글이 없습니다.</td></tr>')
+                    }else {
+                    $('.board-box').append('<tr>' +
+                        '<td>댓글내용</td>' +
+                        '<td>작성일</td>' +
+                        '<td>좋아요</td>' +
+                        '<td><input type="button" value="삭제" class="deletec"></td>' +
+                        '<td><input style="display:none" type="button" value="취소" id="noc"></td>' +
+                        '</tr>')
+                    $.each(data.list, function (index, comment) {
+                            $('.board-box').append(
+                                '<tr onclick="window.location.href=\'/detailview?pnum=' + comment.pnum + '\'">' +
+                                '<td>' + comment.cbody + '</td>' +
+                                '<td>' + comment.cdate + '</td>' +
+                                '<td>' + comment.clike + '</td>' +
+                                '<td>' +
+                                '<input style="display: none" type="checkbox" class="check" data-num="' + comment.cnum + '" onclick="event.stopPropagation();">'+
+                                '</td>' +
+                                '</tr>'
+                            )
+                        })
+                    }
+
+
+                }
+            })
+        })
+
+        $(document).on('click', '.deletec', function () {
+            $('.check').css('display', 'inline-block');
+            $('#noc').css('display', 'inline-block');
+            $(this).replaceWith('<input type="button" value="확인" id="okc">');
+        })
+
+        $(document).on('click', '.deleteb', function () {
+            $('.check').css('display', 'inline-block');
+            $('#nob').css('display', 'inline-block');
+            $(this).replaceWith('<input type="button" value="확인" id="okb">');
+        })
+
+        $(document).on('click','#nob',function (){
+            $(this).css('display', 'none');
+            $('.check').css('display', 'none');
+            $('#okb').replaceWith('<input type="button" value="삭제" class="deleteb">');
+        })
+
+        $(document).on('click','#noc',function (){
+            $(this).css('display', 'none');
+            $('.check').css('display', 'none');
+            $('#okc').replaceWith('<input type="button" value="삭제" class="deletec">');
+        })
+
+        $(document).on('click','#okc',function (){
+            alert("들어옴")
+        let list=[];
+        $('.check:checked').each(function (){
+            list.push($(this).data('num'))
+        })
+            let uid= $('#uid').text();
+            $.ajax({
+                url:'/dellistcomment',
+                dataType:'json' ,
+                method: 'post',
+                data:{
+                    uid:uid,
+                    list:list
+                },
+                success:function (data) {
+                    $('.board-box').empty();
+                    if(data.list.length<1){
+                        $('.board-box').append('<tr><td>등록하신 댓글이 없습니다.</td></tr>')
+                    }else{
+                    $('.board-box').append('<tr>' +
+                        '<td>댓글내용</td>' +
+                        '<td>작성일</td>' +
+                        '<td>좋아요</td>' +
+                        '<td><input type="button" value="삭제" class="deletebtn"></td>' +
+                        '<td><input style="display:none" type="button" value="취소" id="no"></td>' +
+                        '</tr>')
+                    $.each(data.list, function (index, comment) {
+                            $('.board-box').append(
+                                '<tr onclick="window.location.href=\'/detailview?pnum=' + comment.pnum + '\'">' +
+                                '<td>' + comment.cbody + '</td>' +
+                                '<td>' + comment.cdate + '</td>' +
+                                '<td>' + comment.clike + '</td>' +
+                                '<td>' +
+                                '<input style="display: none" type="checkbox" class="check" data-num="' + comment.cnum + '" onclick="event.stopPropagation();">'+
+                                '</td>' +
+                                '</tr>'
+                            )
+                        }
+                    )
+
+                    }
+                },
+                error:function (){
+                    alert("통신오류")
+                }
+            })
+        })
+        $(document).on('click','#okb',function (){
+            alert("들어옴")
+            let list=[];
+            $('.check:checked').each(function (){
+                list.push($(this).data('num'))
+            })
+            let uid= $('#uid').text();
+            $.ajax({
+                url:'/dellistboard',
+                dataType:'json' ,
+                method: 'post',
+                data:{
+                    uid:uid,
+                    list:list
+                },
+                success:function (data) {
+                    $('.board-box').empty();
+                    if(data.list.length<1){
+                        $('.board-box').append('<tr><td>등록하신 게시글이 없습니다.</td></tr>')
+                    }else{
+
+                    $('.board-box').append('<tr>' +
+                        '<td>제목</td>' +
+                        '<td>작성일</td>' +
+                        '<td>좋아요</td>' +
+                        '<td><input type="button" value="삭제" class="deleteb"></td>' +
+                        '<td><input style="display:none" type="button" value="취소" id="no"></td>' +
+                        '</tr>')
+                    $.each(data.list, function (index, board) {
+                            $('.board-box').append(
+                                '<tr onclick="window.location.href=\'/detailview?pnum=' + board.pnum + '\'">' +
+                                '<td>' + board.ptitle + '</td>' +
+                                '<td>' + board.pdate + '</td>' +
+                                '<td>' + board.plike + '</td>' +
+                                '<td>' +
+                                '<input style="display: none" type="checkbox" class="check" data-num="' + board.pnum + '" onclick="event.stopPropagation();">'+
+                                '</td>' +
+                                '</tr>'
+                            )
+                        }
+                    )
+                    }
+                },
+                error:function (){
+                    alert("통신오류")
+                }
+            })
+        })
+    })
+
+    function renderRoutineList() {
+        const ul = document.getElementById("exerciseList");
+        ul.innerHTML = "";
+
+        routines.forEach(routine => {
+            const li = document.createElement("li");
+
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.classList.add("checkbox");
+            checkbox.style.display = deleteset ? "inline-block" : "none";
+
+            checkbox.setAttribute("data-id", routine.routineid);
+
+            const span = document.createElement("span");
+            span.textContent = `운동명 : ${routine.routine} / ${routine.time}분 / ${routine.calorie}kcal`;
+
+            li.appendChild(checkbox);
+            li.appendChild(span);
+            ul.appendChild(li);
+        });
+    }
+
+    // 최초 렌더링 (서버에서 받아온 데이터 표시)
+    renderRoutineList();
+
+    // 칼로리 내림차순 정렬 버튼
+    document.getElementById("sort_cal").addEventListener("click", () => {
+        routines.sort((a, b) => b.calorie - a.calorie);
+        renderRoutineList();
+    });
+
+    // 시간 내림차순 정렬 버튼
+    document.getElementById("sort_time").addEventListener("click", () => {
+        routines.sort((a, b) => b.time - a.time);
+        renderRoutineList();
+    });
+    document.getElementById("delete_all").addEventListener("click", ()=>{
+        if(confirm("선택한 운동루틴을 삭제하시겠습니까?")){
+        const selected = document.querySelectorAll('.checkbox:checked');
+       const deletelist = [];
+       for(let i=0; i<selected.length; i++){
+           let cb = selected[i];
+           let id = cb.getAttribute('data-id');
+           deletelist.push(id);
+        }
+       $.ajax({
+           type: "POST",
+           url : "/api/exercise/deleteList",
+           traditional: true,
+           data: { deletelist: deletelist },
+           dataType : "json",
+           success : function (res) {
+
+               console.log("응답내용",res)
+               if(res === true){
+                   alert("삭제했습니다.")
+                   location.reload();
+               }else{
+                   alert("실패");
+               }
+           }
+       })
+
+        }else{
+            alert("취소했습니다.")
+        }
+
+    })
+
+    // 추가 정보 편집 토글
+    document.getElementById('editBtn').addEventListener('click', () => {
+        document.getElementById('viewAdditionalInfo').style.display = 'none';
+        document.getElementById('editAdditionalInfo').style.display = 'block';
+    });
+
+    // 취소 버튼
+    document.getElementById('cancelBtn').addEventListener('click', () => {
+        document.getElementById('editAdditionalInfo').style.display = 'none';
+        document.getElementById('viewAdditionalInfo').style.display = 'block';
+    });
+
+</script>

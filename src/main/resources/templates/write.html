@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>게시글 작성</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8e2; /* 연초록 배경 */
+            margin: 0;
+            padding: 0;
+            color: #4a4a4a; /* 텍스트 색상 */
+        }
+        h2 {
+            color: #38a169; /* 연초록 색상 */
+            text-align: center;
+            padding: 20px;
+        }
+        form {
+            width: 80%;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        td {
+            padding: 10px;
+            vertical-align: middle;
+        }
+        input[type="text"], input[type="file"], select, textarea {
+            width: 100%;
+            padding: 8px;
+            font-size: 16px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+        }
+        input[type="text"]:focus, select:focus, textarea:focus {
+            border-color: #38a169; /* 포커스 시 연초록색 */
+            outline: none;
+        }
+        textarea {
+            resize: vertical;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #38a169; /* 연초록색 버튼 */
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #2f8c56; /* 버튼 hover 시 어두운 초록 */
+        }
+        option {
+            padding: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>게시글 작성</h2>
+
+<form th:action="${mod} ? @{/mod_post} : @{/submit_post}"
+      th:object="${board}" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="nickname" th:value="${session.nickname}"/>
+    <input type="hidden" name="uid" th:value="${session.uid}">
+    <input th:if="${mod}" type="hidden" name="pnum" th:value="${board.pnum}">
+    <table>
+        <tr>
+            <td>제목</td>
+            <td><input type="text" th:field="*{ptitle}" required></td>
+        </tr>
+        <tr>
+            <td>카테고리</td>
+            <td>
+                <select th:field="*{pcategory}" required>
+                    <option value="" disabled selected>카테고리를 선택하세요</option>
+                    <option value="운동꿀팁">운동꿀팁</option>
+                    <option value="운동질문">운동질문</option>
+                    <option value="식단후기">식단후기</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>내용</td>
+            <td><textarea th:field="*{pbody}" required rows="5" cols="30"></textarea></td>
+        </tr>
+        <tr>
+            <td>이미지 파일</td>
+            <td><input type="file" name="files" accept="image/jpeg,image/png,image/gif" /></td>
+        </tr>
+        <tr>
+            <td>이미지 파일</td>
+            <td><input type="file" name="files" accept="image/jpeg,image/png,image/gif" /></td>
+        </tr>
+        <tr>
+            <td colspan="2" style="text-align: center;">
+                <button type="submit">작성 완료</button>
+            </td>
+        </tr>
+    </table>
+</form>
+
+</body>
+</html>
