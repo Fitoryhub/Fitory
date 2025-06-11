@@ -1,9 +1,8 @@
 package com.Fitory.fitory.controller;
 
-import com.Fitory.fitory.dto.UserDTO;
+import com.Fitory.fitory.dto.SessionUserDTO;
 import com.Fitory.fitory.entity.ExerciseRoutine;
 import com.Fitory.fitory.entity.User;
-import com.Fitory.fitory.repository.UserRepository;
 import com.Fitory.fitory.service.ExerciseRoutineService;
 import com.Fitory.fitory.service.UserService;
 import jakarta.servlet.http.HttpSession;
@@ -20,7 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
-public class UserController {
+public class MemberController {
 
 
     @Autowired
@@ -51,11 +50,10 @@ public class UserController {
         if(user.isPresent()) {
             User u = user.get();
             if(u.getPassword().equals(password)) {
-                UserDTO udto = new UserDTO();
-                udto.setUser_id(u.getId());
-                udto.setNickname(u.getNickname());
+                SessionUserDTO udto = new SessionUserDTO(u.getId(), u.getNickname());
+
                 session.setAttribute("user", udto);
-                System.out.println("로그인 성공"+id);
+                System.out.println("로그인 성공");
                 return "main";
             }else{
                 redirectAttributes.addFlashAttribute("error", "비밀번호가 들렸습니다.");
@@ -69,12 +67,12 @@ public class UserController {
 
     @GetMapping("/mypage")
     public String mypage(HttpSession session, Model model) {
-       UserDTO uid = (UserDTO) session.getAttribute("user");
+       SessionUserDTO uid = (SessionUserDTO) session.getAttribute("user");
        if(uid==null) {
            return "redirect:/loginForm";
        }
-        List<ExerciseRoutine> routineList = exerciseRoutineService.findByUserID(uid.getUser_id());
-        Optional<User> user = userService.findById(uid.getUser_id());
+        List<ExerciseRoutine> routineList = exerciseRoutineService.findByUserID(uid.getId());
+        Optional<User> user = userService.findById(uid.getId());
         user.ifPresent(u -> model.addAttribute("user", u));
         model.addAttribute("routineList", routineList);
         return "/mypage";
