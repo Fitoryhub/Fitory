@@ -1,5 +1,6 @@
 package com.Fitory.fitory.service;
 
+import com.Fitory.fitory.dto.IdDate;
 import com.Fitory.fitory.dto.ScheduleDTO;
 import com.Fitory.fitory.entity.Schedule;
 import com.Fitory.fitory.repository.ScheduleRepository;
@@ -27,6 +28,13 @@ public class ScheduleService implements IF_ScheduleService {
     public void saveschedule(Schedule schedule) {
         scheduleRepository.save(schedule);
 
+    }
+
+    @Override
+    public List<Schedule> finddetail(IdDate iddate) {
+       String id= iddate.getId();
+       LocalDate date=  LocalDate.parse(iddate.getDate());
+        return scheduleRepository.findByUseridAndDate(id ,date);
     }
 
 

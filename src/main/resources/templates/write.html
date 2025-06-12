@@ -71,8 +71,8 @@
 
 <form th:action="${mod} ? @{/mod_post} : @{/submit_post}"
       th:object="${board}" method="post" enctype="multipart/form-data">
-    <input type="hidden" name="nickname" th:value="${session.nickname}"/>
-    <input type="hidden" name="uid" th:value="${session.uid}">
+    <input type="hidden" name="nickname" th:value="${session.userInfo.nickname}"/>
+    <input type="hidden" name="uid" th:value="${session.userInfo.id}">
     <input th:if="${mod}" type="hidden" name="pnum" th:value="${board.pnum}">
     <table>
         <tr>

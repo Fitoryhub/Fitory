@@ -14,4 +14,6 @@ public interface IF_DietService {
 	public Map<String, Object> serlist(int page);
 
     List<Diet> selectdiet_id(String userid);
+
+	List<Diet> findbyuserId(String id);
 }

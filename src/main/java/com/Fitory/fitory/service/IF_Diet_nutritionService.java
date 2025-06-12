@@ -9,4 +9,7 @@ public interface IF_Diet_nutritionService {
 	
 	public void insert(int did, List<FoodlistDTO> flist);
 	public Diet_nutrition getone(int did);
+
+
+	Diet_nutrition finddid(int did);
 }

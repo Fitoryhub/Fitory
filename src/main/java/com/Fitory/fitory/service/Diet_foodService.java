@@ -2,6 +2,7 @@ package com.Fitory.fitory.service;
 
 import java.util.List;
 
+import com.Fitory.fitory.entity.Diet_nutrition;
 import org.springframework.stereotype.Service;
 
 import com.Fitory.fitory.entity.Diet_food;
@@ -18,9 +19,9 @@ public class Diet_foodService implements IF_DIet_foodService{
 	public void insert(int did, int[] fnid, List<Diet_food> dflist) {
 		for(int i=0; i<fnid.length; i++) {
 			Diet_food df=new Diet_food();
-			df.setDiet_id(did);
+			df.setDietid(did);
 			df.setFood_nutrition_id(fnid[i]);
-			df.setFood_name(dflist.get(i).getFood_name());
+			df.setFoodname(dflist.get(i).getFoodname());
 			dfrepo.save(df);
 		}
 	}
@@ -28,5 +29,15 @@ public class Diet_foodService implements IF_DIet_foodService{
 	public List<Diet_food> getdflist(int did){
 		List<Diet_food> dflist=dfrepo.findAllByDiet_id(did);
 		return dflist;
+	}
+
+	@Override
+	public List<Diet_food> findBy(int dietId) {
+		return dfrepo.findByDietid(dietId);
+	}
+
+	@Override
+	public Diet_food findByfoodname(String name) {
+		return dfrepo.findByFoodname(name);
 	}
 }

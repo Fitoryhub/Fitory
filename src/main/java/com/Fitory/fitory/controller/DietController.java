@@ -149,7 +149,7 @@ public class DietController {
 			Long did=diet.getDiet_id();
 			 List<Diet_food> foods=dfservice.getdflist(did.intValue());
 				for(Diet_food food:foods){
-					foodname.add(food.getFood_name());
+					foodname.add(food.getFoodname());
 				}
 		}
 

@@ -25,7 +25,7 @@ public class Food_nutritionService implements IF_Food_nutritionService{
 			Food_nutrition temp_f=new Food_nutrition();
 			FoodlistDTO fvo=flist.get(i);
 			Diet_food dfvo=new Diet_food();
-			dfvo.setFood_name(fvo.getFood_name());
+			dfvo.setFoodname(fvo.getFood_name());
 			temp_f.setDiet_id(did);
 			temp_f.setCalories(fvo.getCalories());
 			temp_f.setProtein(fvo.getProtein());

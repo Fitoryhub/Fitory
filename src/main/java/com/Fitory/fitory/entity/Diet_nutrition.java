@@ -16,8 +16,8 @@ import lombok.Setter;
 @DynamicInsert
 public class Diet_nutrition {
 	@Id
-	@Column(columnDefinition = "BIGINT")
-	private int diet_id;
+	@Column(name = "diet_id", columnDefinition = "BIGINT")
+	private int dietid;
 	
 	@Column(name="calories", columnDefinition = "INT(11)")
 	private int calories;

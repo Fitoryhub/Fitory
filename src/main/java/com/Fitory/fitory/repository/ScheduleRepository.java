@@ -21,4 +21,5 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Integer> {
     List<Schedule> findByUseridAndDateBetween(@Param("userid") String userid,
                                               @Param("start") LocalDate start , @Param("end")LocalDate end);
 
+    List<Schedule> findByUseridAndDate(String id, LocalDate date);
 }

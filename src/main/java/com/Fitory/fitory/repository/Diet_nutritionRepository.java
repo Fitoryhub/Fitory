@@ -6,4 +6,5 @@ import com.Fitory.fitory.entity.Diet_nutrition;
 
 public interface Diet_nutritionRepository extends JpaRepository<Diet_nutrition, Integer>{
 
+    Diet_nutrition findByDietid(int did);
 }

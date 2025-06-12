@@ -26,7 +26,7 @@ public class Diet_nutritionService implements IF_Diet_nutritionService{
 			tfat+=flist.get(i).getFat();
 			tpro+=flist.get(i).getProtein();
 		}
-		dn.setDiet_id(did);
+		dn.setDietid(did);
 		dn.setCalories(tcal);
 		dn.setCarbohydrate(tcarbo);
 		dn.setFat(tfat);
@@ -38,4 +38,13 @@ public class Diet_nutritionService implements IF_Diet_nutritionService{
 		Optional<Diet_nutrition> temp=dnrepo.findById(did);
         return temp.orElse(null);
 	}
+
+
+
+	@Override
+	public Diet_nutrition finddid(int did) {
+		return dnrepo.findByDietid(did);
+	}
+
+
 }

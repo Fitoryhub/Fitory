@@ -1,5 +1,6 @@
 package com.Fitory.fitory.repository;
 
+import com.Fitory.fitory.entity.Diet_nutrition;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.Fitory.fitory.entity.Diet_food;
@@ -15,5 +16,9 @@ public interface Diet_foodRepository extends JpaRepository<Diet_food, Integer>{
             "       WHERE diet_id=:did"
             ,nativeQuery = true)
     public List<Diet_food> findAllByDiet_id(@Param("did") int did);
+
+    List<Diet_food> findByDietid(int dietId);
+
+    Diet_food findByFoodname(String name);
 }
 

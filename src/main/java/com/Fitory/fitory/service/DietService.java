@@ -52,4 +52,9 @@ public class DietService implements IF_DietService{
 	public List<Diet> selectdiet_id(String userid) {
 		return dietrespo.findByUserid(userid);
 	}
+
+	@Override
+	public List<Diet> findbyuserId(String id) {
+		return dietrespo.findByUserid(id);
+	}
 }

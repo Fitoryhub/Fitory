@@ -5,6 +5,48 @@
     <title>jQuery 고정형 달력</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            overflow: auto; /* 데이터 많을 때 스크롤 가능 */
+            padding: 20px;
+        }
+
+        .modal-content {
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh; /* 화면 기준 최대 높이 */
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            overflow-y: auto; /* 내용이 넘치면 세로 스크롤 */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+
+        .schedule-entry {
+            margin-bottom: 20px;
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .schedule-entry h4 {
+            margin-bottom: 4px;
+        }
+
+        .nutrients {
+            font-size: 14px;
+            color: #555;
+        }
+
         body {
             font-family: sans-serif;
             text-align: center;
@@ -77,7 +119,7 @@
         <h2 id="monthYear"></h2>
         <button id="nextMonth">→</button>
     </div>
-
+    <input type="hidden" id="name" th:value="${session.userInfo.id}">
     <div class="weekdays">
         <div class="weekday">일</div>
         <div class="weekday">월</div>
@@ -90,10 +132,19 @@
 
     <div class="days" id="calendarDays"></div>
 </div>
+<div id="scheduleModal" class="modal" style="display: none;">
+    <div class="modal-content" style="width: 500px; padding: 20px; background: #fff; border-radius: 12px;">
+        <h2 id="modal-date-title"></h2>
+        <div id="schedule-details"></div>
+        <button id="closeBtn">닫기</button>
+    </div>
+</div>
 <button id="addScheduleBtn">스케줄 추가</button>
 
 <script>
     $(function () {
+
+
         let slist = [];
         const today = new Date();
         let currentDate = new Date();
@@ -104,7 +155,7 @@
                 url: "/api/schedules",
                 method: "GET",
                 dataType: "json",
-                data: { num },
+                data: {num},
                 success: function (data) {
                     slist = data;
                     renderCalendar(currentDate);
@@ -177,8 +228,76 @@
 
         window.scheduleReload = scheduleReload;
         scheduleReload();
+        $("#closeBtn").on("click", function () {
+            $("#scheduleModal").hide();
+        });
+
+        $("#calendarDays").on("click", ".day", function () {
+            $("#schedule-details").empty();
+            let id = $("#name").val();
+            const day = parseInt($(this).attr("data-day")); // 클릭한 일 (1~31)
+            const year = currentDate.getFullYear();         // 현재 표시 중인 연도
+            const month = currentDate.getMonth();           // 현재 표시 중인 월 (0~11)
+
+            const fullDate = new Date(year, month, day);    // 전체 날짜 객체 생성
+            const yyyy = fullDate.getFullYear();
+            const mm = String(fullDate.getMonth() + 1).padStart(2, '0');
+            const dd = String(fullDate.getDate()).padStart(2, '0');
+
+            const formattedDate = `${yyyy}-${mm}-${dd}`;
+
+            $.ajax({
+                url: "/schedule/detail",
+                dataType: "json",
+                method: "post",
+                data: {
+                    id: id,  // ← 여기에 id 변수 정의 필요함 (밖에서 선언했는지 확인!)
+                    date: formattedDate
+                },
+                success: function (data) {
+                    let a=0;
+                    let b=0;
+                    $.each(data.exerciseRoutineList, function (index, routine) {
+                        if (a==0){
+                            $("#schedule-details").append( '<h3>운동</h3>');
+                        }
+                        $("#schedule-details").append(
+                            "<li>일정:" + routine.schedule+
+                            "   운동명: " + routine.routine +
+                            "   운동시간: " + routine.time +
+                            "분    칼로리소비: " + routine.calorie + "</li>"
+                        );
+                        a++;
+                    })
+
+                    $.each(data.dflist, function (index, dfood) {
+                        if (b==0){
+                            $("#schedule-details").append( '<h3>식단</h3>');
+                        }
+                        $("#schedule-details").append(
+                            "<li>일정:" + dfood.time+
+                            "   식단명: " + dfood.name +
+                            "   섭취칼로리: " + dfood.calories +
+                            "kal   탄수화물: " + dfood.carbohydrate +
+                            "g   단백질: " + dfood.protein +
+                            "g   지방: " + dfood.fat + "g</li>"
+                        );
+                        b++;
+                    })
+
+
+
+                    if(a==0&&b==0){
+                        $("#schedule-details").append('<h1>일정없음</h1>')
+                    }
+                    $("#scheduleModal").show();
+                },
+                error: function () {
+                    alert("스케줄 상세 정보를 불러오는 데 실패했습니다.");
+                }
+            });
+        });
     });
 </script>
-
 </body>
 </html>
