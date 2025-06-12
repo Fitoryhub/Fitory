@@ -1,7 +1,7 @@
 package com.Fitory.fitory.service;
 
-import com.Fitory.fitory.DTO.PtitlePcategoryDTO;
-import com.Fitory.fitory.entity.*;
+import com.Fitory.fitory.dto.PtitlePcategoryDTO;
+import com.Fitory.fitory.entity.Board;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

@@ -1,18 +1,20 @@
 package com.Fitory.fitory.service;
 
+import com.Fitory.fitory.dto.UserDTO;
 import com.Fitory.fitory.entity.User;
-import com.Fitory.fitory.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-@Service
-public class UserService {
+import java.util.Optional;
 
-    @Autowired
-    private UserRepository userRepository;
+public interface UserService {
+    public void usersave(UserDTO udto);
 
-    public void save(User user) {
+    public boolean idchk(String id);
 
-        userRepository.save(user);
-    }
+    public boolean nicknamechk(String nickname);
+
+    public UserDTO login(String id);
+
+    public UserDTO userInfo(String id);
+
+    public Optional<User> findById(String id);
 }

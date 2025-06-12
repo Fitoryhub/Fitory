@@ -1,7 +1,6 @@
 package com.Fitory.fitory.service;
 
 import com.Fitory.fitory.entity.Files;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 

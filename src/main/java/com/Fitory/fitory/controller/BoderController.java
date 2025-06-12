@@ -1,28 +1,24 @@
 package com.Fitory.fitory.controller;
 
-import com.Fitory.fitory.DTO.CommentDTO;
-import com.Fitory.fitory.DTO.PtitlePcategoryDTO;
-import com.Fitory.fitory.DTO.RepliesDTO;
+import com.Fitory.fitory.dto.CommentDTO;
+import com.Fitory.fitory.dto.PtitlePcategoryDTO;
+import com.Fitory.fitory.dto.RepliesDTO;
+import com.Fitory.fitory.dto.SessionUserDTO;
 import com.Fitory.fitory.entity.*;
-import com.Fitory.fitory.repository.*;
+import com.Fitory.fitory.entity.Files;
 import com.Fitory.fitory.service.*;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 
 
@@ -47,7 +43,7 @@ public class BoderController {
 
     //게시판 들어온창(검색기준으로 출력될수있게 구현)
     @GetMapping("/boardlist")
-    public String boardlist(Model model, @PageableDefault(page = 0, size = 10, sort = "pnum"
+    public String boardlist(HttpSession session, Model model, @PageableDefault(page = 0, size = 10, sort = "pnum"
                                     , direction = Sort.Direction.DESC) Pageable pageable
             , @RequestParam(required = false) String pcategory,
                             @RequestParam(required = false) String ptitle) {
@@ -73,6 +69,8 @@ public class BoderController {
         int startpage = Math.max(nowpage - 2, 1);  // 현재 페이지를 중심으로 2개 앞뒤
         int endpage = Math.min(startpage + 4, board.getTotalPages()); // 총 5개만 보이도록 조정
 
+        SessionUserDTO userInfo = (SessionUserDTO) session.getAttribute("userInfo");
+        model.addAttribute("userInfo", userInfo);
         model.addAttribute("list", board);
         model.addAttribute("nowpage", nowpage);
         model.addAttribute("startpage", startpage);
@@ -117,7 +115,8 @@ public class BoderController {
 
         boardService.updateplook(pnum);
         Board board = boardService.searchoneboard(pnum);
-        String uid = session.getAttribute("uid").toString();
+        SessionUserDTO userdto = (SessionUserDTO) session.getAttribute("userInfo");
+        String uid = userdto.getId();
         Plike plike = plikeService.findplike(uid, pnum);
         List<Files> files = fileService.findfile(pnum);
 

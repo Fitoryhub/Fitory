@@ -1,10 +1,6 @@
-package com.Fitory.fitory.DTO;
-
-import lombok.Getter;
-import lombok.Setter;
+package com.Fitory.fitory.dto;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 
 public class CommentDTO {

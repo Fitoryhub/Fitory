@@ -1,6 +1,5 @@
 package com.Fitory.fitory.repository;
 
-import com.Fitory.fitory.DTO.RepliesDTO;
 import com.Fitory.fitory.entity.Replies;
 import feign.Param;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,7 +1,6 @@
 package com.Fitory.fitory.service;
 
 import com.Fitory.fitory.entity.Replies;
-import com.Fitory.fitory.entity.Rlikes;
 
 import java.util.List;
 

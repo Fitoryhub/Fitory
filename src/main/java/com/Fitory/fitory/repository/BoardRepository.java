@@ -1,7 +1,6 @@
 package com.Fitory.fitory.repository;
 
 import com.Fitory.fitory.entity.Board;
-import com.Fitory.fitory.entity.Clike;
 import feign.Param;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

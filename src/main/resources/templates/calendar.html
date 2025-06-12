@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>jQuery 고정형 달력</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: sans-serif;
+            text-align: center;
+        }
+
+        .calendar {
+            display: inline-block;
+            margin-top: 30px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .weekdays, .days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+
+        .weekday, .day {
+            border: 1px solid #ddd;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+
+        .weekday {
+            font-weight: bold;
+            background-color: #f0f0f0;
+            height: 30px;
+        }
+
+        .day {
+            height: 100px; /* 고정 높이 */
+            position: relative;
+            overflow-y: auto;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        .day::before {
+            content: attr(data-day);
+            position: absolute;
+            top: 3px;
+            right: 5px;
+            font-weight: bold;
+        }
+
+        .today {
+            background-color: gainsboro;
+            color: white;
+        }
+
+        .schedule-item {
+            margin-top: 18px;
+            font-size: 12px;
+            color: #333;
+            padding-left: 3px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="calendar">
+    <div class="header">
+        <button id="prevMonth">←</button>
+        <h2 id="monthYear"></h2>
+        <button id="nextMonth">→</button>
+    </div>
+
+    <div class="weekdays">
+        <div class="weekday">일</div>
+        <div class="weekday">월</div>
+        <div class="weekday">화</div>
+        <div class="weekday">수</div>
+        <div class="weekday">목</div>
+        <div class="weekday">금</div>
+        <div class="weekday">토</div>
+    </div>
+
+    <div class="days" id="calendarDays"></div>
+</div>
+<button id="addScheduleBtn">스케줄 추가</button>
+
+<script>
+    $(function () {
+        let slist = [];
+        const today = new Date();
+        let currentDate = new Date();
+        let num = 0;
+
+        function scheduleReload() {
+            $.ajax({
+                url: "/api/schedules",
+                method: "GET",
+                dataType: "json",
+                data: { num },
+                success: function (data) {
+                    slist = data;
+                    renderCalendar(currentDate);
+                },
+                error: function () {
+                    alert("스케줄 불러오기 실패");
+                }
+            });
+        }
+
+        function renderCalendar(date) {
+            const $calendarDays = $("#calendarDays");
+            const $monthYear = $("#monthYear");
+
+            $calendarDays.empty();
+
+            const year = date.getFullYear();
+            const month = date.getMonth();
+            const firstDay = new Date(year, month, 1).getDay();
+            const lastDate = new Date(year, month + 1, 0).getDate();
+
+            $monthYear.text(`${year}년 ${month + 1}월`);
+
+            let dayCount = 1;
+            for (let i = 0; i < 42; i++) {
+                if (i < firstDay || dayCount > lastDate) {
+                    $calendarDays.append(`<div class="day"></div>`);
+                } else {
+                    let isToday =
+                        dayCount === today.getDate() &&
+                        month === today.getMonth() &&
+                        year === today.getFullYear();
+
+                    let scheduleHtml = '';
+                    for (let j = 0; j < slist.length; j++) {
+                        if (slist[j].day === dayCount) {
+                            scheduleHtml += `<div class="schedule-item">${slist[j].time.slice(0, 5)} - ${slist[j].item}</div>`;
+                        }
+                    }
+
+                    $calendarDays.append(`
+                        <div class="day ${isToday ? 'today' : ''}" data-day="${dayCount}">
+                            ${scheduleHtml}
+                        </div>
+                    `);
+                    dayCount++;
+                }
+            }
+        }
+
+        $("#addScheduleBtn").on("click", function () {
+            window.open(
+                "/add_schedule",
+                "스케줄 추가",
+                "width=400,height=500,top=100,left=100"
+            );
+        });
+
+        $("#prevMonth").on("click", function () {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            num--;
+            scheduleReload();
+        });
+
+        $("#nextMonth").on("click", function () {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            num++;
+            scheduleReload();
+        });
+
+        window.scheduleReload = scheduleReload;
+        scheduleReload();
+    });
+</script>
+
+</body>
+</html>

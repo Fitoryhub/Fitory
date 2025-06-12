@@ -1,4 +1,4 @@
-package com.Fitory.fitory.DTO;
+package com.Fitory.fitory.dto;
 
 import lombok.Getter;
 import lombok.Setter;
