@@ -5,132 +5,227 @@
     <title>jQuery 고정형 달력</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
+        .day:not([data-day]) {
+            pointer-events: none;
+            background-color: #f0f0f0;
+        }
+
+        body {
+            font-family: 'Apple SD Gothic Neo', sans-serif;
+            text-align: center;
+            margin: 0;
+            background-color: #f9f9f9;
+        }
+
+        /* 모달 스타일 */
         .modal {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background-color: rgba(0, 0, 0, 0.5);
+            background-color: rgba(0, 0, 0, 0.6);
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 1000;
-            overflow: auto; /* 데이터 많을 때 스크롤 가능 */
+            overflow: auto;
             padding: 20px;
         }
 
         .modal-content {
             width: 90%;
             max-width: 600px;
-            max-height: 80vh; /* 화면 기준 최대 높이 */
+            max-height: 80vh;
             background: #fff;
             border-radius: 12px;
             padding: 20px;
-            overflow-y: auto; /* 내용이 넘치면 세로 스크롤 */
+            overflow-y: auto;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         }
 
-
-        .schedule-entry {
-            margin-bottom: 20px;
-            padding: 10px;
-            border-bottom: 1px solid #ccc;
-        }
-
-        .schedule-entry h4 {
-            margin-bottom: 4px;
-        }
-
-        .nutrients {
-            font-size: 14px;
-            color: #555;
-        }
-
-        body {
-            font-family: sans-serif;
-            text-align: center;
-        }
-
+        /* 달력 컨테이너 */
         .calendar {
             display: inline-block;
-            margin-top: 30px;
+            margin: 30px auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+            padding: 20px;
         }
 
+        /* 달력 상단 헤더 */
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
         }
 
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header h2 {
+            font-size: 20px;
+            margin: 0;
+        }
+
+        .header button {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 5px 10px;
+        }
+
+        /* 요일 및 날짜 */
         .weekdays, .days {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 5px;
+            gap: 4px;
         }
 
         .weekday, .day {
-            border: 1px solid #ddd;
-            padding: 5px;
+            border: 1px solid #e0e0e0;
             box-sizing: border-box;
+            border-radius: 4px;
         }
 
         .weekday {
             font-weight: bold;
-            background-color: #f0f0f0;
-            height: 30px;
-        }
-
-        .day {
-            height: 100px; /* 고정 높이 */
-            position: relative;
-            overflow-y: auto;
-            text-align: left;
+            background-color: #f4f4f4;
+            height: 32px;
+            text-align: center;
+            line-height: 32px;
             font-size: 14px;
         }
 
+        /* 날짜 셀 */
+        .day {
+            height: 100px;
+            background-color: #fff;
+            position: relative;
+            font-size: 13px;
+            display: flex;
+            flex-direction: column;
+            padding: 5px 4px;
+            overflow: hidden;
+            justify-content: flex-start;
+            align-items: flex-start;
+        }
+
+        /* 날짜 숫자 */
         .day::before {
             content: attr(data-day);
             position: absolute;
-            top: 3px;
-            right: 5px;
+            top: 5px;
+            right: 6px;
             font-weight: bold;
+            font-size: 12px;
+            color: #888;
+            z-index: 1;
         }
 
+        /* 오늘 날짜 */
         .today {
-            background-color: gainsboro;
+            background-color: #4caf50 !important;
             color: white;
+            border-color: darkgrey;
         }
 
-        .schedule-item {
+        /* 일정 컨테이너 */
+        .schedule-wrapper {
             margin-top: 18px;
+            width: 100%;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        /* 일정 항목 */
+        .schedule-item {
             font-size: 12px;
             color: #333;
-            padding-left: 3px;
+            word-break: break-word;
+            margin-bottom: 3px;
         }
+
+        /* 일정 추가 버튼 */
+        #addScheduleBtn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        #addScheduleBtn:hover {
+            background-color: #0056b3;
+        }
+
+        /* 모달 상세보기 */
+        #schedule-details li {
+            margin: 8px 0;
+            text-align: left;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        #schedule-details h3 {
+            text-align: left;
+            margin-top: 15px;
+            margin-bottom: 10px;
+            color: #333;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 5px;
+        }
+
+        /* 개별 스케줄 항목 */
+        .schedule-entry {
+            margin-bottom: 20px;
+            padding: 10px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .schedule-entry h4 {
+            margin-bottom: 6px;
+            font-size: 16px;
+            color: #222;
+        }
+
+        .nutrients {
+            font-size: 14px;
+            color: #666;
+        }
+
     </style>
 </head>
 <body>
 
-<div class="calendar">
-    <div class="header">
-        <button id="prevMonth">←</button>
-        <h2 id="monthYear"></h2>
+<div class="header">
+    <button id="prevMonth">←</button>
+    <h2 id="monthYear"></h2>
+    <div class="header-right">
+        <button id="addScheduleBtn">스케줄 추가</button>
         <button id="nextMonth">→</button>
     </div>
-    <input type="hidden" id="name" th:value="${session.userInfo.id}">
-    <div class="weekdays">
-        <div class="weekday">일</div>
-        <div class="weekday">월</div>
-        <div class="weekday">화</div>
-        <div class="weekday">수</div>
-        <div class="weekday">목</div>
-        <div class="weekday">금</div>
-        <div class="weekday">토</div>
-    </div>
+</div>
+<input type="hidden" id="name" th:value="${session.userInfo.id}">
+<div class="weekdays">
+    <div class="weekday">일</div>
+    <div class="weekday">월</div>
+    <div class="weekday">화</div>
+    <div class="weekday">수</div>
+    <div class="weekday">목</div>
+    <div class="weekday">금</div>
+    <div class="weekday">토</div>
+</div>
 
-    <div class="days" id="calendarDays"></div>
+<div class="days" id="calendarDays"></div>
 </div>
 <div id="scheduleModal" class="modal" style="display: none;">
     <div class="modal-content" style="width: 500px; padding: 20px; background: #fff; border-radius: 12px;">
@@ -139,23 +234,21 @@
         <button id="closeBtn">닫기</button>
     </div>
 </div>
-<button id="addScheduleBtn">스케줄 추가</button>
 
 <script>
     $(function () {
-
-
         let slist = [];
         const today = new Date();
         let currentDate = new Date();
         let num = 0;
+        let formattedDate = ""; // 🔑 전역 변수로 설정
 
-        function scheduleReload() {
+        window.scheduleReload = function() {
             $.ajax({
                 url: "/api/schedules",
                 method: "GET",
                 dataType: "json",
-                data: {num},
+                data: { num },
                 success: function (data) {
                     slist = data;
                     renderCalendar(currentDate);
@@ -206,14 +299,7 @@
             }
         }
 
-        $("#addScheduleBtn").on("click", function () {
-            window.open(
-                "/add_schedule",
-                "스케줄 추가",
-                "width=400,height=500,top=100,left=100"
-            );
-        });
-
+        // 이전 / 다음 달 이동
         $("#prevMonth").on("click", function () {
             currentDate.setMonth(currentDate.getMonth() - 1);
             num--;
@@ -226,77 +312,122 @@
             scheduleReload();
         });
 
-        window.scheduleReload = scheduleReload;
-        scheduleReload();
+        // 일정 추가 버튼
+        $("#addScheduleBtn").on("click", function () {
+            window.open("/add_schedule", "스케줄 추가", "width=400,height=500,top=100,left=100");
+        });
+
+        // 모달 닫기
         $("#closeBtn").on("click", function () {
             $("#scheduleModal").hide();
         });
 
+        // 모달 열기
         $("#calendarDays").on("click", ".day", function () {
             $("#schedule-details").empty();
             let id = $("#name").val();
-            const day = parseInt($(this).attr("data-day")); // 클릭한 일 (1~31)
-            const year = currentDate.getFullYear();         // 현재 표시 중인 연도
-            const month = currentDate.getMonth();           // 현재 표시 중인 월 (0~11)
+            const day = parseInt($(this).attr("data-day"));
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
 
-            const fullDate = new Date(year, month, day);    // 전체 날짜 객체 생성
+            const fullDate = new Date(year, month, day);
             const yyyy = fullDate.getFullYear();
             const mm = String(fullDate.getMonth() + 1).padStart(2, '0');
             const dd = String(fullDate.getDate()).padStart(2, '0');
 
-            const formattedDate = `${yyyy}-${mm}-${dd}`;
+            formattedDate = `${yyyy}-${mm}-${dd}`;
+            $("#modal-date-title").text(`${yyyy}년 ${mm}월 ${dd}일 스케줄`);
+            $("#scheduleModal").show();
 
             $.ajax({
                 url: "/schedule/detail",
+                method: "POST",
                 dataType: "json",
-                method: "post",
-                data: {
-                    id: id,  // ← 여기에 id 변수 정의 필요함 (밖에서 선언했는지 확인!)
-                    date: formattedDate
-                },
-                success: function (data) {
-                    let a=0;
-                    let b=0;
-                    $.each(data.exerciseRoutineList, function (index, routine) {
-                        if (a==0){
-                            $("#schedule-details").append( '<h3>운동</h3>');
-                        }
-                        $("#schedule-details").append(
-                            "<li>일정:" + routine.schedule+
-                            "   운동명: " + routine.routine +
-                            "   운동시간: " + routine.time +
-                            "분    칼로리소비: " + routine.calorie + "</li>"
-                        );
-                        a++;
-                    })
-
-                    $.each(data.dflist, function (index, dfood) {
-                        if (b==0){
-                            $("#schedule-details").append( '<h3>식단</h3>');
-                        }
-                        $("#schedule-details").append(
-                            "<li>일정:" + dfood.time+
-                            "   식단명: " + dfood.name +
-                            "   섭취칼로리: " + dfood.calories +
-                            "kal   탄수화물: " + dfood.carbohydrate +
-                            "g   단백질: " + dfood.protein +
-                            "g   지방: " + dfood.fat + "g</li>"
-                        );
-                        b++;
-                    })
-
-
-
-                    if(a==0&&b==0){
-                        $("#schedule-details").append('<h1>일정없음</h1>')
-                    }
-                    $("#scheduleModal").show();
-                },
+                data: { id, date: formattedDate },
+                success: renderDetails,
                 error: function () {
                     alert("스케줄 상세 정보를 불러오는 데 실패했습니다.");
                 }
             });
         });
+
+        // 삭제 버튼 클릭
+        $("#schedule-details").on("click", ".delete-btn", function () {
+            let id = $(this).data("id");
+            let name = $(this).data("name");
+            let time = $(this).data("time");
+
+            $.ajax({
+                url: "/del/schedule",
+                method: "POST",
+                dataType: "json",
+                data: {
+                    id: id,
+                    date: formattedDate,
+                    name: name,
+                    time: time
+                },
+                success: function (data) {
+                    renderDetails(data);
+                    scheduleReload();
+                },
+                error: function () {
+                    alert("삭제 실패");
+                }
+            });
+        });
+
+        // 상세 뷰 렌더링 함수 분리
+        function renderDetails(data) {
+            $("#schedule-details").empty();
+            let a = 0;
+            let b = 0;
+
+            $.each(data.exerciseRoutineList, function (index, routine) {
+                if (a === 0) {
+                    $("#schedule-details").append('<h3>운동</h3>');
+                }
+                $("#schedule-details").append(
+                    "<li>일정: " + routine.schedule +
+                    "   운동명: " + routine.routine +
+                    "   운동시간: " + routine.time + "분 " +
+                    "   칼로리소비: " + routine.calorie +
+                    ' <button class="delete-btn" data-id="' + $("#name").val() +
+                    '" data-name="' + routine.routine +
+                    '" data-time="' + routine.schedule +
+                    '" data-date="' + formattedDate + '">삭제</button>' +
+                    "</li>"
+                );
+                a++;
+            });
+
+            $.each(data.dflist, function (index, dfood) {
+                if (b === 0) {
+                    $("#schedule-details").append('<h3>식단</h3>');
+                }
+                $("#schedule-details").append(
+                    "<li>일정:" + dfood.time +
+                    "   식단명: " + dfood.name +
+                    "   섭취칼로리: " + dfood.calories +
+                    "kal   탄수화물: " + dfood.carbohydrate +
+                    "g   단백질: " + dfood.protein +
+                    "g   지방: " + dfood.fat + "g" +
+                    ' <button class="delete-btn" data-id="' + $("#name").val() +
+                    '" data-name="' + dfood.name +
+                    '" data-time="' + dfood.time +
+                    '" data-date="' + formattedDate + '">삭제</button>' +
+                    "</li>"
+                );
+                b++;
+            });
+
+            if (a === 0 && b === 0) {
+                $("#schedule-details").append('<h1>일정없음</h1>');
+            }
+        }
+
+        // 초기 호출
+        scheduleReload();
     });
 </script>
 </body>

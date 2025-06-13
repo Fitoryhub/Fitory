@@ -1,5 +1,6 @@
 package com.Fitory.fitory.service;
 
+import com.Fitory.fitory.dto.DelscheduleDTO;
 import com.Fitory.fitory.dto.IdDate;
 import com.Fitory.fitory.dto.ScheduleDTO;
 import com.Fitory.fitory.entity.Schedule;
@@ -10,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -20,8 +23,8 @@ public class ScheduleService implements IF_ScheduleService {
 
     @Transactional
     @Override
-    public List<Schedule> mySchedule(String userid , LocalDate start, LocalDate end) {
-    return scheduleRepository.findByUseridAndDateBetween(userid ,start,end);
+    public List<Schedule> mySchedule(String userid, LocalDate start, LocalDate end) {
+        return scheduleRepository.findByUseridAndDateBetween(userid, start, end);
     }
 
     @Override
@@ -32,9 +35,33 @@ public class ScheduleService implements IF_ScheduleService {
 
     @Override
     public List<Schedule> finddetail(IdDate iddate) {
-       String id= iddate.getId();
-       LocalDate date=  LocalDate.parse(iddate.getDate());
-        return scheduleRepository.findByUseridAndDate(id ,date);
+        String id = iddate.getId();
+        LocalDate date = LocalDate.parse(iddate.getDate());
+        return scheduleRepository.findByUseridAndDate(id, date);
+    }
+
+    @Transactional
+    @Override
+    public void del(DelscheduleDTO delschedule) {
+
+        Schedule s = new Schedule();
+
+        String id = delschedule.getId();
+
+        String date = delschedule.getDate();
+
+        LocalDate date1 = LocalDate.parse(date, DateTimeFormatter.ISO_LOCAL_DATE);
+
+        String timeStr = delschedule.getTime();
+
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+
+        LocalTime time = LocalTime.parse(timeStr, timeFormatter);
+
+        String name = delschedule.getName();
+
+        scheduleRepository.deleteByUseridAndDateAndTimeAndItem( id , date1, time, name);
+
     }
 
 

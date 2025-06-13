@@ -10,16 +10,26 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @Repository
 public interface ScheduleRepository extends JpaRepository<Schedule, Integer> {
 
 
-
     @Query("select s from Schedule s where s.userid=:userid and s.date between :start and :end")
     List<Schedule> findByUseridAndDateBetween(@Param("userid") String userid,
-                                              @Param("start") LocalDate start , @Param("end")LocalDate end);
+                                              @Param("start") LocalDate start, @Param("end") LocalDate end);
 
     List<Schedule> findByUseridAndDate(String id, LocalDate date);
+
+
+
+    @Modifying
+    @Query("DELETE FROM Schedule s WHERE s.userid = :userid AND s.date = :date AND s.time = :time AND s.item = :item")
+    void deleteByUseridAndDateAndTimeAndItem(
+            @Param("id") String userid,
+            @Param("date") LocalDate date,
+            @Param("time") LocalTime time,
+            @Param("item") String item);
 }

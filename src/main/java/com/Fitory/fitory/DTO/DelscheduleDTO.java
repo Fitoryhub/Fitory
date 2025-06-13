@@ -5,9 +5,11 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class IdDate {
-
+public class DelscheduleDTO {
     private String id;
+    private String name;
     private String date;
+    private String time;
+
 
 }

@@ -1,5 +1,6 @@
 package com.Fitory.fitory.service;
 
+import com.Fitory.fitory.dto.DelscheduleDTO;
 import com.Fitory.fitory.dto.IdDate;
 import com.Fitory.fitory.dto.ScheduleDTO;
 import com.Fitory.fitory.entity.Schedule;
@@ -14,4 +15,6 @@ public interface IF_ScheduleService {
     void saveschedule(Schedule schedule);
 
     List<Schedule> finddetail(IdDate iddate);
+
+    void del(DelscheduleDTO delschedule);
 }

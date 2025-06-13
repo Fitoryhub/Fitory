@@ -137,7 +137,9 @@ public class CalendarController {
             List did = new ArrayList();
 
             for (Diet dl : dietList1) {
+
                 did.add(dl.getDiet_id());
+
             }
 
             List<Diet_nutrition> dn = new ArrayList<>();
@@ -176,7 +178,7 @@ public class CalendarController {
         }
 
         List<ExerciseRoutine> exerciseRoutineList = new ArrayList<>();
-        for (IdEname idename : elist) {
+        for  (IdEname idename : elist) {
             exerciseRoutineList.add(exerciseRoutineService.findByidename(idename));
         }
 
@@ -193,6 +195,16 @@ public class CalendarController {
         map.put("exerciseRoutineList", li);
 
         return map;
+    }
+    @PostMapping("/del/schedule")
+    @ResponseBody
+    public Map<String, Object> delschedule(@ModelAttribute DelscheduleDTO delschedule) {
+        scheduleService.del(delschedule);
+        IdDate iddate = new IdDate();
+        iddate.setId(delschedule.getId());
+        iddate.setDate(delschedule.getDate());
+        return sdetail(iddate);
+
     }
 
 }

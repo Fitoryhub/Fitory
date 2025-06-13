@@ -87,8 +87,8 @@ public class BoderController {
         System.out.println("확인한다" + board.getNickname());
 
         boardService.savepost(board);
-
         String ProjectPath = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\files";
+
 
 
         for (MultipartFile onefile : filelist) {
@@ -343,10 +343,27 @@ public class BoderController {
     }
 
 
-    // 게시글 삭제 구현 메서드
     @GetMapping("/boarddelete")
     public String boarddelete(@RequestParam("pnum") Integer pnum) {
+        // 1. 게시글 삭제
+
+
+        List<Files> files = fileService.findfile(pnum);
         boardService.boarddelete(pnum);
+
+
+        String basePath = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\files";
+
+        for (Files file : files) {
+            String filename = file.getFilename();
+            String fullPath = basePath + "\\" + filename;
+
+            File f = new File(fullPath);
+            if (f.exists()) {
+                f.delete(); // 실제 파일 삭제
+            }
+        }
+
         return "redirect:/boardlist";
     }
 
