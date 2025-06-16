@@ -19,6 +19,6 @@ public interface Diet_foodRepository extends JpaRepository<Diet_food, Integer>{
 
     List<Diet_food> findByDietid(int dietId);
 
-    Diet_food findByFoodname(String name);
+    Diet_food findFirstByFoodname(String name);
 }
 

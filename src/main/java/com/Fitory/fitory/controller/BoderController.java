@@ -227,13 +227,72 @@ public class BoderController {
     }
 
     //게시글에 댓글작성구현 메서드
-    @PostMapping("comment")
-    public String comment(@ModelAttribute Comment comment, Model model) {
+    @PostMapping("/comment")
+    @ResponseBody
+    public Map<String, Object> comment(@ModelAttribute Comment comment, HttpSession session) {
+        Map<String, Object> response = new HashMap<>();
 
+        // 댓글 저장
         commentService.commentsave(comment);
+        String uid = ((SessionUserDTO) session.getAttribute("userInfo")).getId();
+        String loginNickname = ((SessionUserDTO) session.getAttribute("userInfo")).getNickname();
 
+        // 댓글 리스트 조회
+        List<Comment> comments = commentService.findcomment(comment.getPnum());
+        List<CommentDTO> commentDTOS = new ArrayList<>();
+        for (Comment c : comments) {
+            CommentDTO dto = new CommentDTO();
+            dto.setCnum(c.getCnum());
+            dto.setPnum(c.getPnum());
+            dto.setCbody(c.getCbody());
+            dto.setNickname(c.getNickname());
+            dto.setUid(c.getUid());
+            dto.setCdate(c.getCdate());
+            dto.setClike(c.getClike());
+            commentDTOS.add(dto);
+        }
 
-        return "redirect:/detailview?pnum=" + comment.getPnum();
+        // 댓글 좋아요 상태
+        List<Clike> clikes = clikeService.findclike(comment.getPnum());
+        for (CommentDTO dto : commentDTOS) {
+            for (Clike c : clikes) {
+                if (c.getUid().equals(uid) && dto.getCnum().equals(c.getCnum())) {
+                    dto.setLiked(true);
+                }
+            }
+        }
+
+        // 대댓글 리스트
+        List<Replies> repliesList = replieService.findreplies(comment.getPnum());
+        List<RepliesDTO> replies = new ArrayList<>();
+        for (Replies r : repliesList) {
+            RepliesDTO dto = new RepliesDTO();
+            dto.setRnum(r.getRnum());
+            dto.setCnum(r.getCnum());
+            dto.setPnum(r.getPnum());
+            dto.setRbody(r.getRbody());
+            dto.setNickname(r.getNickname());
+            dto.setUid(r.getUid());
+            dto.setRdate(r.getRdate());
+            dto.setRlikes(r.getRlikes());
+            replies.add(dto);
+        }
+
+        // 대댓글 좋아요 상태
+        List<Rlikes> rlikes = rlikeService.findrlike(comment.getPnum());
+        for (RepliesDTO dto : replies) {
+            for (Rlikes r : rlikes) {
+                if (r.getUid().equals(uid) && r.getRnum().equals(dto.getRnum())) {
+                    dto.setCheck(true);
+                }
+            }
+        }
+
+        // 응답
+        response.put("comments", commentDTOS);
+        response.put("replies", replies);
+        response.put("loginNickname", loginNickname);
+        return response;
     }
 
 

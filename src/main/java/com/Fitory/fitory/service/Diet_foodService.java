@@ -38,6 +38,6 @@ public class Diet_foodService implements IF_DIet_foodService{
 
 	@Override
 	public Diet_food findByfoodname(String name) {
-		return dfrepo.findByFoodname(name);
+		return dfrepo.findFirstByFoodname(name);
 	}
 }

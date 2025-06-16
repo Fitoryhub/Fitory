@@ -17,7 +17,7 @@ import java.util.List;
 public interface ScheduleRepository extends JpaRepository<Schedule, Integer> {
 
 
-    @Query("select s from Schedule s where s.userid=:userid and s.date between :start and :end")
+    @Query("select s from Schedule s where s.userid=:userid and s.date between :start and :end order by s.time asc")
     List<Schedule> findByUseridAndDateBetween(@Param("userid") String userid,
                                               @Param("start") LocalDate start, @Param("end") LocalDate end);
 
