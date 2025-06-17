@@ -249,4 +249,12 @@ public class CalendarController {
 
     }
 
+    @GetMapping("/todayCal")
+    @ResponseBody
+    public Map<String, Integer> todayCal(Model model) {
+        Map<String, Integer> map = new HashMap<>();
+
+        return null;
+    }
+
 }

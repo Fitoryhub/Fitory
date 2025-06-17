@@ -33,7 +33,7 @@
                 <h3>내 건강 정보</h3>
                 <ul>
                     <li>BMI : <span th:text="${#numbers.formatDecimal(BMI, 1, 1)}"></span></li>
-                    <li>오늘 섭취한 칼로리 : <span th:text="${BMR}"></span> Kcal</li>
+                    <li>오늘 섭취한 칼로리 : <span id="todayCal"></span> Kcal</li>
                     <li>기초 대사량 : <span th:text="${BMR}"></span> Kcal</li>
                     <li>목표 체중 : <span>null</span></li>
                 </ul>
@@ -357,6 +357,31 @@
                    dayCount++;
                }
            }
+
+
+/*
+           //오늘 식단의 칼로리 렌더링 될 때 가져오기
+           //컨트롤러에서 오늘 날짜 검색 후 오늘 식단 찾아서 이름 가져오기 -> diet_food에서 이름에 해당하는 food_nutrition_id 가져오기
+           //food_nutrition 테이블에서 해당하는 id 튜플의 칼로리 가져와서 다 더하기
+           $.ajax({
+               url: "/schedule/todayCal",
+               method: "GET",
+               dataType: "json",
+               success: function (data){
+                   let totalCal
+                   totalCal += data.Cal;
+                   if(totalCal!=null){
+                       $("#todayCal").text(totalCal)
+                   }else{
+                       $("#todayCal").text('식단을 등록하세요!!')
+                   }
+               },
+               error: function () {
+                   alert("오류 : 칼로리 가져오기 실패");
+               }
+           });
+               */
+
        }
 
        // 이전 / 다음 달 이동
@@ -443,6 +468,7 @@
            let a = 0;
            let b = 0;
 
+
            $.each(data.exerciseRoutineList, function (index, routine) {
                if (a === 0) {
                    $("#schedule-details").append('<h3>운동</h3>');
@@ -465,6 +491,8 @@
                if (b === 0) {
                    $("#schedule-details").append('<h3>식단</h3>');
                }
+
+
                $("#schedule-details").append(
                    "<li>일정:" + dfood.time +
                    "   식단명: " + dfood.name +
@@ -479,15 +507,20 @@
                    "</li>"
                );
                b++;
+
            });
 
            if (a === 0 && b === 0) {
                $("#schedule-details").append('<h1>일정없음</h1>');
            }
+
+
        }
 
        // 초기 호출
        scheduleReload();
    });
+
+
     </script>
 </section>
