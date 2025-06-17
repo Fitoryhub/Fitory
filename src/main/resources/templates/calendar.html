@@ -32,10 +32,8 @@
             <div class="user-stats">
                 <h3>내 건강 정보</h3>
                 <ul>
-                    <li>성별 : <span th:text ="${user.gender}"></span></li>
-                    <li>키 : <span th:text ="${user.height}"></span> cm</li>
-                    <li>몸무게 : <span th:text ="${user.weight}"></span> kg</li>
                     <li>BMI : <span th:text="${#numbers.formatDecimal(BMI, 1, 1)}"></span></li>
+                    <li>오늘 섭취한 칼로리 : <span th:text="${BMR}"></span> Kcal</li>
                     <li>기초 대사량 : <span th:text="${BMR}"></span> Kcal</li>
                     <li>목표 체중 : <span>null</span></li>
                 </ul>
