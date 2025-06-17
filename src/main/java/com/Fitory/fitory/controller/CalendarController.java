@@ -52,12 +52,40 @@ public class CalendarController {
     @GetMapping("/calendar")
     public String calendar(HttpSession session, Model model) {
         SessionUserDTO userInfo = (SessionUserDTO) session.getAttribute("userInfo");
+        if(userInfo==null){
+            return "redirect:/";
+        }
         session.setAttribute("userInfo", userInfo);
         User user = userRepository.findById(userInfo.getId())
                 .orElseThrow(() -> new IllegalArgumentException("사용자 없음"));
+        //키와 체중 이용해 BMI 계산
         int w = Integer.parseInt(user.getWeight());
         int h = Integer.parseInt(user.getHeight());
+        int tempage = Integer.parseInt(user.getBirth().substring(0,4));
+        int age = java.time.Year.now().getValue() - tempage;
+        System.out.println(age+"ㄴ나이임!@#!@$%!%^!$#%");
+        System.out.println(java.time.Year.now().getValue()+"올해");
+        System.out.println(tempage+"내가 태어난 년도");
         double bmi = (w/((h/100.0)*(h/100.0)));
+
+        //BMR(기초 대사량) 계산
+        String gender = user.getGender();
+        double[] temp = new double[4];
+        //성별에 따라 계산식이 다름
+        if(gender.equals("남성")){
+           temp[0] = 66.47;
+           temp[1] = 13.75;
+           temp[2] = 5;
+           temp[3] = 6.76;
+        }else {
+            temp[0] = 655.1;
+            temp[1] = 9.56;
+            temp[2] = 1.85;
+            temp[3] = 4.68;
+        }
+        int bmr = Math.toIntExact(Math.round(temp[0] + (temp[1] * w) + (temp[2] * h) - (temp[3] * age)));
+        System.out.println(bmr+"BMR이거임ㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁ");
+        model.addAttribute("BMR", bmr);
         model.addAttribute("BMI", bmi);
         model.addAttribute("user", user);
         return "calendar"; // calendar.html
@@ -67,7 +95,7 @@ public class CalendarController {
     @GetMapping("/api/schedules")
     @ResponseBody
     public List<ScheduleDTO> getScheduleData(@RequestParam(value = "num", required = false, defaultValue = "0") int num, HttpSession session) {
-        SessionUserDTO userInfo = (com.Fitory.fitory.dto.SessionUserDTO) session.getAttribute("userInfo");
+        SessionUserDTO userInfo = (SessionUserDTO) session.getAttribute("userInfo");
         String id = userInfo.getId();
 
         YearMonth date = YearMonth.from(LocalDate.now());

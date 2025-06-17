@@ -28,16 +28,34 @@
             <div class="days" id="calendarDays"></div>
         </div>
 
-        <div class="user-stats">
-            <h3>내 건강 정보</h3>
-            <ul>
-                <li>키: <span th:text ="${user.height}"></span> cm</li>
-                <li>몸무게: <span th:text ="${user.weight}"></span> kg</li>
-                <li>BMI: <span th:text="${#numbers.formatDecimal(BMI, 1, 1)}"></span></li>
-                <li>목표 체중:<span>null</span></li>
-            </ul>
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+            <div class="user-stats">
+                <h3>내 건강 정보</h3>
+                <ul>
+                    <li>성별 : <span th:text ="${user.gender}"></span></li>
+                    <li>키 : <span th:text ="${user.height}"></span> cm</li>
+                    <li>몸무게 : <span th:text ="${user.weight}"></span> kg</li>
+                    <li>BMI : <span th:text="${#numbers.formatDecimal(BMI, 1, 1)}"></span></li>
+                    <li>기초 대사량 : <span th:text="${BMR}"></span> Kcal</li>
+                    <li>목표 체중 : <span>null</span></li>
+                </ul>
+            </div>
+
+            <div class="user-stats">
+                <h3>BMI 지수</h3>
+                <ul>
+                    <li>저체중 : <span>>18.5</span></li>
+                    <li>정상 : <span>18.5 ~ 22.9</span></li>
+                    <li>비만 전 단계 : <span>23 ~ 24.9</span></li>
+                    <li>1단계 비만 : <span>25 ~ 29.9</span></li>
+                    <li>2단계 비만 : <span>30 ~ 34.9</span></li>
+                    <li>3단계 비만 : <span>>=35</span></li>
+                </ul>
+            </div>
         </div>
+
     </main>
+
 
     <div id="scheduleModal" class="modal" style="display: none;">
         <div class="modal-content" style="width: 500px; padding: 20px; background: #fff; border-radius: 12px;">
