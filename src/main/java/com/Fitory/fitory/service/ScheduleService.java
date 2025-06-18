@@ -62,5 +62,10 @@ public class ScheduleService implements IF_ScheduleService {
 
     }
 
+    @Override
+    public List<Schedule> todayCal(String id, LocalDate date) {
+        return scheduleRepository.todayCal(id, date);
+    }
+
 
 }

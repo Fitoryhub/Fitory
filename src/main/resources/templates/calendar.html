@@ -317,6 +317,24 @@
                    alert("스케줄 불러오기 실패");
                }
            });
+
+           $.ajax({
+               url: "/schedule/todayCal",
+               method: "GET",
+               dataType: "json",
+               success: function (data){
+                   alert('실패는 아님'+data+': 데이터')
+                   let totalCal = parseInt(data)
+                   if(totalCal!=null){
+                       $("#todayCal").text(totalCal)
+                   }else{
+                       $("#todayCal").text('식단을 등록하세요!!')
+                   }
+               },
+               error: function () {
+                   alert("오류 : 칼로리 가져오기 실패");
+               }
+           });
        }
 
        function renderCalendar(date) {
@@ -359,28 +377,10 @@
            }
 
 
-/*
-           //오늘 식단의 칼로리 렌더링 될 때 가져오기
-           //컨트롤러에서 오늘 날짜 검색 후 오늘 식단 찾아서 이름 가져오기 -> diet_food에서 이름에 해당하는 food_nutrition_id 가져오기
-           //food_nutrition 테이블에서 해당하는 id 튜플의 칼로리 가져와서 다 더하기
-           $.ajax({
-               url: "/schedule/todayCal",
-               method: "GET",
-               dataType: "json",
-               success: function (data){
-                   let totalCal
-                   totalCal += data.Cal;
-                   if(totalCal!=null){
-                       $("#todayCal").text(totalCal)
-                   }else{
-                       $("#todayCal").text('식단을 등록하세요!!')
-                   }
-               },
-               error: function () {
-                   alert("오류 : 칼로리 가져오기 실패");
-               }
-           });
-               */
+
+
+
+
 
        }
 

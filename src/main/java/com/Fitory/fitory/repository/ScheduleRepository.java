@@ -30,4 +30,8 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Integer> {
             @Param("date") LocalDate date,
             @Param("time") LocalTime time,
             @Param("item") String item);
+
+    @Query("select s from Schedule s where s.userid=:userid and s.date=:date and s.type='meal'")
+    List<Schedule> todayCal(@Param("userid") String userid,
+                          @Param("date") LocalDate date);
 }

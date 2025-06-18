@@ -9,4 +9,5 @@ public interface IF_Food_nutritionService {
 	
 	public List<Diet_food> insert(List<FoodlistDTO> flist, int did);
 	public int[] getidlist(int id);
+	public int getCal(int id);
 }

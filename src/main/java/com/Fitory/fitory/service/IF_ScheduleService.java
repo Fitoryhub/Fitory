@@ -15,4 +15,6 @@ public interface IF_ScheduleService {
     List<Schedule> finddetail(IdDate iddate);
 
     void del(DelscheduleDTO delschedule);
+
+    List<Schedule> todayCal(String id, LocalDate date);
 }

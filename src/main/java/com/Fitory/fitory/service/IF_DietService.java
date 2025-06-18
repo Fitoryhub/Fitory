@@ -16,4 +16,6 @@ public interface IF_DietService {
     List<Diet> selectdiet_id(String userid);
 
 	List<Diet> findbyuserId(String id);
+
+
 }

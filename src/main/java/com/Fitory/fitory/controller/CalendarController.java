@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.Year;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -42,6 +43,8 @@ public class CalendarController {
 
     @Autowired
     private Diet_nutritionService nutritionService;
+    @Autowired
+    private Food_nutritionService food_nutritionService;
 
     @GetMapping("/add_schedule")
     public String addSchedule() {
@@ -62,10 +65,9 @@ public class CalendarController {
         int w = Integer.parseInt(user.getWeight());
         int h = Integer.parseInt(user.getHeight());
         int tempage = Integer.parseInt(user.getBirth().substring(0,4));
-        int age = java.time.Year.now().getValue() - tempage;
-        System.out.println(age+"ㄴ나이임!@#!@$%!%^!$#%");
-        System.out.println(java.time.Year.now().getValue()+"올해");
-        System.out.println(tempage+"내가 태어난 년도");
+        int age = Year.now().getValue() - tempage;
+
+
         double bmi = (w/((h/100.0)*(h/100.0)));
 
         //BMR(기초 대사량) 계산
@@ -84,7 +86,6 @@ public class CalendarController {
             temp[3] = 4.68;
         }
         int bmr = Math.toIntExact(Math.round(temp[0] + (temp[1] * w) + (temp[2] * h) - (temp[3] * age)));
-        System.out.println(bmr+"BMR이거임ㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁ");
         model.addAttribute("BMR", bmr);
         model.addAttribute("BMI", bmi);
         model.addAttribute("user", user);
@@ -249,12 +250,38 @@ public class CalendarController {
 
     }
 
-    @GetMapping("/todayCal")
+    @GetMapping("/schedule/todayCal")
     @ResponseBody
-    public Map<String, Integer> todayCal(Model model) {
-        Map<String, Integer> map = new HashMap<>();
+    public int todayCal(Model model, HttpSession session) {
+        SessionUserDTO User = (SessionUserDTO) session.getAttribute("userInfo");
+        String id = User.getId();
+        LocalDate date = LocalDate.now();
 
-        return null;
+        LocalDate today = LocalDate.now();
+        List<Schedule> ss = scheduleService.todayCal(id, today);
+        List<String> meals = new ArrayList<>();
+        for(int i=0; i<ss.size(); i++) {
+            meals.add(ss.get(i).getItem());
+        }
+
+        System.out.println("오늘 식단 size()"+meals.size());
+
+        int[] df_id = new int[meals.size()];
+        for (int i = 0; i < meals.size(); i++) {
+            Diet_food df = new Diet_food();
+            df = diet_foodService.findByfoodname(meals.get(i));
+            df_id[i] = df.getFood_nutrition_id();
+        }
+        int calories = 0;
+        for (int j : df_id) {
+            calories += food_nutritionService.getCal(j);
+        }
+
+        System.out.println("오늘 식단 칼로리 : "+calories);
+
+
+
+        return calories;
     }
 
 }
