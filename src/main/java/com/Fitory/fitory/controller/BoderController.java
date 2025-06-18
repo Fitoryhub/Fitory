@@ -21,6 +21,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.util.*;
 
+import static org.springframework.util.ObjectUtils.isEmpty;
+
 
 @Controller
 public class BoderController {
@@ -226,21 +228,29 @@ public class BoderController {
 
     }
 
-    //게시글에 댓글작성구현 메서드
     @PostMapping("/comment")
     @ResponseBody
     public Map<String, Object> comment(@ModelAttribute Comment comment, HttpSession session) {
+        // 댓글 저장
+        if (!isEmpty(comment)) {
+            commentService.commentsave(comment);
+        }
+
+        // 로그인 정보 추출
+        SessionUserDTO user = (SessionUserDTO) session.getAttribute("userInfo");
+        String uid = user.getId();
+        String nickname = user.getNickname();
+
+        return buildCommentResponse(comment.getPnum(), uid, nickname);
+    }
+
+
+    private Map<String, Object> buildCommentResponse(Integer pnum, String uid, String loginNickname) {
         Map<String, Object> response = new HashMap<>();
 
-        // 댓글 저장
-        commentService.commentsave(comment);
-        String uid = ((SessionUserDTO) session.getAttribute("userInfo")).getId();
-        String loginNickname = ((SessionUserDTO) session.getAttribute("userInfo")).getNickname();
-
         // 댓글 리스트 조회
-        List<Comment> comments = commentService.findcomment(comment.getPnum());
-        List<CommentDTO> commentDTOS = new ArrayList<>();
-        for (Comment c : comments) {
+        List<Comment> comments = commentService.findcomment(pnum);
+        List<CommentDTO> commentDTOS = comments.stream().map(c -> {
             CommentDTO dto = new CommentDTO();
             dto.setCnum(c.getCnum());
             dto.setPnum(c.getPnum());
@@ -249,11 +259,11 @@ public class BoderController {
             dto.setUid(c.getUid());
             dto.setCdate(c.getCdate());
             dto.setClike(c.getClike());
-            commentDTOS.add(dto);
-        }
+            return dto;
+        }).toList();
 
         // 댓글 좋아요 상태
-        List<Clike> clikes = clikeService.findclike(comment.getPnum());
+        List<Clike> clikes = clikeService.findclike(pnum);
         for (CommentDTO dto : commentDTOS) {
             for (Clike c : clikes) {
                 if (c.getUid().equals(uid) && dto.getCnum().equals(c.getCnum())) {
@@ -263,9 +273,8 @@ public class BoderController {
         }
 
         // 대댓글 리스트
-        List<Replies> repliesList = replieService.findreplies(comment.getPnum());
-        List<RepliesDTO> replies = new ArrayList<>();
-        for (Replies r : repliesList) {
+        List<Replies> repliesList = replieService.findreplies(pnum);
+        List<RepliesDTO> replies = repliesList.stream().map(r -> {
             RepliesDTO dto = new RepliesDTO();
             dto.setRnum(r.getRnum());
             dto.setCnum(r.getCnum());
@@ -275,11 +284,11 @@ public class BoderController {
             dto.setUid(r.getUid());
             dto.setRdate(r.getRdate());
             dto.setRlikes(r.getRlikes());
-            replies.add(dto);
-        }
+            return dto;
+        }).toList();
 
         // 대댓글 좋아요 상태
-        List<Rlikes> rlikes = rlikeService.findrlike(comment.getPnum());
+        List<Rlikes> rlikes = rlikeService.findrlike(pnum);
         for (RepliesDTO dto : replies) {
             for (Rlikes r : rlikes) {
                 if (r.getUid().equals(uid) && r.getRnum().equals(dto.getRnum())) {
@@ -288,7 +297,7 @@ public class BoderController {
             }
         }
 
-        // 응답
+        // 응답 구성
         response.put("comments", commentDTOS);
         response.put("replies", replies);
         response.put("loginNickname", loginNickname);
@@ -429,27 +438,42 @@ public class BoderController {
     // 댓글 삭제 구현 메서드
 
     @PostMapping("/commentdelete")
-    public String commentdelete(@RequestParam("pnum") Integer pnum, @RequestParam("cnum") Integer cnum) {
+    @ResponseBody
+    public Map<String,Object> commentdelete(@RequestParam("pnum") Integer pnum, @RequestParam("cnum") Integer cnum ,HttpSession session) {
         commentService.commentdelete(cnum);
-        return "redirect:/detailview?pnum=" + pnum;
+        SessionUserDTO user = (SessionUserDTO) session.getAttribute("userInfo");
+        String uid = user.getId();
+        String nickname = user.getNickname();
+
+        return buildCommentResponse(pnum, uid, nickname);
     }
 
     //댓글 수정 구현 메서드
     @PostMapping("/commentmod")
-    public String commentmod(@ModelAttribute Comment comment) {
+    @ResponseBody
+    public Map<String, Object> commentmod(@ModelAttribute Comment comment ,HttpSession session) {
 
         commentService.commentmod(comment);
+        SessionUserDTO user = (SessionUserDTO) session.getAttribute("userInfo");
+        String uid = user.getId();
+        String nickname = user.getNickname();
 
-        return "redirect:/detailview?pnum=" + comment.getPnum();
+        return buildCommentResponse(comment.getPnum(), uid, nickname);
+
     }
 
 
     //대댓글 삭제 구현 메서드
     @PostMapping("/repliedelete")
-    public String repliedelete(@RequestParam("rnum") Integer rnum, @RequestParam("pnum") Integer pnum) {
+    @ResponseBody
+    public Map<String, Object> repliedelete(@RequestParam("rnum") Integer rnum, @RequestParam("pnum") Integer pnum , HttpSession session) {
 
         replieService.repliedelete(rnum);
-        return "redirect:/detailview?pnum=" + pnum;
+        SessionUserDTO user = (SessionUserDTO) session.getAttribute("userInfo");
+        String uid = user.getId();
+        String nickname = user.getNickname();
+
+        return buildCommentResponse(pnum, uid, nickname);
     }
 
     //대댓글 수정 구현 메서드

@@ -322,26 +322,23 @@
 
                         <button type="button" th:onclick="'showEditForm(' + ${comment.cnum} + ')'">수정</button>
 
-                        <form th:action="@{/commentdelete}" method="post">
-                            <input type="hidden" name="cnum" th:value="${comment.cnum}">
-                            <input type="hidden" name="pnum" th:value="${board.pnum}">
-                            <button type="submit">삭제</button>
-                        </form>
+                        <div class="delete-comment-btn" th:data-cnum="${comment.cnum}" th:data-pnum="${board.pnum}">
+                            <button type="button">삭제</button>
+                        </div>
 
                     </div>
                 </div>
 
-                <div class="comment-body" th:id="'body-' + ${comment.cnum}" th:text="${comment.cbody}">댓글 내용</div>
+                <div class="body" th:id="'body-' + ${comment.cnum}" th:text="${comment.cbody}">댓글 내용</div>
 
 
-                <form th:action="@{/commentmod}" method="post" th:id="'editForm-' + ${comment.cnum}"
-                      style="display:none;">
-                    <input type="hidden" name="cnum" th:value="${comment.cnum}"/>
-                    <input type="hidden" name="pnum" th:value="${board.pnum}"/>
-                    <textarea name="cbody" th:text="${comment.cbody}" rows="3" style="width:100%;"></textarea>
-                    <button type="submit">확인</button>
+                <div th:id="'editForm-' + ${comment.cnum}" style="display:none; width: 100%; margin-top:10px;">
+                    <input type="hidden" th:id="'cnum-' + ${comment.cnum}" th:value="${comment.cnum}"/>
+                    <input type="hidden" th:id="'pnum-' + ${comment.cnum}" th:value="${board.pnum}"/>
+                    <textarea th:id="'cbody-' + ${comment.cnum}" rows="3" style="width:100%;" th:text="${comment.cbody}"></textarea>
+                    <button type="button" th:onclick="'submitEdit(' + ${comment.cnum} + ')'">확인</button>
                     <button type="button" th:onclick="'hideEditForm(' + ${comment.cnum} + ')'">취소</button>
-                </form>
+                </div>
 
 
                 <div class="comment-footer">
@@ -377,12 +374,14 @@
 
                         <!-- 수정/삭제 -->
                         <div th:if="${reply.nickname==session.userInfo.nickname}">
-                            <button type="button" th:onclick="'showReplyEditForm(' + ${reply.rnum} + ')'">수정</button>
-                            <form th:action="@{/repliedelete}" method="post">
-                                <input type="hidden" name="pnum" th:value="${board.pnum}">
-                                <input type="hidden" name="rnum" th:value="${reply.rnum}">
-                                <button type="submit">삭제</button>
-                            </form>
+
+                            <button type="button" class="edit-reply-btn" th:data-rnum="${reply.rnum}" th:onclick="'showReplyEditForm(' + ${reply.rnum} + ')'">수정</button>
+                            <div class="delete-reply-btn"
+                                 th:id="'replyDeleteContainer-' + ${reply.rnum}"
+                                 th:data-rnum="${reply.rnum}"
+                                 th:data-pnum="${board.pnum}">
+                                <button type="button" class="delete-reply">삭제</button>
+                            </div>
                         </div>
 
                         <!-- 대댓글 수정 폼 -->
@@ -411,6 +410,74 @@
     </div>
 </div>
 <script>
+
+    $('.comments-list').on('click', '.delete-reply-btn .delete-reply', function() {
+        let $parent = $(this).closest('.delete-reply-btn');
+        let rnum = $parent.data('rnum');
+        let pnum = $parent.data('pnum');
+
+        $.ajax({
+            url:"/repliedelete",
+            method:"post",
+            dataType:"json",
+            data:{
+                pnum:pnum,
+                rnum:rnum
+            },
+            success: function (data) {
+                renderCommentsAndReplies(data.comments, data.replies, data.loginNickname)
+            },
+            error: function () {
+                alert('대댓글 삭제중 오류가 발생했습니다.');
+            }
+        })
+    })
+
+    // 댓글 삭제 비동기
+    $('.comments-list').on('click', '.delete-comment-btn button', function() {
+        let $parent = $(this).closest('.delete-comment-btn');
+        let cnum = $parent.data('cnum');
+        let pnum = $parent.data('pnum');
+        $.ajax({
+            url: '/commentdelete',
+            dataType: "json",
+            method: "post",
+            data: {
+                pnum: pnum,
+                cnum: cnum
+            },
+            success: function (data) {
+                renderCommentsAndReplies(data.comments, data.replies, data.loginNickname)
+            },
+            error: function () {
+                alert('댓글 삭제중 오류가 발생했습니다.');
+            }
+        })
+    });
+
+
+    function submitEdit(cnum) {
+        const pnum = $('#pnum-' + cnum).val();
+        const cbody = $('#cbody-' + cnum).val();
+
+        $.ajax({
+            url: '/commentmod',
+            method: 'POST',
+            data: {
+                cnum: cnum,
+                pnum: pnum,
+                cbody: cbody
+            },
+            success: function(data) {
+                renderCommentsAndReplies(data.comments, data.replies, data.loginNickname)
+            },
+            error: function() {
+        alert('댓글 수정 중 오류가 발생했습니다.');
+            }
+        });
+    }
+
+
     // ------------------------------
     // 1. 게시글 좋아요 버튼 클릭 이벤트
     // ------------------------------
@@ -531,12 +598,13 @@
 
                     // 대댓글 수정/삭제 버튼 (본인만)
                     if (reply.nickname === loginNickname) {
-                        html += '<button onclick="showReplyEditForm(' + reply.rnum + ')">수정</button>';
-                        html += '<form action="/repliedelete" method="post">';
-                        html += '<input type="hidden" name="rnum" value="' + reply.rnum + '">';
-                        html += '<input type="hidden" name="pnum" value="' + reply.pnum + '">';
-                        html += '<button type="submit">삭제</button>';
-                        html += '</form>';
+                        html += '<button type="button" class="edit-reply-btn" ' +
+                            'data-rnum="' + reply.rnum + '" ' +
+                            'onclick="showReplyEditForm(' + reply.rnum + ')">수정</button>';
+
+                        html += '<div class="delete-reply-btn" id="replyDeleteContainer-' + reply.rnum + '" data-rnum="' + reply.rnum + '" data-pnum="' + reply.pnum + '">';
+                        html += '<button type="button" class="delete-reply">삭제</button>';
+                        html += '</div>';
 
                         // 대댓글 수정 폼 (숨김)
                         html += '<form action="/replymod" method="post" id="replyEditForm-' + reply.rnum + '" style="display:none; width:100%; margin-top:10px;">';
