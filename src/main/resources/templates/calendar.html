@@ -33,8 +33,9 @@
                 <h3>내 건강 정보</h3>
                 <ul>
                     <li>BMI : <span th:text="${#numbers.formatDecimal(BMI, 1, 1)}"></span></li>
-                    <li>오늘 섭취한 칼로리 : <span id="todayCal"></span> Kcal</li>
                     <li>기초 대사량 : <span th:text="${BMR}"></span> Kcal</li>
+                    <li>오늘 섭취한 칼로리 : <span id="todayCal"></span></li>
+                    <li>오늘 소비한 칼로리 : <span id="useCal"></span></li>
                     <li>목표 체중 : <span>null</span></li>
                 </ul>
             </div>
@@ -323,12 +324,11 @@
                method: "GET",
                dataType: "json",
                success: function (data){
-                   alert('실패는 아님'+data+': 데이터')
                    let totalCal = parseInt(data)
-                   if(totalCal!=null){
-                       $("#todayCal").text(totalCal)
+                   if(totalCal!=0){
+                       $("#todayCal").text(totalCal+" kcal")
                    }else{
-                       $("#todayCal").text('식단을 등록하세요!!')
+                       $("#todayCal").text('오늘의 식단을 등록하세요!!')
                    }
                },
                error: function () {
