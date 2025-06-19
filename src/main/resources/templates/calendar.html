@@ -324,11 +324,20 @@
                method: "GET",
                dataType: "json",
                success: function (data){
-                   let totalCal = parseInt(data)
-                   if(totalCal!=0){
-                       $("#todayCal").text(totalCal+" kcal")
+                   let food = parseInt(data.foodcal)
+                   let exercise = parseInt(data.exercisecal)
+                   if(food!=0 && exercise!=0){
+                       $("#todayCal").text(food+" kcal")
+                       $("#useCal").text(exercise+" Kcal")
+                   }else if(food!=0 && exercise==0){
+                       $("#todayCal").text(food+" kcal")
+                        $("#useCal").text("오늘의 운동 스케줄을 등록하세요!!!")
+                   }else if(food==0 && exercise!=0){
+                        $("#todayCal").text("오늘의 식단을 등록하세요!!!")
+                        $("#useCal").text(exercise+" Kcal")
                    }else{
-                       $("#todayCal").text('오늘의 식단을 등록하세요!!')
+                         $("#todayCal").text("오늘의 식단을 등록하세요!!!")
+                          $("#useCal").text("오늘의 운동 스케줄을 등록하세요!!!")
                    }
                },
                error: function () {

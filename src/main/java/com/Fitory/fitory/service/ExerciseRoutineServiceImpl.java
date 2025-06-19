@@ -51,5 +51,10 @@ public class ExerciseRoutineServiceImpl implements ExerciseRoutineService {
         return exerciseRoutineRepository.findFirstByUseridAndRoutine(userid, routine);
     }
 
+    @Override
+    public ExerciseRoutine todaysexercise(String id, String ename) {
+        return exerciseRoutineRepository.todayExercise(id, ename);
+    }
+
 
 }

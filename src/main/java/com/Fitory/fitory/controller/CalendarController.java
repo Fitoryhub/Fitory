@@ -18,7 +18,10 @@ import java.time.LocalTime;
 import java.time.Year;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 public class CalendarController {
@@ -55,7 +58,7 @@ public class CalendarController {
     @GetMapping("/calendar")
     public String calendar(HttpSession session, Model model) {
         SessionUserDTO userInfo = (SessionUserDTO) session.getAttribute("userInfo");
-        if(userInfo==null){
+        if (userInfo == null) {
             return "redirect:/";
         }
         session.setAttribute("userInfo", userInfo);
@@ -64,22 +67,22 @@ public class CalendarController {
         //키와 체중 이용해 BMI 계산
         int w = Integer.parseInt(user.getWeight());
         int h = Integer.parseInt(user.getHeight());
-        int tempage = Integer.parseInt(user.getBirth().substring(0,4));
+        int tempage = Integer.parseInt(user.getBirth().substring(0, 4));
         int age = Year.now().getValue() - tempage;
 
 
-        double bmi = (w/((h/100.0)*(h/100.0)));
+        double bmi = (w / ((h / 100.0) * (h / 100.0)));
 
         //BMR(기초 대사량) 계산
         String gender = user.getGender();
         double[] temp = new double[4];
         //성별에 따라 계산식이 다름
-        if(gender.equals("남성")){
-           temp[0] = 66.47;
-           temp[1] = 13.75;
-           temp[2] = 5;
-           temp[3] = 6.76;
-        }else {
+        if (gender.equals("남성")) {
+            temp[0] = 66.47;
+            temp[1] = 13.75;
+            temp[2] = 5;
+            temp[3] = 6.76;
+        } else {
             temp[0] = 655.1;
             temp[1] = 9.56;
             temp[2] = 1.85;
@@ -221,7 +224,7 @@ public class CalendarController {
         }
 
         List<ExerciseRoutine> exerciseRoutineList = new ArrayList<>();
-        for  (IdEname idename : elist) {
+        for (IdEname idename : elist) {
             exerciseRoutineList.add(exerciseRoutineService.findByidename(idename));
         }
 
@@ -239,6 +242,7 @@ public class CalendarController {
 
         return map;
     }
+
     @PostMapping("/del/schedule")
     @ResponseBody
     public Map<String, Object> delschedule(@ModelAttribute DelscheduleDTO delschedule) {
@@ -252,36 +256,52 @@ public class CalendarController {
 
     @GetMapping("/schedule/todayCal")
     @ResponseBody
-    public int todayCal(Model model, HttpSession session) {
+    public Map<String, Integer> calList(Model model, HttpSession session) {
         SessionUserDTO User = (SessionUserDTO) session.getAttribute("userInfo");
         String id = User.getId();
-        LocalDate date = LocalDate.now();
 
+        //오늘 날짜 구해서
         LocalDate today = LocalDate.now();
         List<Schedule> ss = scheduleService.todayCal(id, today);
         List<String> meals = new ArrayList<>();
-        for(int i=0; i<ss.size(); i++) {
-            meals.add(ss.get(i).getItem());
+        List<String> exercise = new ArrayList<>();
+        //오늘 식단의 음식 이름 가져오기
+        for (int i = 0; i < ss.size(); i++) {
+            if (ss.get(i).getType().equals("meal")) {
+                //음식 명
+                meals.add(ss.get(i).getItem());
+            } else {
+                //운동 명
+                exercise.add(ss.get(i).getItem());
+            }
+
         }
 
-        System.out.println("오늘 식단 size()"+meals.size());
-
+        //음식 이름으로 food_id 구하기
         int[] df_id = new int[meals.size()];
         for (int i = 0; i < meals.size(); i++) {
-            Diet_food df = new Diet_food();
-            df = diet_foodService.findByfoodname(meals.get(i));
+            Diet_food df = diet_foodService.findByfoodname(meals.get(i));
             df_id[i] = df.getFood_nutrition_id();
         }
+        List<ExerciseRoutine> elist = new ArrayList<>();
+        int e_cal = 0;
+        for (int i = 0; i < exercise.size(); i++) {
+            elist.add(exerciseRoutineService.todaysexercise(id, exercise.get(i)));
+        }
+        for (int i = 0; i < elist.size(); i++) {
+            e_cal += elist.get(i).getCalorie();
+        }
+
+        // food_id로 해당하는 칼로리 모두 더하기
         int calories = 0;
         for (int j : df_id) {
             calories += food_nutritionService.getCal(j);
         }
+        Map<String, Integer> calList = new HashMap<>();
+        calList.put("foodcal", calories);
+        calList.put("exercisecal", e_cal);
 
-        System.out.println("오늘 식단 칼로리 : "+calories);
-
-
-
-        return calories;
+        return calList;
     }
 
 }

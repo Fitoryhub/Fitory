@@ -13,4 +13,6 @@ public interface ExerciseRoutineService {
    public boolean deleteByroutineid(int routineid);
 
     ExerciseRoutine findByidename(IdEname idename);
+
+   public ExerciseRoutine todaysexercise(String id, String ename);
 }
