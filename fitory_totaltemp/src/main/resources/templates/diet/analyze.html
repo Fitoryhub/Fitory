@@ -7,6 +7,7 @@
     <section id="body2">
         <div id="body2title">
             <h2>영양정보 분석</h2>
+            <button id="update" onclick="update()">정보 갱신</button>
         </div>
         <div style="background: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); width: 1000px; margin: 0 auto;">
             <div style="margin-bottom: 20px;">
@@ -70,6 +71,19 @@
     <script>
         const servicekey='jL8PHgOttipXdQtu%2BF4YntDmduAIvBCSdB7OP5VHXLcT8zpvkYvHRaPOAiwsFhAZVTG9hy%2FiVtBt%2Bqn7aQmT0w%3D%3D';
         const base='https://apis.data.go.kr/1471000/FoodNtrCpntDbInfo02';
+
+        function update(){
+            let token='eyJhbGciOiJSUzI1NiIsImtpZCI6IjEwOEFEREZGRjZBNDkxOUFBNDE4QkREQTYwMDcwQzE5NzNDRjMzMUUiLCJ0eXAiOiJhdCtqd3QiLCJ4NXQiOiJLCJ4NXQiOiJFSXJkX19ha2tacWtHTDNhWUFjTUdYUFBNeDQifQ.eyJuYmYiOjE3NDk3ODU1NjgsImV4cCI6MTc0OTg3MTk2OCwiaXNzIjoiaHR0cHM6Ly9vYXWNyZXQuY29tV0aC5mYXRzZWNyZXQuY29tIiwiYXVkIjoiYmFzaWMiLCJjbGllbnRfaWQiOiI1OWJlNDEyMTY5ZDg0NWMxYThlNTgxYmRlYjVjMzcxNSIsInNjb3BlIjpbImJySY44sqY__uhc2ljIl19.owKUXnXvhUOBySY44sqY__u2SE0VL_1SDKbmU2blkT0ivcpSGfaR-9btyiJJN4YWAn07PgblYEgewG8BGebRxrNp1V3bshEhpY3Y3-7pwLPz1Rf6AoI72dzRDUjiEWDT5vjsHRRnomxItAftwYynoWOWiTC6AoI72dzRDUDapRculoS6QCGjbz5UEeI2RuUgfn-gU7unv5mgNzFJVsj-eJ7F5XYyNW6DoVUcA0vkRwZUU8JZ1KLk1eaj2eQVqQusoV9WNnHP52rT8GxG0A2b1W_awfa7_KO4BW-oK3JQb_k1eaj2eQVqQM16p3dL_w_DnsP8ZAzBCsUCgabhWD_4Z4SfdKvrEGWPk13Pbr2ILCZ0VO3-I-ykVzKael6Fr0Vj1SJsGXaw0TruEirTR8sk43bjYLV3g4_jHRq7_SpLpCxQEMfAiCBjFTdnVael6Fr0Vj1Sij9lgzIrhwDmS6oQ_FF0nSSYd5LsXM-eRhLtSDilNUkSQ2Kqk7a9ts-D1iaPSivwkT1v09WUv8pFsur-A2lJL6rNQZK6CkTC5Q9hn5eSw141Ql3XNKNCNGdtI6Ge2aSXPK-1D1iaPSivwkTte8xRLo_D-L2vtNVf2c6-eeS3W_TrPWReBl6rxMJjnYnnCbutWlkgwoNZb6G6ccKEExctSCS7gfk2RDo62gPhwX4TQQn95X9MhveZPxz8HlNJmgCCIzMDqHBZjOz_lX3S8kCnCbutWlkgwo'
+            
+            fetch("https://platform.fatsecret.com/rest/food/v4?food_id=33691&format=json",{
+                headers :{
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer "+token
+                }
+            })
+            .then(response=>console.log(response))
+            .catch(error=>console.log(error))
+        }
 
         function search(){
             let selectfd=$('#atefd').val();

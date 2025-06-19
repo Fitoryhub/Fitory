@@ -1,6 +1,7 @@
 var request=require('request');
 let access_token;
 let foods_name;
+let currpage;
 
 module.exports.settk=function(token){
     access_token=token;
@@ -10,6 +11,11 @@ module.exports.setfn=function(fname){
     foods_name=fname;
     console.log(foods_name)
 }
+module.exports.setpg=function(page){
+    currpage=page;
+    console.log(page);
+}
+
 
 function getdata(){
     return new Promise((resolve, reject) => {
@@ -23,6 +29,7 @@ function getdata(){
             qs:{
                 'search_expression':foods_name,
                 'max_results': 15,
+                'page_number':currpage,
                 'region':'KR',
                 'language':'ko',
                 'format':'json'

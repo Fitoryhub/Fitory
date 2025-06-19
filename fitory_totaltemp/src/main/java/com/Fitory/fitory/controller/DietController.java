@@ -64,6 +64,7 @@ public class DietController {
 		model.addAttribute("dplike",dp);
 		return "/diet/dietdetail";
 	}
+	@Transactional
 	@GetMapping("/dietlike")
 	@ResponseBody
 	public Map<String,Object> dietlike(@RequestParam(name = "did") int did,@RequestParam(name = "uid") String uid){
@@ -115,7 +116,7 @@ public class DietController {
 		model.addAttribute("userInfo", userInfo);
 		return "/diet/analyze";
 	}
-	
+	@Transactional
 	@PostMapping("/diet/save")
 	@ResponseBody
 	public Map<String, String> save(@RequestBody DietsaveDTO dsv) {
