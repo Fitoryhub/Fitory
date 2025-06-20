@@ -7,34 +7,18 @@
     <section id="body2">
         <div id="body2title">
             <h2>영양정보 분석</h2>
-            <button id="update" onclick="update()">정보 갱신</button>
         </div>
         <div style="background: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); width: 1000px; margin: 0 auto;">
             <div style="margin-bottom: 20px;">
-                <h3 style="margin-bottom: 10px;">음식명/대분류명(필수 X)</h3>
+                <h3 style="margin-bottom: 10px;">
+                    음식명/대분류명(필수 X, eng는 비활성화)
+                    <button style="padding-top: 5px; padding-bottom: 5px; background-color: #10b981; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; width: 80px" onclick="conversion()">
+                        kor/eng
+                    </button>
+                </h3>
                 <input type="text" name="atefd" id="atefd" placeholder="음식명을 입력하세요" style="padding: 8px; width: 250px;">
                 <select name="classification" id="classification" style="height: 35px; width: 100px;">
                     <option value="none">---------------</option>
-                    <option value="튀김류">튀김류</option>
-                    <option value="찜류">찜류</option>
-                    <option value="찌개 및 전골류">찌개 및 전골류</option>
-                    <option value="죽 및 스프류">죽 및 스프류</option>
-                    <option value="밥류">밥류</option>
-                    <option value="면 및 만두류">면 및 만두류</option>
-                    <option value="국 및 탕류">국 및 탕류</option>
-                    <option value="전·적 및 부침류">전·적 및 부침류</option>
-                    <option value="볶음류">볶음류</option>
-                    <option value="조림류">조림류</option>
-                    <option value="나물·숙채류">나물·숙채류</option>
-                    <option value="생채·무침류">생채·무침류</option>
-                    <option value="장아찌·절임류">장아찌·절임류</option>
-                    <option value="음료 및 차류">음료 및 차류</option>
-                    <option value="수·조·어·육류">수·조·어·육류</option>
-                    <option value="장류, 양념류">장류, 양념류</option>
-                    <option value="과일류">과일류</option>
-                    <option value="유제품류 및 빙과류">유제품류 및 빙과류</option>
-                    <option value="두류, 견과 및 종실류">두류, 견과 및 종실류</option>
-                    <option value="곡류, 서류 제품">곡류, 서류 제품</option>
                 </select>
                 <input type="button" value="검색" onclick="search()" style="padding: 8px 15px; background-color: #10b981; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer;">
             </div>
@@ -69,26 +53,61 @@
         </div>
     </section>
     <script>
+        let tdata;
         const servicekey='jL8PHgOttipXdQtu%2BF4YntDmduAIvBCSdB7OP5VHXLcT8zpvkYvHRaPOAiwsFhAZVTG9hy%2FiVtBt%2Bqn7aQmT0w%3D%3D';
         const base='https://apis.data.go.kr/1471000/FoodNtrCpntDbInfo02';
+        const korct=['찜류','찌개 및 전골류','죽 및 스프류','밥류','면 및 만두류','국 및 탕류','전·적 및 부침류','볶음류','조림류','나물·숙채류','생채·무침류','장아찌·절임류','음료 및 차류','수·조·어·육류','장류, 양념류','과일류','제품류 및 빙과류','두류, 견과 및 종실류','곡류, 서류 제품'];
+        let lang='kor'
 
-        function update(){
-            let token='eyJhbGciOiJSUzI1NiIsImtpZCI6IjEwOEFEREZGRjZBNDkxOUFBNDE4QkREQTYwMDcwQzE5NzNDRjMzMUUiLCJ0eXAiOiJhdCtqd3QiLCJ4NXQiOiJLCJ4NXQiOiJFSXJkX19ha2tacWtHTDNhWUFjTUdYUFBNeDQifQ.eyJuYmYiOjE3NDk3ODU1NjgsImV4cCI6MTc0OTg3MTk2OCwiaXNzIjoiaHR0cHM6Ly9vYXWNyZXQuY29tV0aC5mYXRzZWNyZXQuY29tIiwiYXVkIjoiYmFzaWMiLCJjbGllbnRfaWQiOiI1OWJlNDEyMTY5ZDg0NWMxYThlNTgxYmRlYjVjMzcxNSIsInNjb3BlIjpbImJySY44sqY__uhc2ljIl19.owKUXnXvhUOBySY44sqY__u2SE0VL_1SDKbmU2blkT0ivcpSGfaR-9btyiJJN4YWAn07PgblYEgewG8BGebRxrNp1V3bshEhpY3Y3-7pwLPz1Rf6AoI72dzRDUjiEWDT5vjsHRRnomxItAftwYynoWOWiTC6AoI72dzRDUDapRculoS6QCGjbz5UEeI2RuUgfn-gU7unv5mgNzFJVsj-eJ7F5XYyNW6DoVUcA0vkRwZUU8JZ1KLk1eaj2eQVqQusoV9WNnHP52rT8GxG0A2b1W_awfa7_KO4BW-oK3JQb_k1eaj2eQVqQM16p3dL_w_DnsP8ZAzBCsUCgabhWD_4Z4SfdKvrEGWPk13Pbr2ILCZ0VO3-I-ykVzKael6Fr0Vj1SJsGXaw0TruEirTR8sk43bjYLV3g4_jHRq7_SpLpCxQEMfAiCBjFTdnVael6Fr0Vj1Sij9lgzIrhwDmS6oQ_FF0nSSYd5LsXM-eRhLtSDilNUkSQ2Kqk7a9ts-D1iaPSivwkT1v09WUv8pFsur-A2lJL6rNQZK6CkTC5Q9hn5eSw141Ql3XNKNCNGdtI6Ge2aSXPK-1D1iaPSivwkTte8xRLo_D-L2vtNVf2c6-eeS3W_TrPWReBl6rxMJjnYnnCbutWlkgwoNZb6G6ccKEExctSCS7gfk2RDo62gPhwX4TQQn95X9MhveZPxz8HlNJmgCCIzMDqHBZjOz_lX3S8kCnCbutWlkgwo'
-            
-            fetch("https://platform.fatsecret.com/rest/food/v4?food_id=33691&format=json",{
-                headers :{
-                    "Content-Type": "application/json",
-                    "Authorization": "Bearer "+token
+        window.onload=function(){
+            $.ajax({
+                method:'GET',
+                url:'http://localhost:3000/getcategories',
+                dataType:'json',
+                success:function(data){
+                    const templist=data.food_categories.food_category;
+                    $.each(templist,function(index,item){
+                        engct.push(item.food_category_name);
+                    })
+                },
+                error:function(error){
+                    console.log(error);
                 }
             })
-            .then(response=>console.log(response))
-            .catch(error=>console.log(error))
+            
+            categories();
+        }
+
+        function categories(){
+            let sentence1='<option value="none">---------------</option>';
+            if(lang=='kor'){
+                $.each(korct,function(index,item){
+                    sentence1+='<option value="'+item+'">'+item+'</option>';
+                })
+                 $('#classification').prop("disabled",false);
+            }else if(lang=='eng'){
+                $('#classification').prop("disabled",true);
+            }
+            $('#classification').html(sentence1);
+        }
+
+        function conversion(){
+            if(lang=='kor'){
+                lang='eng'
+            }else if(lang=='eng'){
+                lang='kor'
+            }
+            categories();
         }
 
         function search(){
             let selectfd=$('#atefd').val();
             let selectclasification=$('#classification').val();
-            getname(selectfd,selectclasification);
+            if(lang=='kor'){
+                getname(selectfd,selectclasification);
+            }else if(lang=='eng'){
+                getname2(selectfd,selectclasification);
+            }
         }
 
         function del(){
@@ -182,14 +201,54 @@
                 const items=inform.body.items;
                 let tempsnt='';
                 $.each(items,function(index,item){
-                    tempsnt+='<span onclick="add('+index+')" style="border: 2px solid #10b981; background-color: #ecfdf5; padding: 6px 10px; border-radius: 6px; margin: 5px; cursor: pointer; display: inline-block;">'+item.FOOD_NM_KR+'('+item.FOOD_OR_NM+')'+'</span>&ensp;';
+                    tempsnt+='<span onclick="add('+index+')" style="font-size: 12px; border: 2px solid #10b981; background-color: #ecfdf5; padding: 6px 10px; border-radius: 6px; margin: 5px; cursor: pointer; display: inline-block;">'+item.FOOD_NM_KR+'('+item.FOOD_OR_NM+')'+'</span>&ensp;';
                     tempsnt+='<input type="hidden" name="tmplist" value='+btoa(encodeURIComponent(JSON.stringify(item)))+'>';
                 })
                 if(tempsnt==''){
-                    tempsnt='<div style="color: red;">해당 검색어에 대한 정보가 없습니다.</div>';;
+                    tempsnt='<div style="color: red;">해당 검색어에 대한 정보가 없습니다.</div>';
                 }
                 $('#searchlist').html(tempsnt);
             } catch (error) {
+                alert('오류');
+                console.log(error);
+            }
+        }
+
+        async function getname2(foodname,selectclasification){
+            let url='http://localhost:3000/getdata?foodname='+foodname;
+            try{
+                const response= await fetch(url);
+                const data= await response.json();
+                tdata=data;
+                const rdata=data.foods_search.results;
+                console.log(rdata);
+                let templist=[];
+
+                let tempsnt='';
+                if(rdata==null){
+                    tempsnt='<div style="color: red;">해당 검색어에 대한 정보가 없습니다.</div>';
+                    $('#searchlist').html(tempsnt);
+                    return;
+                }
+                $.each(rdata.food,function(index,item){
+                    let nut=item.servings.serving[0];
+                    let tempdata={
+                        FOOD_NM_KR:item.food_name,
+                        AMT_NUM1:parseInt(nut.calories),
+                        AMT_NUM6:nut.carbohydrate,
+                        AMT_NUM3:nut.protein,
+                        AMT_NUM4:nut.fat,
+                        AMT_NUM7:nut.sugar,
+                        AMT_NUM13:parseInt(nut.sodium)
+                    }
+                    templist.push(tempdata);
+                })
+                $.each(templist,function(index,item){
+                    tempsnt+='<span onclick="add('+index+')" style="font-size: 12px; border: 2px solid #10b981; background-color: #ecfdf5; padding: 6px 10px; border-radius: 6px; margin: 5px; cursor: pointer; display: inline-block;">'+item.FOOD_NM_KR+'('+item.FOOD_NM_KR+')'+'</span>&ensp;';
+                    tempsnt+='<input type="hidden" name="tmplist" value='+btoa(encodeURIComponent(JSON.stringify(item)))+'>';
+                })
+                $('#searchlist').html(tempsnt);
+            }catch(error){
                 alert('오류');
                 console.log(error);
             }
