@@ -105,23 +105,6 @@
             width: 100px;
         }
 
-        .info-box input[type="button"] {
-            margin-top: 20px;
-            padding: 10px 16px;
-            background-color: #10b981;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 14px;
-            transition: background-color 0.2s;
-        }
-
-        .info-box input[type="button"]:hover {
-            background-color: #059669;
-        }
-
         .additional-info-box .info-row {
             display: flex;
             align-items: center;
@@ -242,7 +225,26 @@
             display: inline-block;
         }
 
-        #editBtn {
+        .targetWeight, .bloodPressure, .bodyFat, .muscle, .bmr1, .rdi{
+            width: 60%;
+        }
+
+        .diabetes, .smoking, .activityLevel{
+            width: 15%;
+        }
+
+        .medicalHistory, .allergy{
+            width: 60%;
+            resize: none;
+        }
+
+        #editForm, #infoMod{
+            div{
+                display: grid;
+            }
+        }
+
+        .btn {
             margin-top: 15px;
             padding: 8px 16px;
             background-color: #10b981;
@@ -255,7 +257,35 @@
             transition: background-color 0.2s;
         }
 
-        #editBtn:hover {
+        .btn:hover {
+            background-color: #059669;
+        }
+
+
+        #viewAdditionalInfo2 {
+            background-color: #e6f4ea;  /* 연한 초록 배경 */
+            border-radius: 12px;
+            padding: 20px 30px;
+            max-width: 600px;
+            margin-top: 20px;
+            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);
+        }
+
+
+        #viewAdditionalInfo2 > div {
+            margin-bottom: 12px;
+            font-size: 18px;
+            color: #065f46;
+        }
+
+        #viewAdditionalInfo2 > div > b {
+            display: inline-block;
+            width: 120px;
+            font-weight: 700;
+        }
+
+
+        #viewAdditionalInfo2 button#editBtn2:hover {
             background-color: #059669;
         }
 
@@ -359,67 +389,106 @@
             <div class="info-grid" th:if="${user != null}">
                 <div class="info-item"><span>이름:</span> <span th:text="${user.name}"></span></div>
                 <div class="info-item"><span>닉네임:</span> <span th:text="${user.nickname}"></span></div>
-                <div class="info-item"><span>성별:</span> <span th:text="${user.gender}"></span></div>
+                <div class="info-item"><span>성별:</span> <span th:if="${user.gender=='female'}" th:text="여성"></span>
+                    <span th:if="${user.gender=='male'}" th:text="남성"></span></div>
                 <div class="info-item"><span>생년월일:</span> <span th:text="${user.birth}"></span></div>
-                <div class="info-item"><span>몸무게:</span> <span th:text="${user.weight_kg != null} ? ${user.weight_kg + 'kg'} : ${user.weight + 'kg'}"></span></div>
-                <div class="info-item"><span>키:</span> <span th:text="${user.height_cm != null} ? ${user.height_cm + 'cm'} : ${user.height + 'cm'}"></span></div>
-                <div class="info-item"><span>아이디:</span> <span id = "uid" th:text="${user.id}"></span></div>
+                <div class="info-item"><span>몸무게:</span> <span th:text="${user.weight_kg + 'kg'}"></span></div>
+                <div class="info-item"><span>키:</span> <span th:text="${user.height_cm + 'cm'}"></span></div>
+                <div class="info-item"><span>아이디:</span> <span id="uid" th:text="${user.id}"></span></div>
                 <div class="info-item"><span>이메일:</span> <span th:text="${user.email}"></span></div>
-                <div><input type="button" value="개인정보수정"></div>
             </div>
         </div>
 
-        <!--        &lt;!&ndash; 추가 정보 &ndash;&gt;-->
-        <!--        <div class="additional-info-box">-->
-        <!--            <h3>추가 정보</h3>-->
-        <!--            <div id="viewAdditionalInfo" th:if="${userInfo != null}">-->
-        <!--                <div><b>기초대사량:</b> <span id="bmr1" th:text="${user.bmr}"></span></div>-->
-        <!--                <div><b>권장칼로리:</b> <span th:text="${user.recommendedCalorie}"></span></div>-->
-        <!--                <div><b>목표체중:</b> <span th:text="${user.targetWeight}"></span></div>-->
-        <!--                <div><b>혈압:</b> <span th:text="${user.bloodPressure}"></span></div>-->
-        <!--                <div><b>당뇨여부:</b> <span th:text="${user.diabetes}"></span></div>-->
-        <!--                <div><b>흡연여부:</b> <span th:text="${user.smoking}"></span></div>-->
-        <!--                <div><b>체지방률:</b> <span th:text="${user.bodyFat}"></span></div>-->
-        <!--                <div><b>근육량:</b> <span th:text="${user.muscleMass}"></span></div>-->
-        <!--                <div><b>활동 수준:</b> <span th:text="${user.activityLevel}"></span></div>-->
-        <!--                <div><b>질병 이력:</b> <span th:text="${user.medicalHistory}"></span></div>-->
-        <!--                <div><b>알레르기:</b> <span th:text="${user.allergy}"></span></div>-->
-        <!--                <button id="editBtn" type="button">추가 정보 설정하기</button>-->
-        <!--            </div>-->
-        <!--            <form id="editAdditionalInfo" th:action="@{/updateInfo}" method="post" style="display:none; margin-top: 20px;">-->
-        <!--                <div class="info-row"><label for="bmr">기초대사량:</label><input id="bmr" type="number" name="bmr" th:value="${user.bmr}" required/></div>-->
-        <!--                <div class="info-row"><label for="recommendedCalorie">권장칼로리:</label><input id="recommendedCalorie" type="number" name="recommendedCalorie" th:value="${user.recommendedCalorie}" required/></div>-->
-        <!--                <div class="info-row"><label for="targetWeight">목표체중:</label><input id="targetWeight" type="number" name="targetWeight" th:value="${user.targetWeight}" required/></div>-->
-        <!--                <div class="info-row"><label for="bloodPressure">혈압:</label><input id="bloodPressure" type="text" name="bloodPressure" th:value="${user.bloodPressure}" required/></div>-->
-        <!--                <div class="info-row"><label for="diabetes">당뇨여부:</label>-->
-        <!--                    <select id="diabetes" name="diabetes" th:value="${user.diabetes}">-->
-        <!--                        <option value="없음" th:selected="${user.diabetes == '없음'}">없음</option>-->
-        <!--                        <option value="있음" th:selected="${user.diabetes == '있음'}">있음</option>-->
-        <!--                    </select>-->
-        <!--                </div>-->
-        <!--                <div class="info-row"><label for="smoking">흡연여부:</label>-->
-        <!--                    <select id="smoking" name="smoking" th:value="${user.smoking}">-->
-        <!--                        <option value="비흡연" th:selected="${user.smoking == '비흡연'}">비흡연</option>-->
-        <!--                        <option value="흡연" th:selected="${user.smoking == '흡연'}">흡연</option>-->
-        <!--                    </select>-->
-        <!--                </div>-->
-        <!--                <div class="info-row"><label for="bodyFat">체지방률:</label><input id="bodyFat" type="number" step="0.1" name="bodyFat" th:value="${user.bodyFat}" required/></div>-->
-        <!--                <div class="info-row"><label for="muscleMass">근육량:</label><input id="muscleMass" type="number" step="0.1" name="muscleMass" th:value="${user.muscleMass}" required/></div>-->
-        <!--                <div class="info-row"><label for="activityLevel">활동 수준:</label>-->
-        <!--                    <select id="activityLevel" name="activityLevel" th:value="${user.activityLevel}">-->
-        <!--                        <option value="낮음" th:selected="${user.activityLevel == '낮음'}">낮음</option>-->
-        <!--                        <option value="보통" th:selected="${user.activityLevel == '보통'}">보통</option>-->
-        <!--                        <option value="높음" th:selected="${user.activityLevel == '높음'}">높음</option>-->
-        <!--                    </select>-->
-        <!--                </div>-->
-        <!--                <div class="info-row"><label for="medicalHistory">질병 이력:</label><textarea id="medicalHistory" name="medicalHistory" rows="2" th:text="${user.medicalHistory}"></textarea></div>-->
-        <!--                <div class="info-row"><label for="allergy">알레르기:</label><textarea id="allergy" name="allergy" rows="2" th:text="${user.allergy}"></textarea></div>-->
-        <!--                <div style="text-align: right; margin-top: 10px;">-->
-        <!--                    <button type="button" id="cancelBtn">취소</button>-->
-        <!--                    <input type="submit" value="저장" style="padding: 8px 16px; background-color: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer;">-->
-        <!--                </div>-->
-        <!--            </form>-->
-        <!--        </div>-->
+        <!-- 추가 정보 -->
+        <div class="additional-info-box">
+            <h3>추가 정보</h3>
+            <div id="viewAdditionalInfo" th:if="${userInfo == null}">
+                <h3 id = "etitle"> 다양한 서비스 제공을 위해서 추가적인 정보를 입력해 주세요.</h3>
+                <button id="editBtn1" type="button" class = "btn" onclick="addInfo();">추가정보 설정하기</button>
+                <form action="/healthInfo" method="post"  id ="editForm" hidden>
+                    <div style="display: none;"><b>기초대사량:</b> <input class="bmr1" name = "bmr" readonly></div>
+                    <div style="display: none;"><b>권장칼로리:</b> <input class="rdi" name="rdi" type="hidden" readonly></div>
+                    <div><b>목표체중:</b> <input class="targetWeight" name = "targetWeight" type="number" ></div>
+                    <div><b>혈압:</b> <input type="text" class="bloodPressure" name = "bloodPressure"></div>
+                    <div><b>당뇨여부:</b>
+                        <select class="diabetes" name="diabetes">
+                            <option value="없음">없음</option>
+                            <option value="있음">있음</option>
+                        </select>
+                    </div>
+                    <div><b>흡연여부:</b>
+                        <select class="smoking" name="smoking">
+                            <option value="비흡연">비흡연</option>
+                            <option value="흡연">흡연</option>
+                        </select>
+                    </div>
+                    <div><b>체지방률:</b> <input type="number" class="bodyFat" name="bodyFat"></div>
+                    <div><b>근육량:</b> <input type="number"  class="muscle" name="muscle"></div>
+                    <div><b>활동 수준:</b>
+                        <select class="activityLevel" name="activityLevel">
+                            <option value="낮음">낮음</option>
+                            <option value="보통">보통</option>
+                            <option value="높음">높음</option>
+                        </select>
+                    </div>
+                    <div><b>질병 이력:</b><textarea class="medicalHistory" name="medicalHistory" rows="2" ></textarea></div>
+                    <div><b>알레르기:</b> <textarea class="allergy" name="allergy" rows="2" ></textarea></div>
+                    <button id="editBtn" class = "btn" type="submit" >추가 정보 저장</button>
+                    <button class = "btn" type="button" onclick="addInfo()">취소</button>
+                </form>
+            </div>
+
+            <div th:if="${userInfo != null}">
+                <div id="viewAdditionalInfo2" >
+                    <div><b>기초대사량:</b> <span class="bmr1" th:text="${userInfo.bmr + ' kcal'}"></span></div>
+                    <div><b>권장칼로리:</b> <span class="rdi" th:text="${userInfo.rdi + ' kcal'}"></span></div>
+                    <div><b>목표체중:</b> <span class="targetWeight" th:text="${userInfo.targetWeight + ' kg'}"></span></div>
+                    <div><b>혈압:</b> <span class="bloodPressure" th:text="${userInfo.bloodPressure + ' mmHg'}"></span></div>
+                    <div><b>당뇨여부:</b> <span class="diabetes" th:text="${userInfo.diabetes}"></span></div>
+                    <div><b>흡연여부:</b> <span class="smoking" th:text="${userInfo.smoking}"></span></div>
+                    <div><b>체지방률:</b> <span class="bodyFat" th:text="${userInfo.bodyFat + ' %'}"></span></div>
+                    <div><b>근육량:</b> <span class="muscle" th:text="${userInfo.muscle + ' kg'}"></span></div>
+                    <div><b>활동 수준:</b> <span class="activityLevel" th:text="${userInfo.activityLevel}"></span></div>
+                    <div><b>질병 이력:</b> <span class="medicalHistory" th:text="${userInfo.medicalHistory}"></span></div>
+                    <div><b>알레르기:</b> <span class="allergy" th:text="${userInfo.allergy}"></span></div>
+                    <button id="editBtn2" class="btn" type="button">추가 정보 수정</button>
+                </div>
+                <div id="editFormWrapper" style="display: none;" >
+                    <form action="/healthInfoMod" method="post" id = "infoMod">
+                        <div style="display: none;"><b>기초대사량:</b> <input class="bmr1" name = "bmr" th:value="${userInfo.bmr}"></div>
+                        <div style="display: none;"><b>권장칼로리:</b> <input class="rdi" name="rdi" th:value="${userInfo.rdi}"></div>
+                        <div><b>목표체중:</b> <input class="targetWeight" name = "targetWeight" type="number" th:value="${userInfo.targetWeight}"></div>
+                        <div><b>혈압:</b> <input type="text" class="bloodPressure" name = "bloodPressure" th:value="${userInfo.bloodPressure}"></div>
+                        <div><b>당뇨여부:</b>
+                            <select class="diabetes" name="diabetes" th:value="${userInfo.diabetes}">
+                                <option value="없음">없음</option>
+                                <option value="있음">있음</option>
+                            </select>
+                        </div>
+                        <div><b>흡연여부:</b>
+                            <select class="smoking" name="smoking" th:value="${userInfo.smoking}">
+                                <option value="비흡연">비흡연</option>
+                                <option value="흡연">흡연</option>
+                            </select>
+                        </div>
+                        <div><b>체지방률:</b> <input type="number" class="bodyFat" name="bodyFat" th:value="${userInfo.bodyFat}"></div>
+                        <div><b>근육량:</b> <input type="number"  class="muscle" name="muscle" th:value="${userInfo.muscle}"></div>
+                        <div><b>활동 수준:</b>
+                            <select class="activityLevel" name="activityLevel" th:value="${userInfo.activityLevel}">
+                                <option value="낮음">낮음</option>
+                                <option value="보통">보통</option>
+                                <option value="높음">높음</option>
+                            </select>
+                        </div>
+                        <div><b>질병 이력:</b><textarea class="medicalHistory" name="medicalHistory" rows="2" th:text="${userInfo.medicalHistory}"></textarea></div>
+                        <div><b>알레르기:</b> <textarea class="allergy" name="allergy" rows="2" th:text="${userInfo.allergy}"></textarea></div>
+                        <input type="submit" value="저장"
+                               style="padding: 8px 16px; margin-top: 10px; background-color: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer;">
+                        <button type="button" id="cancelBtn">취소</button>
+                    </form>
+                </div>
+            </div>
+        </div>
 
 
         <!-- 추천 운동 -->
@@ -462,7 +531,7 @@
         <div class="menu-group">
             <h4>계정</h4>
             <ul>
-                <li>내 정보 관리</li>
+                <li><a href="edit">내 정보 관리</a></li>
             </ul>
         </div>
 
@@ -503,23 +572,24 @@
             deletebtn.style.display = deleteset ? 'inline-block' : 'none';
         })
 
-<!--        let gender = [[${user.gender}]];-->
-<!--        let weight = [[${user.weight_kg != null} ? ${user.weight_kg} : ${user.weight}]];-->
-<!--        let height = [[${user.height_cm != null} ? ${user.height_cm} : ${user.height}]];-->
-<!--        let birth = [[${user.birth}]];-->
-<!--        let currentYear = new Date().getFullYear();-->
-<!--        let age = currentYear - parseInt(birth.substr(0, 4));-->
-<!--        let bmr;  // 여기서 선언-->
-<!--        if (gender === "female") {-->
-<!--            bmr = (10 * weight) + (6.25 * height) - (5 * age) - 161;-->
-<!--        } else {-->
-<!--            bmr = (10 * weight) + (6.25 * height) - (5 * age) + 5;-->
-<!--        }-->
-<!--        document.getElementById('bmr1').textContent = bmr.toFixed(2);-->
-<!--        alert(bmr.toFixed(2));-->
 
-<!--        // 삭제 버튼 초기 설정-->
-<!--        document.getElementById("delete_all").style.display = 'none';-->
+        let gender = [[${user.gender}]];
+        let weight = [[${user.weight_kg != null} ? ${user.weight_kg} : ${user.weight}]];
+        let height = [[${user.height_cm != null} ? ${user.height_cm} : ${user.height}]];
+        let birth = [[${user.birth}]];
+        let currentYear = new Date().getFullYear();
+        let age = currentYear - parseInt(birth.substr(0, 4));
+        let bmr;  // 여기서 선언
+        if (gender === "female") {
+            bmr = (10 * weight) + (6.25 * height) - (5 * age) - 161;
+        } else {
+            bmr = (10 * weight) + (6.25 * height) - (5 * age) + 5;
+        }
+        document.getElementsByClassName('bmr1')[0].value = bmr.toFixed(2);
+        document.getElementsByClassName('rdi')[0].value = (weight * 30);
+
+        // 삭제 버튼 초기 설정
+        document.getElementById("delete_all").style.display = 'none';
     };
 
     let temp;
@@ -803,16 +873,39 @@
 
     })
 
-    // 추가 정보 편집 토글
-    document.getElementById('editBtn').addEventListener('click', () => {
-        document.getElementById('viewAdditionalInfo').style.display = 'none';
-        document.getElementById('editAdditionalInfo').style.display = 'block';
+    document.addEventListener("DOMContentLoaded", function () {
+        const editBtn = document.getElementById("editBtn2");
+        const cancelBtn = document.getElementById("cancelBtn");
+        const viewDiv = document.getElementById("viewAdditionalInfo2");
+        const editForm = document.getElementById("editFormWrapper");
+
+        if (editBtn) {
+            editBtn.addEventListener("click", function () {
+                viewDiv.style.display = "none";
+                editForm.style.display = "block";
+            });
+        }
+
+        if (cancelBtn) {
+            cancelBtn.addEventListener("click", function () {
+                editForm.style.display = "none";
+                viewDiv.style.display = "block";
+            });
+        }
     });
 
-    // 취소 버튼
-    document.getElementById('cancelBtn').addEventListener('click', () => {
-        document.getElementById('editAdditionalInfo').style.display = 'none';
-        document.getElementById('viewAdditionalInfo').style.display = 'block';
-    });
+    let flag = false;
+    function addInfo(){
+        document.getElementById("etitle").hidden = !flag;
+        document.getElementById("editBtn1").hidden = !flag;
+        document.getElementById("editForm").hidden = flag;
+        flag = !flag;
+    }
+
+<!--    // 취소 버튼-->
+<!--    document.getElementById('cancelBtn').addEventListener('click', () => {-->
+<!--        document.getElementById('editFormWrapper').style.display = 'none';-->
+<!--        document.getElementById('viewAdditionalInfo').style.display = 'block';-->
+<!--    });-->
 
 </script>

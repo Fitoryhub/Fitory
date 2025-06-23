@@ -305,7 +305,7 @@
     <div class="comment-section">
         <h3>댓글</h3>
 
-        <form th:action="@{/comment}" method="post" class="comment-form">
+        <form id="comment-Form" class="comment-form">
             <input type="hidden" name="nickname" th:value="${session.userInfo.nickname}">
             <input type="hidden" name="uid" th:value="${session.userInfo.id}">
             <input type="hidden" name="pnum" th:value="${board.pnum}">
@@ -322,26 +322,23 @@
 
                         <button type="button" th:onclick="'showEditForm(' + ${comment.cnum} + ')'">수정</button>
 
-                        <form th:action="@{/commentdelete}" method="post">
-                            <input type="hidden" name="cnum" th:value="${comment.cnum}">
-                            <input type="hidden" name="pnum" th:value="${board.pnum}">
-                            <button type="submit">삭제</button>
-                        </form>
+                        <div class="delete-comment-btn" th:data-cnum="${comment.cnum}" th:data-pnum="${board.pnum}">
+                            <button type="button">삭제</button>
+                        </div>
 
                     </div>
                 </div>
 
-                <div class="comment-body" th:id="'body-' + ${comment.cnum}" th:text="${comment.cbody}">댓글 내용</div>
+                <div class="body" th:id="'body-' + ${comment.cnum}" th:text="${comment.cbody}">댓글 내용</div>
 
 
-                <form th:action="@{/commentmod}" method="post" th:id="'editForm-' + ${comment.cnum}"
-                      style="display:none;">
-                    <input type="hidden" name="cnum" th:value="${comment.cnum}"/>
-                    <input type="hidden" name="pnum" th:value="${board.pnum}"/>
-                    <textarea name="cbody" th:text="${comment.cbody}" rows="3" style="width:100%;"></textarea>
-                    <button type="submit">확인</button>
+                <div th:id="'editForm-' + ${comment.cnum}" style="display:none; width: 100%; margin-top:10px;">
+                    <input type="hidden" th:id="'cnum-' + ${comment.cnum}" th:value="${comment.cnum}"/>
+                    <input type="hidden" th:id="'pnum-' + ${comment.cnum}" th:value="${board.pnum}"/>
+                    <textarea th:id="'cbody-' + ${comment.cnum}" rows="3" style="width:100%;" th:text="${comment.cbody}"></textarea>
+                    <button type="button" th:onclick="'submitEdit(' + ${comment.cnum} + ')'">확인</button>
                     <button type="button" th:onclick="'hideEditForm(' + ${comment.cnum} + ')'">취소</button>
-                </form>
+                </div>
 
 
                 <div class="comment-footer">
@@ -377,23 +374,27 @@
 
                         <!-- 수정/삭제 -->
                         <div th:if="${reply.nickname==session.userInfo.nickname}">
-                            <button type="button" th:onclick="'showReplyEditForm(' + ${reply.rnum} + ')'">수정</button>
-                            <form th:action="@{/repliedelete}" method="post">
-                                <input type="hidden" name="pnum" th:value="${board.pnum}">
-                                <input type="hidden" name="rnum" th:value="${reply.rnum}">
-                                <button type="submit">삭제</button>
-                            </form>
+
+                            <button type="button" class="edit-reply-btn" th:data-rnum="${reply.rnum}" th:onclick="'showReplyEditForm(' + ${reply.rnum} + ')'">수정</button>
+                            <div class="delete-reply-btn"
+                                 th:id="'replyDeleteContainer-' + ${reply.rnum}"
+                                 th:data-rnum="${reply.rnum}"
+                                 th:data-pnum="${board.pnum}">
+                                <button type="button" class="delete-reply">삭제</button>
+                            </div>
                         </div>
 
                         <!-- 대댓글 수정 폼 -->
-                        <form th:action="@{/replymod}" method="post" th:id="'replyEditForm-' + ${reply.rnum}"
+
+                        <form th:id="'replyEditForm-' + ${reply.rnum}"
                               style="display:none; width: 100%; margin-top:10px;">
                             <input type="hidden" name="rnum" th:value="${reply.rnum}"/>
                             <input type="hidden" name="pnum" th:value="${board.pnum}"/>
                             <textarea name="rbody" rows="2" style="width:100%;" th:text="${reply.rbody}"></textarea>
-                            <button type="submit">확인</button>
+                            <button type="button" th:onclick="'submitReplyEdit(' + ${reply.rnum} + ')'">확인</button>
                             <button type="button" th:onclick="'cancelReplyEditForm(' + ${reply.rnum} + ')'">취소</button>
                         </form>
+
                     </div>
 
 
@@ -411,142 +412,307 @@
     </div>
 </div>
 <script>
-    function showEditForm(cnum) {
-        document.getElementById('editForm-' + cnum).style.display = 'block';
-        document.getElementById('body-' + cnum).style.display = 'none';
-    }
-
-    function hideEditForm(cnum) {
-        document.getElementById('editForm-' + cnum).style.display = 'none';
-        document.getElementById('body-' + cnum).style.display = 'block';
-    }
-
-    function showReplyEditForm(rnum) {
-        document.getElementById('replyEditForm-' + rnum).style.display = 'block';
-        document.getElementById('rbody-' + rnum).style.display = 'none';
-    }
-
-    function cancelReplyEditForm(rnum) {
-        document.getElementById('replyEditForm-' + rnum).style.display = 'none';
-        document.getElementById('rbody-' + rnum).style.display = 'inline';
-    }
-
-    $(document).ready(function () {
-
-        $('.like-button').click(function () {
-
-            let button = $(this);
-            let pnum = button.data('pnum');  // 게시글 번호
-            let liked = button.data('liked');  // 현재 좋아요 상태
-            let url = liked ? '/phate' : '/plike';  // 좋아요 취소 or 등록
-            let uid = button.data('uid');  // Thymeleaf에서 uid 직접 삽입
-
-
-            $.ajax({
-                url: liked ? '/phate' : '/plike', // 좋아요/싫어요에 따라 URL 동적 설정
-                method: 'POST',
-                dataType: 'text', // 응답은 텍스트
-                data: ({
-                    uid: uid,
-                    pnum: pnum,
-                }),
-
-                success: function (data) {
-                    // 좋아요 상태 토글
-                    if (liked) {
-                        button.find('.like-icon').text('🤍');
-                        button.data('liked', false);
-                    } else {
-                        button.find('.like-icon').text('❤️');
-                        button.data('liked', true);
-                    }
-
-                    $('#like-count-' + pnum).text(data);
-                },
-                error: function (xhr, status, error) {
-                    console.error('Error:', xhr.responseText);
-                    alert('좋아요 처리 중 오류가 발생했습니다.');
-                }
-            });
-        });
-
-
-        $('.like-button2').click(function () {
-            const button = $(this);
-            const cnum = button.data('cnum');
-            const pnum = button.data('pnum');
-            const uid = button.data('uid');
-            const liked = button.data('liked');
-            const url = liked ? '/chate' : '/clike';
-
-
-            $.ajax({
-                url: url,
-                method: 'POST',
-                dataType: 'text',
-                data: {
-                    uid: uid,
-                    cnum: cnum,
-                    pnum: pnum
-                },
-                success: function (data) {
-
-                    if (liked) {
-                        button.find('.like-icon').text('🤍');
-                        button.data('liked', false);
-                    } else {
-                        button.find('.like-icon').text('❤️');
-                        button.data('liked', true);
-                    }
-                    // 좋아요 카운트 업데이트
-                    $('#like-count2-' + cnum).text(data);
-                },
-                error: function () {
-                    alert('좋아요 처리 중 오류가 발생했습니다.');
-                }
-            });
-        });
-
-
-        $(document).ready(function () {
-            $('.like-button3').click(function () {
-                const button = $(this);
-                const rnum = button.data('rnum'); // 대댓글 번호
-                const cnum = button.data('cnum'); // 댓글 번호
-                const pnum = button.data('pnum'); // 게시글 번호
-                const uid = button.data('uid');
-                const liked = button.data('liked');
-                const url = liked ? '/rhate' : '/rlike';
-
-                $.ajax({
-                    url: url,
-                    method: 'POST',
-                    dataType: 'text',
-                    data: {
-                        rnum: rnum,
-                        cnum: cnum,
-                        pnum: pnum,
-                        uid: uid
-                    },
-                    success: function (data) {
-                        if (liked) {
-                            button.find('.like-icon').text('🤍');
-                            button.data('liked', false);
-                        } else {
-                            button.find('.like-icon').text('❤️');
-                            button.data('liked', true);
-                        }
-                        // 좋아요 카운트 업데이트
-                        $('#like-count3-' + rnum).text(data);
-                    },
-                    error: function () {
-                        alert('좋아요 처리 중 오류가 발생했습니다.');
-                    }
-                });
-            });
+    // -------------------------
+    // 1. 댓글 등록 (AJAX)
+    // -------------------------
+    $('#comment-Form').on('submit', function(e) {
+        e.preventDefault();
+        $.ajax({
+            url: '/comment',
+            method: 'POST',
+            dataType: 'json',
+            data: $(this).serialize(),
+            success: function(data) {
+                renderCommentsAndReplies(data.comments, data.replies, data.loginNickname,data.uid);
+                bindLikeEvents();
+                $('textarea[name="cbody"]').val('');
+            },
+            error: function() {
+                alert('댓글 등록 실패');
+            }
         });
     });
-</script>
 
+    // -------------------------
+    // 2. 댓글 삭제 (AJAX)
+    // -------------------------
+    $('.comments-list').on('click', '.delete-comment-btn button', function() {
+        const $parent = $(this).closest('.delete-comment-btn');
+        const pnum = $parent.data('pnum');
+        const cnum = $parent.data('cnum');
+        $.ajax({
+            url: '/commentdelete',
+            method: 'POST',
+            dataType: 'json',
+            data: { pnum, cnum },
+            success: function(data) {
+                renderCommentsAndReplies(data.comments, data.replies, data.loginNickname,data.uid);
+                bindLikeEvents();
+            },
+            error: function() {
+                alert('댓글 삭제중 오류가 발생했습니다.');
+            }
+        });
+    });
+
+    // -------------------------
+    // 3. 댓글 수정 (AJAX + JS 함수 호출)
+    // -------------------------
+    function submitEdit(cnum) {
+        const pnum = $('#pnum-' + cnum).val();
+        const cbody = $('#cbody-' + cnum).val();
+        $.ajax({
+            url: '/commentmod',
+            method: 'POST',
+            dataType: 'json',
+            data: { cnum, pnum, cbody },
+            success: function(data) {
+                renderCommentsAndReplies(data.comments, data.replies, data.loginNickname,data.uid);
+                bindLikeEvents();
+            },
+            error: function() {
+                alert('댓글 수정 중 오류가 발생했습니다.');
+            }
+        });
+    }
+    window.submitEdit = submitEdit; // inline onclick 대응
+
+    // -------------------------
+    // 4. 대댓글 등록 (AJAX)
+    // -------------------------
+    $('.comments-list').on('submit', '.reply-form', function(e) {
+        e.preventDefault();
+        $.ajax({
+            url: '/replies',
+            method: 'POST',
+            dataType: 'json',
+            data: $(this).serialize(),
+            success: function(data) {
+                renderCommentsAndReplies(data.comments, data.replies, data.loginNickname ,data.uid);
+                bindLikeEvents();
+            },
+            error: function() {
+                alert('대댓글 등록 실패');
+            }
+        });
+    });
+
+    // -------------------------
+    // 5. 대댓글 삭제 (AJAX)
+    // -------------------------
+    $('.comments-list').on('click', '.delete-reply-btn button', function() {
+        const $parent = $(this).closest('.delete-reply-btn');
+        const pnum = $parent.data('pnum');
+        const rnum = $parent.data('rnum');
+        $.ajax({
+            url: '/repliedelete',
+            method: 'POST',
+            dataType: 'json',
+            data: { pnum, rnum },
+            success: function(data) {
+                renderCommentsAndReplies(data.comments, data.replies, data.loginNickname,data.uid);
+                bindLikeEvents();
+            },
+            error: function() {
+                alert('대댓글 삭제중 오류가 발생했습니다.');
+            }
+        });
+    });
+
+    // -------------------------
+    // 6. 대댓글 수정 (AJAX + JS 함수 호출)
+    // -------------------------
+    function submitReplyEdit(rnum) {
+        const form = $('#replyEditForm-' + rnum);
+        $.ajax({
+            url: '/replymod',
+            method: 'POST',
+            data: form.serialize(),
+            dataType: 'json',
+            success: function(data) {
+                // 댓글과 대댓글 다시 렌더링
+                renderCommentsAndReplies(data.comments, data.replies, data.loginNickname, data.uid);
+                bindLikeEvents();
+                // 수정 폼 숨기기
+                $('#replyEditForm-' + rnum).hide();
+            },
+            error: function() {
+                alert('대댓글 수정 실패');
+            }
+        });
+    }
+    window.submitReplyEdit = submitReplyEdit; // inline 대응
+
+    // -------------------------
+    // 7. 좋아요 버튼 이벤트 바인딩
+    // -------------------------
+    function bindLikeEvents() {
+        // 게시글 좋아요
+        $('.like-button').off('click').on('click', function() {
+            const $btn = $(this);
+            const pnum = $btn.data('pnum');
+            const uid = $btn.data('uid');
+            const liked = $btn.data('liked');
+            $.ajax({
+                url: liked ? '/phate' : '/plike',
+                method: 'POST',
+                dataType: 'text',
+                data: { uid, pnum },
+                success: function(count) {
+                    $btn.data('liked', !liked);
+                    $btn.find('.like-icon').text(!liked ? '❤️' : '🤍');
+                    $('#like-count-' + pnum).text(count);
+                },
+                error: function() {
+                    alert('좋아요 처리 중 오류가 발생했습니다.');
+                }
+            });
+        });
+
+        // 댓글 좋아요
+        $('.like-button2').off('click').on('click', function() {
+            const $btn = $(this);
+            const cnum = $btn.data('cnum');
+            const pnum = $btn.data('pnum');
+            const uid = $btn.data('uid');
+            const liked = $btn.data('liked');
+            $.ajax({
+                url: liked ? '/chate' : '/clike',
+                method: 'POST',
+                dataType: 'text',
+                data: { uid, cnum, pnum },
+                success: function(count) {
+                    $btn.data('liked', !liked);
+                    $btn.find('.like-icon').text(!liked ? '❤️' : '🤍');
+                    $('#like-count2-' + cnum).text(count);
+                },
+                error: function() {
+                    alert('댓글 좋아요 처리 중 오류');
+                }
+            });
+        });
+
+        // 대댓글 좋아요
+        $('.like-button3').off('click').on('click', function() {
+            const $btn = $(this);
+            const rnum = $btn.data('rnum');
+            const cnum = $btn.data('cnum');
+            const pnum = $btn.data('pnum');
+            const uid = $btn.data('uid');
+            const liked = $btn.data('liked');
+            $.ajax({
+                url: liked ? '/rhate' : '/rlike',
+                method: 'POST',
+                dataType: 'text',
+                data: { uid, rnum, cnum, pnum },
+                success: function(count) {
+                    $btn.data('liked', !liked);
+                    $btn.find('.like-icon').text(!liked ? '❤️' : '🤍');
+                    $('#like-count3-' + rnum).text(count);
+                },
+                error: function() {
+                    alert('대댓글 좋아요 오류');
+                }
+            });
+        });
+    }
+
+    // -------------------------
+    // 8. 렌더함수 + 초기 바인딩
+    // -------------------------
+    function renderCommentsAndReplies(comments, replies, loginNickname , uid) {
+        let html = '';
+        for (let i = 0; i < comments.length; i++) {
+            let comment = comments[i];
+            html += '<div class="comment-item">';
+            html += '  <div class="comment-header">';
+            html += '    <span class="comment-author">' + comment.nickname + '</span>';
+            html += '    <span>' + comment.cdate + '</span>';
+            if (comment.nickname === loginNickname) {
+                html += '    <button type="button" onclick="showEditForm(' + comment.cnum + ')">수정</button>';
+                html += '    <div class="delete-comment-btn" data-pnum="' + comment.pnum + '" data-cnum="' + comment.cnum + '"><button type="button">삭제</button></div>';
+            }
+            html += '  </div>';
+            html += '  <div class="comment-body" id="body-' + comment.cnum + '">' + comment.cbody + '</div>';
+            if (comment.nickname === loginNickname) {
+                html += '  <div id="editForm-' + comment.cnum + '" style="display:none;">';
+                html += '    <input type="hidden" id="pnum-' + comment.cnum + '" value="' + comment.pnum + '">';
+                html += '    <textarea id="cbody-' + comment.cnum + '">' + comment.cbody + '</textarea>';
+                html += '    <button type="button" onclick="submitEdit(' + comment.cnum + ')">확인</button>';
+                html += '    <button type="button" onclick="hideEditForm(' + comment.cnum + ')">취소</button>';
+                html += '  </div>';
+            }
+            html += '  <div class="comment-footer">';
+            html += '    <button class="like-button2" data-pnum="' + comment.pnum + '" data-cnum="' + comment.cnum + '" data-uid="' + comment.uid + '" data-liked="' + comment.liked + '">';
+            html += '      <span class="like-icon">' + (comment.liked ? '❤️' : '🤍') + '</span>';
+            html += '    </button>';
+            html += '    <span id="like-count2-' + comment.cnum + '">' + comment.clike + '</span>';
+            html += '  </div>';
+            html += '  <div class="reply-box">';
+
+            for (let j = 0; j < replies.length; j++) {
+                let reply = replies[j];
+                if (reply.cnum === comment.cnum) {
+                    html += '    <div class="reply-item">';
+                    html += '      <span>↪' + reply.nickname + '</span>';
+                    html += '      <span id="rbody-' + reply.rnum + '">' + reply.rbody + '</span>';
+                    html += '      <span>' + reply.rdate + '</span>';
+                    html += '      <div class="reply-footer">';
+                    html += '        <button class="like-button3" data-pnum="' + reply.pnum + '" data-cnum="' + reply.cnum + '" data-rnum="' + reply.rnum + '" data-uid="' + reply.uid + '" data-liked="' + reply.check + '">';
+                    html += '          <span class="like-icon">' + (reply.check ? '❤️' : '🤍') + '</span>';
+                    html += '        </button>';
+                    html += '        <span id="like-count3-' + reply.rnum + '">' + reply.rlikes + '</span>';
+                    html += '      </div>';
+                    if (reply.nickname === loginNickname) {
+                        html += '      <button type="button" onclick="showReplyEditForm(' + reply.rnum + ')">수정</button>';
+                        html += '      <div class="delete-reply-btn" data-pnum="' + reply.pnum + '" data-rnum="' + reply.rnum + '">';
+                        html += '        <button type="button" class="delete-reply">삭제</button>';
+                        html += '      </div>';
+                        html += '      <div id="replyEditForm-' + reply.rnum + '" style="display:none;">';
+                        html += '        <textarea id="rbody-edit-' + reply.rnum + '">' + reply.rbody + '</textarea>';
+                        html += '        <button type="button" onclick="submitReplyEdit(' + reply.rnum + ')">확인</button>';
+                        html += '        <button type="button" onclick="cancelReplyEditForm(' + reply.rnum + ')">취소</button>';
+                        html += '      </div>';
+                    }
+                    html += '    </div>';
+                }
+            }
+
+            html += '    <form class="reply-form">';
+            html += '      <textarea name="rbody" placeholder="답글을 입력하세요..."></textarea>';
+            html += '      <input type="hidden" name="cnum" value="' + comment.cnum + '">';
+            html += '      <input type="hidden" name="uid" value="' + uid + '">';
+            html += '      <input type="hidden" name="nickname" value="' + loginNickname + '">';
+            html += '      <input type="hidden" name="pnum" value="' + comment.pnum + '">';
+            html += '      <button type="submit">답글 작성</button>';
+            html += '    </form>';
+
+            html += '  </div>';
+            html += '</div>';
+        }
+        $('.comments-list').html(html);
+    }
+
+    function showEditForm(cnum) {
+        $('#editForm-' + cnum).show();
+        $('#body-' + cnum).hide();
+    }
+    function hideEditForm(cnum) {
+        $('#editForm-' + cnum).hide();
+        $('#body-' + cnum).show();
+    }
+    function showReplyEditForm(rnum) {
+        $('#replyEditForm-' + rnum).show();
+        $('#rbody-' + rnum).hide();
+    }
+    function cancelReplyEditForm(rnum) {
+        $('#replyEditForm-' + rnum).hide();
+        $('#rbody-' + rnum).show();
+    }
+
+    $(document).ready(function() {
+        bindLikeEvents();
+    });
+</script>
 </body>
 </html>

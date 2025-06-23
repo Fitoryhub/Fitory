@@ -5,7 +5,6 @@ import com.Fitory.fitory.dto.PtitlePcategoryDTO;
 import com.Fitory.fitory.dto.RepliesDTO;
 import com.Fitory.fitory.dto.SessionUserDTO;
 import com.Fitory.fitory.entity.*;
-import com.Fitory.fitory.entity.Files;
 import com.Fitory.fitory.service.*;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +19,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.util.*;
+
+import static org.springframework.util.ObjectUtils.isEmpty;
 
 
 @Controller
@@ -54,7 +55,7 @@ public class BoderController {
 
         Page<Board> board;
 
-        if (searchboard.getPcategory() == null) {
+        if (searchboard.getPcategory() == null||searchboard.getPcategory().equals("")) {
             board = boardService.alllist(pageable);
         } else {
             if (searchboard.getPcategory().equals("all")) {
@@ -87,8 +88,8 @@ public class BoderController {
         System.out.println("확인한다" + board.getNickname());
 
         boardService.savepost(board);
-
         String ProjectPath = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\files";
+
 
 
         for (MultipartFile onefile : filelist) {
@@ -226,14 +227,81 @@ public class BoderController {
 
     }
 
-    //게시글에 댓글작성구현 메서드
-    @PostMapping("comment")
-    public String comment(@ModelAttribute Comment comment, Model model) {
+    @PostMapping("/comment")
+    @ResponseBody
+    public Map<String, Object> comment(@ModelAttribute Comment comment, HttpSession session) {
+        // 댓글 저장
+        if (!isEmpty(comment)) {
+            commentService.commentsave(comment);
+        }
 
-        commentService.commentsave(comment);
+        // 로그인 정보 추출
+        SessionUserDTO user = (SessionUserDTO) session.getAttribute("userInfo");
+        String uid = user.getId();
+        String nickname = user.getNickname();
+
+        return buildCommentResponse(comment.getPnum(), uid, nickname);
+    }
 
 
-        return "redirect:/detailview?pnum=" + comment.getPnum();
+    private Map<String, Object> buildCommentResponse(Integer pnum, String uid, String loginNickname) {
+        Map<String, Object> response = new HashMap<>();
+
+        // 댓글 리스트 조회
+        List<Comment> comments = commentService.findcomment(pnum);
+        List<CommentDTO> commentDTOS = comments.stream().map(c -> {
+            CommentDTO dto = new CommentDTO();
+            dto.setCnum(c.getCnum());
+            dto.setPnum(c.getPnum());
+            dto.setCbody(c.getCbody());
+            dto.setNickname(c.getNickname());
+            dto.setUid(c.getUid());
+            dto.setCdate(c.getCdate());
+            dto.setClike(c.getClike());
+            return dto;
+        }).toList();
+
+        // 댓글 좋아요 상태
+        List<Clike> clikes = clikeService.findclike(pnum);
+        for (CommentDTO dto : commentDTOS) {
+            for (Clike c : clikes) {
+                if (c.getUid().equals(uid) && dto.getCnum().equals(c.getCnum())) {
+                    dto.setLiked(true);
+                }
+            }
+        }
+
+        // 대댓글 리스트
+        List<Replies> repliesList = replieService.findreplies(pnum);
+        List<RepliesDTO> replies = repliesList.stream().map(r -> {
+            RepliesDTO dto = new RepliesDTO();
+            dto.setRnum(r.getRnum());
+            dto.setCnum(r.getCnum());
+            dto.setPnum(r.getPnum());
+            dto.setRbody(r.getRbody());
+            dto.setNickname(r.getNickname());
+            dto.setUid(r.getUid());
+            dto.setRdate(r.getRdate());
+            dto.setRlikes(r.getRlikes());
+            return dto;
+        }).toList();
+
+        // 대댓글 좋아요 상태
+        List<Rlikes> rlikes = rlikeService.findrlike(pnum);
+        for (RepliesDTO dto : replies) {
+            for (Rlikes r : rlikes) {
+                if (r.getUid().equals(uid) && r.getRnum().equals(dto.getRnum())) {
+                    dto.setCheck(true);
+                }
+            }
+        }
+
+        // 응답 구성
+        response.put("comments", commentDTOS);
+        response.put("replies", replies);
+        response.put("loginNickname", loginNickname);
+        response.put("uid", uid);
+        return response;
     }
 
 
@@ -268,9 +336,15 @@ public class BoderController {
     //대댓글 작성구현 메서드
 
     @PostMapping("/replies")
-    public String replies(@ModelAttribute Replies replies) {
+    @ResponseBody
+    public Map<String, Object> replies(@ModelAttribute Replies replies , HttpSession session) {
         replieService.repliessave(replies);
-        return "redirect:/detailview?pnum=" + replies.getPnum();
+        SessionUserDTO user = (SessionUserDTO) session.getAttribute("userInfo");
+        String uid = user.getId();
+        String nickname = user.getNickname();
+
+        return buildCommentResponse(replies.getPnum(), uid, nickname);
+
     }
 
 
@@ -322,8 +396,21 @@ public class BoderController {
     public String modpost(@ModelAttribute Board board,
                           @RequestParam("files") MultipartFile[] filelist) throws Exception {
         boardService.board_mod(board);
+        Board first =boardService.searchoneboard(board.getPnum());
+        List <Files> files=fileService.findfile(first.getPnum());
 
         String ProjectPath = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\files";
+
+        for(Files f : files) {
+            String name=f.getFilename();
+            String path=ProjectPath+'\\'+name;
+
+            File f2 = new File(path);
+            if (f2.exists()) {
+                f2.delete(); // 실제 파일 삭제
+            }
+        }
+
         System.out.println(board.getPnum());
 
         for (MultipartFile onefile : filelist) {
@@ -332,10 +419,10 @@ public class BoderController {
                 String filename = uuid + "_" + onefile.getOriginalFilename();
                 File savfile = new File(ProjectPath, filename);
                 onefile.transferTo(savfile);
-                Files files = new Files();
-                files.setFilename(filename);
-                files.setPnum(board.getPnum());
-                fileService.filesave(files);
+                Files file = new Files();
+                file.setFilename(filename);
+                file.setPnum(board.getPnum());
+                fileService.filesave(file);
             }
         }
 
@@ -343,45 +430,83 @@ public class BoderController {
     }
 
 
-    // 게시글 삭제 구현 메서드
     @GetMapping("/boarddelete")
     public String boarddelete(@RequestParam("pnum") Integer pnum) {
+        // 1. 게시글 삭제
+
+
+        List<Files> files = fileService.findfile(pnum);
         boardService.boarddelete(pnum);
+
+
+        String basePath = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\files";
+
+        for (Files file : files) {
+            String filename = file.getFilename();
+            String fullPath = basePath + "\\" + filename;
+
+            File f = new File(fullPath);
+            if (f.exists()) {
+                f.delete(); // 실제 파일 삭제
+            }
+        }
+
         return "redirect:/boardlist";
     }
 
     // 댓글 삭제 구현 메서드
 
     @PostMapping("/commentdelete")
-    public String commentdelete(@RequestParam("pnum") Integer pnum, @RequestParam("cnum") Integer cnum) {
+    @ResponseBody
+    public Map<String,Object> commentdelete(@RequestParam("pnum") Integer pnum, @RequestParam("cnum") Integer cnum ,HttpSession session) {
         commentService.commentdelete(cnum);
-        return "redirect:/detailview?pnum=" + pnum;
+        SessionUserDTO user = (SessionUserDTO) session.getAttribute("userInfo");
+        String uid = user.getId();
+        String nickname = user.getNickname();
+
+        return buildCommentResponse(pnum, uid, nickname);
     }
 
     //댓글 수정 구현 메서드
     @PostMapping("/commentmod")
-    public String commentmod(@ModelAttribute Comment comment) {
+    @ResponseBody
+    public Map<String, Object> commentmod(@ModelAttribute Comment comment ,HttpSession session) {
 
         commentService.commentmod(comment);
+        SessionUserDTO user = (SessionUserDTO) session.getAttribute("userInfo");
+        String uid = user.getId();
+        String nickname = user.getNickname();
 
-        return "redirect:/detailview?pnum=" + comment.getPnum();
+        return buildCommentResponse(comment.getPnum(), uid, nickname);
+
     }
 
 
     //대댓글 삭제 구현 메서드
     @PostMapping("/repliedelete")
-    public String repliedelete(@RequestParam("rnum") Integer rnum, @RequestParam("pnum") Integer pnum) {
+    @ResponseBody
+    public Map<String, Object> repliedelete(@RequestParam("rnum") Integer rnum, @RequestParam("pnum") Integer pnum , HttpSession session) {
 
         replieService.repliedelete(rnum);
-        return "redirect:/detailview?pnum=" + pnum;
+        SessionUserDTO user = (SessionUserDTO) session.getAttribute("userInfo");
+        String uid = user.getId();
+        String nickname = user.getNickname();
+
+        return buildCommentResponse(pnum, uid, nickname);
     }
 
     //대댓글 수정 구현 메서드
     @PostMapping("/replymod")
-    public String replymod(@ModelAttribute Replies replie) {
+    @ResponseBody
+    public Map<String, Object> replymod(@ModelAttribute Replies replie,HttpSession session) {
         replieService.replymod(replie);
-        return "redirect:/detailview?pnum=" + replie.getPnum();
+        SessionUserDTO user = (SessionUserDTO) session.getAttribute("userInfo");
+        String uid = user.getId();
+        String nickname = user.getNickname();
+
+        return buildCommentResponse(replie.getPnum(), uid, nickname);
     }
+
     @GetMapping("/myboard")
     @ResponseBody
     public  Map<String, Object> myboard(@RequestParam("uid")String uid) {
@@ -404,12 +529,12 @@ public class BoderController {
     @ResponseBody
     public Map<String, Object> dellistcomment(@RequestParam List<Integer> list , @RequestParam String uid) {
 
-       for (Integer i : list) {
-           commentService.commentdelete(i);
-       }
-       List<Comment> newlist =commentService.mycomment(uid);
-       Map<String, Object> map = new HashMap<>();
-       map.put("list", newlist);
+        for (Integer i : list) {
+            commentService.commentdelete(i);
+        }
+        List<Comment> newlist =commentService.mycomment(uid);
+        Map<String, Object> map = new HashMap<>();
+        map.put("list", newlist);
         return map;
     }
     @PostMapping("/dellistboard")

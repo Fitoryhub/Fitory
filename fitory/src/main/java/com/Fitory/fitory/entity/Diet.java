@@ -32,4 +32,15 @@ public class Diet {
 	@Column(name="created_at", columnDefinition = "DATETIME")
 	@ColumnDefault("SYSDATE()")
 	private String created_at;
+
+	@Column(name="user_id")
+	private String userid;
+
+	@Column(name="diet_like", columnDefinition = "BIGINT")
+	@ColumnDefault("0")
+	private int diet_like;
+
+	@Column(name="diet_view", columnDefinition = "BIGINT")
+	@ColumnDefault("0")
+	private int diet_view;
 }

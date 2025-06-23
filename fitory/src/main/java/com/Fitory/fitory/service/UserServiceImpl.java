@@ -19,7 +19,6 @@ public class UserServiceImpl implements UserService {
         User user = new User();
         user.update_user(udto);
         userRepository.save(user);
-        System.out.println("저장");
     }
 
     @Override

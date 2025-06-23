@@ -17,10 +17,10 @@ public class Diet_food {
 	private int food_id;
 	
 	@Column(name="diet_id", columnDefinition = "BIGINT")
-	private int diet_id;
+	private int dietId;
 	
 	@Column(name="food_name", columnDefinition = "VARCHAR(100)")
-	private String food_name;
+	private String foodname;
 	
 	@Column(name="quantity", columnDefinition = "VARCHAR(50)")
 	private String quantity;

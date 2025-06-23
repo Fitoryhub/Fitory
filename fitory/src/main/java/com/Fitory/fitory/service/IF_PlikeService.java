@@ -8,4 +8,10 @@ public interface IF_PlikeService {
     void saveplike(Plike plike);
 
     void phate(Integer pnum, String uid);
+
+    public Plike findplike2(String uid, int dnum);
+
+    public void deletdplike(Plike plike);
+
+    public void deletdplike(int did);
 }

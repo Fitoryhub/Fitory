@@ -2,10 +2,12 @@ package com.Fitory.fitory.controller;
 
 import com.Fitory.fitory.dto.SessionUserDTO;
 import com.Fitory.fitory.dto.UserDTO;
+import com.Fitory.fitory.dto.UserHealthInfoDTO;
 import com.Fitory.fitory.entity.ExerciseRoutine;
 import com.Fitory.fitory.entity.User;
 import com.Fitory.fitory.repository.UserRepository;
 import com.Fitory.fitory.service.ExerciseRoutineService;
+import com.Fitory.fitory.service.UserHealthServiceImpl;
 import com.Fitory.fitory.service.UserService;
 import com.Fitory.fitory.service.UserServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,7 +35,8 @@ public class MemberContoller {
     ExerciseRoutineService exerciseRoutineService;
     @Autowired
     UserServiceImpl userServiceImpl;
-
+    @Autowired
+    UserHealthServiceImpl userhealthserviceimpl;
 
     // 회원가입 페이지 이동
     @GetMapping("/signup")
@@ -80,6 +83,7 @@ public class MemberContoller {
     @GetMapping("/mypage")
     public String mypage(HttpSession session, Model model) {
         UserDTO udto = new UserDTO();
+        UserHealthInfoDTO hdto = new UserHealthInfoDTO();
         SessionUserDTO userInfo = (SessionUserDTO) session.getAttribute("userInfo");
         if (userInfo == null) {
             return "redirect:/login"; // 로그인 안 된 상태일 경우
@@ -91,6 +95,8 @@ public class MemberContoller {
         model.addAttribute("routineList", routineList);
         udto = userServiceImpl.userInfo(userInfo.getId());
         model.addAttribute("user", udto);
+        hdto = userhealthserviceimpl.findInfo(userInfo.getId());
+        model.addAttribute("userInfo", hdto);
         return "mypage";
     }
 
@@ -108,11 +114,25 @@ public class MemberContoller {
     @GetMapping("/nickChk")
     @ResponseBody
     public Map<String, Boolean> nickChk(@RequestParam String nickname) {
-        System.out.println("ddddafsdfasdhfklasjdhfklasjdhfkasjdhflkasdjhflkasjhdf46346436");
         boolean exists = userServiceImpl.nicknamechk(nickname);
         Map<String, Boolean> result = new HashMap<>();
         result.put("exists", exists);
         return result;
+    }
+
+    @PostMapping("/edit_passChk")
+    @ResponseBody
+    public UserDTO passChk(HttpSession session, @RequestBody Map<String, String> payload) {
+        UserDTO udto = new UserDTO();
+        SessionUserDTO userInfo = (SessionUserDTO) session.getAttribute("userInfo");
+        udto = userServiceImpl.userInfo(userInfo.getId());
+        String pass = payload.get("pass");
+
+        if(udto.getPassword().equals(pass)){
+            return udto;
+        } else{
+            return null;
+        }
     }
 
     // 회원가입
@@ -122,11 +142,25 @@ public class MemberContoller {
         return "main";
     }
 
-    @PostMapping("/userInfo")
-    public String postMethodName(@RequestBody String entity) {
-        // TODO: process POST request
+    @PostMapping("/healthInfo")
+    public String healthInfo_save(HttpSession session, @ModelAttribute UserHealthInfoDTO udto) {
+        SessionUserDTO userInfo = (SessionUserDTO) session.getAttribute("userInfo");
+        udto.setUid(userInfo.getId());
+        userhealthserviceimpl.Infosave(udto);
+        return "redirect:/mypage";
+    }
 
-        return entity;
+    @PostMapping("/healthInfoMod")
+    public String healthInfo_mod(HttpSession session, @ModelAttribute UserHealthInfoDTO udto) {
+        SessionUserDTO userInfo = (SessionUserDTO) session.getAttribute("userInfo");
+        udto.setUid(userInfo.getId());
+        userhealthserviceimpl.Infosave(udto);
+        return "redirect:/mypage";
+    }
+
+    @GetMapping("/edit")
+    public String profile_edit() {
+        return "profile_edit";
     }
 
 }

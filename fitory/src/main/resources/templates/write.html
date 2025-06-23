@@ -73,7 +73,7 @@
       th:object="${board}" method="post" enctype="multipart/form-data">
     <input type="hidden" name="nickname" th:value="${session.userInfo.nickname}"/>
     <input type="hidden" name="uid" th:value="${session.userInfo.id}">
-    <input th:if="${mod}" type="hidden" name="pnum" th:value"${board.pnum}">
+    <input th:if="${mod}" type="hidden" name="pnum" th:value="${board.pnum}">
     <table>
         <tr>
             <td>제목</td>
@@ -96,12 +96,11 @@
         </tr>
         <tr>
             <td>이미지 파일</td>
-            <td><input type="file" name="files" accept="image/jpeg,image/png,image/gif" /></td>
+         <td>
+        <input type="file" name="files" accept="image/jpeg,image/png,image/gif" multiple />
+            </td>
         </tr>
-        <tr>
-            <td>이미지 파일</td>
-            <td><input type="file" name="files" accept="image/jpeg,image/png,image/gif" /></td>
-        </tr>
+
         <tr>
             <td colspan="2" style="text-align: center;">
                 <button type="submit">작성 완료</button>

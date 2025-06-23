@@ -1,9 +1,6 @@
 package com.Fitory.fitory.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
@@ -15,8 +12,12 @@ import org.hibernate.annotations.DynamicInsert;
 @DynamicInsert
 public class Diet_nutrition {
 	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(columnDefinition = "BIGINT")
-	private int diet_id;
+	private int food_nutrition_id;
+
+	@Column(columnDefinition = "BIGINT")
+	private int dietid;
 	
 	@Column(name="calories", columnDefinition = "INT(11)")
 	private int calories;
@@ -29,4 +30,10 @@ public class Diet_nutrition {
 	
 	@Column(name="fat", columnDefinition = "DECIMAL(6,2)")
 	private double fat;
+
+	@Column(name="sodium", columnDefinition = "DECIMAL(8,2)")
+	private double sodium;
+
+	@Column(name="sugar", columnDefinition = "DECIMAL(6,2)")
+	private double sugar;
 }

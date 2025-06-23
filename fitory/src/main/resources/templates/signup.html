@@ -161,8 +161,8 @@
 
       <label>성별</label>
       <div class="radio-group">
-        <label><input type="radio" name="gender" value="남성" required /> 남성</label>
-        <label><input type="radio" name="gender" value="여성" /> 여성</label>
+        <label><input type="radio" name="gender" value="male" required /> 남성</label>
+        <label><input type="radio" name="gender" value="female" /> 여성</label>
       </div>
 
       <label for="birth">생년월일</label>
@@ -287,19 +287,19 @@
     }
 
   
-  // 비동기 요청
-  fetch(`/idChk?id=${inputId}`)
-    .then(res => res.json())
-    .then(data => {
-      if (data.exists) {
-        result.style.color = "red";
-        result.textContent = "이미 사용중인 아이디입니다.";
-        chk[0] = false;
-      } else {
-        result.style.color = "green";
-        result.textContent = "사용가능한 아이디 입니다.";
-        chk[0] = true;
-      }
+    // 비동기 요청
+    fetch(`/idChk?id=${inputId}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.exists) {
+          result.style.color = "red";
+          result.textContent = "이미 사용중인 아이디입니다.";
+          chk[0] = false;
+        } else {
+          result.style.color = "green";
+          result.textContent = "사용가능한 아이디 입니다.";
+          chk[0] = true;
+        }
     });
 
   }

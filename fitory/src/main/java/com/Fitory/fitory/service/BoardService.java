@@ -1,7 +1,6 @@
 package com.Fitory.fitory.service;
 
 import com.Fitory.fitory.dto.PtitlePcategoryDTO;
-
 import com.Fitory.fitory.entity.Board;
 import com.Fitory.fitory.repository.*;
 import jakarta.transaction.Transactional;
@@ -115,7 +114,7 @@ public class BoardService implements IF_BoardService {
 
     @Override
     public List<Board> myboardlist(String uid) {
-       return boardrepository.findByUid(uid);
+        return boardrepository.findByUid(uid);
     }
 
 

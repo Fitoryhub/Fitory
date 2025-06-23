@@ -13,6 +13,9 @@ public interface PlikeRepository extends JpaRepository<Plike, Integer>  {
 
     Plike findByUidAndPnum(String uid, Integer pnum);
 
+    public void deleteAllByDnum(int did);
     @Modifying
     void deleteByPnumAndUid(Integer pnum, String uid);
+
+    Plike findByUidAndDnum(String uid, int dnum);
 }

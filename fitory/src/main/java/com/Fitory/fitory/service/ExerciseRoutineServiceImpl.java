@@ -1,5 +1,6 @@
 package com.Fitory.fitory.service;
 
+import com.Fitory.fitory.dto.IdEname;
 import com.Fitory.fitory.entity.ExerciseRoutine;
 import com.Fitory.fitory.repository.ExerciseRoutineRepository;
 import jakarta.transaction.Transactional;
@@ -38,6 +39,21 @@ public class ExerciseRoutineServiceImpl implements ExerciseRoutineService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public ExerciseRoutine findByidename(IdEname idename) {
+        System.out.println(idename.getEname());
+        System.out.println(idename.getId());
+
+        String userid = idename.getId();
+        String routine = idename.getEname();
+        return exerciseRoutineRepository.findFirstByUseridAndRoutine(userid, routine);
+    }
+
+    @Override
+    public ExerciseRoutine todaysexercise(String id, String ename) {
+        return exerciseRoutineRepository.todayExercise(id, ename);
     }
 
 

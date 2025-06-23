@@ -31,5 +31,15 @@ public class PlikeService implements IF_PlikeService{
         plikeRepository.deleteByPnumAndUid(pnum, uid);
     }
 
+    public Plike findplike2(String uid, int dnum) {
+        return plikeRepository.findByUidAndDnum(uid, dnum);
+    }
 
+    public void deletdplike(Plike plike) {
+        plikeRepository.delete(plike);
+    }
+
+    public void deletdplike(int did) {
+        plikeRepository.deleteAllByDnum(did);
+    }
 }

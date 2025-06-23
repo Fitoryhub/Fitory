@@ -1,0 +1,185 @@
+<section xmlns:th="http://www.thymeleaf.org"
+         xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+         layout:decorate="~{common}"
+         layout:fragment="content"
+         th:with="userInfo=${userInfo}">
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
+    <style>
+        #detail_view {
+          padding: 40px 5%;
+          background-color: #ffffff;
+          border-radius: 12px;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+          margin: 40px auto;
+          max-width: 1000px;
+        }
+
+        #detail_view h2 {
+          font-size: 28px;
+          margin-bottom: 20px;
+          color: #111827;
+        }
+
+        #detail_content {
+          width: 100%;
+          border-collapse: collapse;
+          font-size: 16px;
+          color: #374151;
+        }
+
+        #detail_content td {
+          padding: 12px 8px;
+          vertical-align: top;
+        }
+
+        #detail_content td:first-child {
+          font-weight: 600;
+          width: 25%;
+          color: #111827;
+        }
+
+        #detail_content td button {
+          background-color: transparent;
+          border: none;
+          cursor: pointer;
+          font-size: 18px;
+        }
+
+        #detail_content td span {
+          margin-left: 6px;
+          font-weight: bold;
+        }
+
+        #title td button{
+          background-color: #10b981; 
+          color: white;
+          font-size: 16px;
+          font-weight: 600;
+          padding: 10px 20px;
+          border: none;
+          border-radius: 8px;
+          cursor: pointer;
+          margin-left: 30px;
+          transition: background-color 0.2s ease;
+        }
+
+        #diet_list {
+          width: 100%;
+          margin-top: 20px;
+          border: 1px solid #d1fae5;
+          border-radius: 8px;
+          background-color: #f0fdf4;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+        }
+
+        #diet_list td {
+          padding: 10px;
+          border-bottom: 1px solid #d1fae5;
+          color: #065f46;
+          font-weight: 500;
+        }
+
+        #diet_list td:last-child {
+          border-bottom: none;
+        }
+
+        #diet_list tr:first-child td {
+          background-color: #d1fae5;
+          color: #065f46;
+          font-weight: bold;
+          font-size: 18px;
+        }
+    </style>
+    <section id="detail_view">
+        <table id="detail_content">
+            <tr id="title">
+                <td colspan="3">
+                  <h2 th:text="${diet.title}" >제목</h2>
+                  <input type="hidden" id="diet_id" th:value="${diet.diet_id}">
+                </td>
+                <td th:if="${userInfo != null}">
+                  <button id="delete" th:text="삭제" th:if="${userInfo.id==diet.user_id}"></button>
+                </td>
+            </tr>
+            <tr>
+                <td th:text="'작성자: '+${diet.user_id}">작성자</td>
+                <td th:text="'작성일: '+${diet.created_at}">작성일</td>
+                <td th:text="'조회수: '+${diet.diet_view}">조회수</td>
+                <td>
+                    <input type="hidden" id="uid" th:if="${userInfo != null}" th:value="${userInfo.id}">
+                    <button id="like" th:value="${diet.diet_id}">
+                        <span id="like_icon" th:text="${dplike != null ? '❤️' : '🤍'}"></span>
+                    </button>
+                    <span id="like_count" th:text="${diet.diet_like}"></span>
+                </td>
+            </tr>
+            <tr>
+                <td th:if="${diet.plan_type=='WEEK'}">주기: 주간</td>
+                <td th:if="${diet.plan_type=='DAY'}">주기: 하루</td>
+                <td th:if="${diet.goal_type=='WEIGHT_LOSS'}">목표: 감량</td>
+                <td th:if="${diet.goal_type=='MUSCLE_GAIN'}">목표: 증량</td>
+                <td th:if="${diet.goal_type=='MAINTAIN'}">목표: 유지</td>
+            </tr>
+            <tr>
+                <td colspan="3" style="vertical-align: top; width: 510px;" th:text="${diet.explanation}">작성내용</td>
+                <td>
+                    <table id="diet_list">
+                        <tr>
+                            <td>식단내용</td>
+                        </tr>
+                        <tr th:each="food : ${dflist}">
+                            <td th:text="${food.food_name}"></td>
+                        </tr>
+                        <tr>
+                            <td th:text="'총 칼로리: '+${dnutrition.calories}+'kcal'"></td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </section>
+    <script>
+        $('#delete').click(()=>{
+          let delconfirm=confirm('삭제하시겠습니까?');
+          if(delconfirm){
+            let did=$('#diet_id').val()
+            $.get("/diet/delete?diet_id="+did,function(response){
+              window.location.href=response;
+            })
+          }
+        })
+
+        $('#like').click(()=>{
+            let did=$('#like').val();
+            let uid=$('#uid').val();
+            if(uid==null){
+                alert('로그인 필요');
+                location.href='/login';
+                return;
+            }
+            $.ajax({
+                async:true,
+                method:'GET',
+                url:'/dietlike',
+                data:{
+                    uid:uid,
+                    did:did
+                },
+                dataType:'JSON',
+                success:function(data){
+                    if(data.status=='yes'){
+                      $('#like_icon').html('❤️');
+                      $('#like_count').html(data.like);
+                    }else if(data.status=='no'){
+                      $('#like_icon').html('🤍');
+                      $('#like_count').html(data.like);
+                    }
+                },
+                error:function(data){
+                    alert('좋아요 오류');
+                    console.log(data);
+                }
+            })
+        })
+    </script>
+</section>

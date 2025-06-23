@@ -1,6 +1,8 @@
-<!DOCTYPE html>
-<html layout:decorate="~{common}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
-<section layout:fragment="content">
+<section xmlns:th="http://www.thymeleaf.org"
+         xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+         layout:decorate="~{common}"
+         layout:fragment="content">
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
     <style>
         #diet_board {
             min-height: 700px;
@@ -14,7 +16,7 @@
             color: #111827;
         }
 
-        #diet_board button {
+        #resist{
             background-color: #10b981; 
             color: white;
             font-size: 16px;
@@ -56,20 +58,54 @@
             background-color: #ffffff;
         }
 
-        #title_table {
+        #title_table,
+        #content_table{
             margin-top: 30px;
+            margin-left: 20px;
             border-bottom: 2px solid #10b981;
         }
 
+        a{
+            text-decoration: none;
+            color: black;
+        }
+    
         #content_table tr:hover {
             background-color: #f9fafb;
         }
+        .pagelist {
+            margin-top: 30px;
+            text-align: center;
+        }
+        .pagelist li {
+            display: inline-block;
+            padding: 8px 12px;            
+            margin: 0 5px;               
+            color: #10b981;
+            background-color: #f0fdf4;
+            border: 1px solid #d1fae5;
+            border-radius: 	6px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.2s, color 0.2s;
+            cursor: pointer;
+        }
+        .pagelist li:hover {
+            background-color: #10b981;
+            color: white;
+        }
+        .pagelist li.active {
+            background-color: #10b981;
+            color: white;
+            font-weight: bold;
+        }
+
     </style>
     <section id="diet_board">
         <h2 style="font-size: 35px; margin-left: 30px;">식단게시판</h2>
-        <button onclick="location.href='/diet/resist'">식단 등록</button>
+        <button id="resist" onclick="location.href='/diet/resist'">식단 등록</button>
         
-        <table id="title_table" style="margin-top: 30px; margin-left: 20px; border-bottom: 1px solid;">
+        <table id="title_table">
             <tr>
                 <th style="width: 30px;">번호</th>
                 <th style="width: 320px; text-align: center;">제목</th>
@@ -80,15 +116,63 @@
             </tr>
         </table>
         <table id="content_table">
-            <tr>
-                <td style="width: 30px;"></td>
-                <th style="width: 320px; text-align: center;"></th>
-                <th style="width: 70px;"></th>
-                <th style="width: 200px; text-align: center;"></th>
-                <th style="width: 70px;"></th>
-                <th style="width: 70px; text-align: center;"></th>
-            </tr>
         </table>
+        <div class="pagination">
+        </div>
     </section>
+    <script>
+        window.onload=function(){
+            goPage(1);
+        }
+
+        function goPage(e){
+            let currpage=e;
+            $.ajax({
+                async:true,
+                url: '/diet/page',
+                method:'GET',
+                dataType:'json',
+                data:{
+                    page:e
+                },
+                success:function(data){
+                    let page=data.page;
+                    let dlist=data.dlist;
+                    let sentence1='';
+                    let sentence2='';
+                    $.each(dlist,function(index,item){
+                        sentence1+='<tr>';
+                        sentence1+='<td style="font-size: 15px; width: 30px;">'+item.diet_id+'</td>';
+                        sentence1+='<td style="font-size: 15px; width: 320px;"><a href="/dietdetail?diet='+item.diet_id+'">'+item.title+'</a></td>';
+                        sentence1+='<td style="font-size: 15px; width: 70px;">'+item.user_id+'</td>';
+                        sentence1+='<td style="font-size: 15px; width: 200px; text-align: center;">'+item.created_at+'</td>';
+                        sentence1+='<td style="font-size: 15px; width: 70px; text-align: center;">'+item.diet_like+'</td>';
+                        sentence1+='<td style="font-size: 15px; width: 70px; text-align: center;">'+item.diet_view+'</td>';
+                        sentence1+='</tr>';
+                    })
+                    sentence2+='<ol class="pagelist" id="pagebox">';
+                    if(page.prev){
+                        sentence2+='<li class="prev" style="display: inline-block;" onclick="goPage('+(page.startPage-10)+')">이전</li>';
+                    }
+                    for(let i=page.startPage; i<=page.endPage; i++){
+                        if(i==e){
+                             sentence2+='<li class="active" style="display: inline-block;" onclick="goPage('+i+')">'+i+'</li>';
+                        }else{
+                             sentence2+='<li class="page" style="display: inline-block;" onclick="goPage('+i+')">'+i+'</li>';
+                        }
+                    }
+                    if(page.next){
+                        sentence2+='<li class="next" style="display: inline-block;" onclick="goPage('+(page.startPage+10)+')">다음</li>';
+                    }
+                    sentence2+='</ol>';
+                    $('#content_table').html(sentence1);
+                    $('.pagination').html(sentence2);
+                },
+                error:function(data){
+                    console.log(data);
+                    alert('오류');
+                }
+            })
+        }
+    </script>
 </section>
-</html>

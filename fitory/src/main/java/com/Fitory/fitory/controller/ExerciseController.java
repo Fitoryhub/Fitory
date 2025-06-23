@@ -124,4 +124,16 @@ public class ExerciseController {
         }
             return true;
     }
+    @GetMapping("/myexercise")
+    @ResponseBody
+    public Map<String, Object> myExercise(@RequestParam("userid") String userid ) {
+        List<ExerciseRoutine> elist = exerciseRoutineService.findByUserID(userid);
+        System.out.println(elist.size());
+        for(ExerciseRoutine e : elist){
+            System.out.println(e.getRoutine());
+        }
+        Map<String, Object> exerciseData = new HashMap<>();
+        exerciseData.put("list", elist);
+        return exerciseData;
+    }
 }
