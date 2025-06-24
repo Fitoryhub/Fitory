@@ -1,0 +1,624 @@
+<section xmlns:th="http://www.thymeleaf.org"
+         xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+         layout:decorate="~{common}"
+         layout:fragment="content">
+
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
+
+    <main class="main-content">
+        <div>
+            <div class="header">
+                <button id="prevMonth">←</button>
+                <h2 id="monthYear"></h2>
+                <div class="header-right">
+                    <button id="addScheduleBtn">스케줄 추가</button>
+                    <button id="nextMonth">→</button>
+                </div>
+            </div>
+            <input type="hidden" id="name" th:value="${session.userInfo.id}">
+            <div class="weekdays">
+                <div class="weekday">일</div>
+                <div class="weekday">월</div>
+                <div class="weekday">화</div>
+                <div class="weekday">수</div>
+                <div class="weekday">목</div>
+                <div class="weekday">금</div>
+                <div class="weekday">토</div>
+            </div>
+            <div class="days" id="calendarDays"></div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 20px; margin-left:30px">
+            <div class="user-stats">
+                <h3>내 건강 정보</h3>
+                <ul>
+                    <li>BMI : <span th:text="${#numbers.formatDecimal(BMI, 1, 1)}"></span></li>
+                    <li>기초 대사량 : <span th:text="${BMR}"></span> Kcal</li>
+                    <li>오늘 섭취한 칼로리 : <span id="todayCal"></span></li>
+                    <li>오늘 소비한 칼로리 : <span id="useCal"></span></li>
+                    <li>목표 체중 : <span>null</span></li>
+                </ul>
+            </div>
+
+            <div class="user-stats">
+                <h3>BMI 지수</h3>
+                <ul>
+                    <li>저체중 : <span>>18.5</span></li>
+                    <li>정상 : <span>18.5 ~ 22.9</span></li>
+                    <li>비만 전 단계 : <span>23 ~ 24.9</span></li>
+                    <li>1단계 비만 : <span>25 ~ 29.9</span></li>
+                    <li>2단계 비만 : <span>30 ~ 34.9</span></li>
+                    <li>3단계 비만 : <span>>=35</span></li>
+                </ul>
+            </div>
+        </div>
+
+    </main>
+
+
+    <div id="scheduleModal" class="modal" style="display: none;">
+        <div class="modal-content" style="width: 500px; padding: 20px; background: #fff; border-radius: 12px;">
+            <h2 id="modal-date-title"></h2>
+            <div id="schedule-details"></div>
+            <button id="closeBtn">닫기</button>
+        </div>
+    </div>
+
+    <style>
+        body {
+            font-family: 'Apple SD Gothic Neo', sans-serif;
+            margin: 0;
+            background-color: #f9f9f9;
+        }
+
+
+
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .user-info {
+            font-size: 14px;
+        }
+
+        .main-content {
+            margin-top: 80px;
+            max-width: 1100px;
+            margin-left: auto;
+            margin-right: auto;
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .calendar {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        .user-stats {
+            width: 250px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .user-stats h3 {
+            margin-top: 0;
+            font-size: 18px;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 6px;
+        }
+
+        .user-stats ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .user-stats li {
+            margin-bottom: 10px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header h2 {
+            font-size: 20px;
+            margin: 0;
+        }
+
+        .header button {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 5px 10px;
+        }
+
+        .weekdays, .days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+        }
+                .days {
+            display: grid;
+            grid-template-columns: repeat(7, 100px); /* 셀 너비 80px → 100px로 증가 */
+            gap: 6px;
+        }
+
+        .weekday, .day {
+            border: 1px solid #e0e0e0;
+            box-sizing: border-box;
+            border-radius: 4px;
+        }
+
+        .weekday {
+            font-weight: bold;
+            background-color: #f4f4f4;
+            height: 32px;
+            text-align: center;
+            line-height: 32px;
+            font-size: 14px;
+        }
+
+            .day {
+            width: 100px; /* 고정 너비 */
+            height: 120px; /* 고정 높이 */
+            background: #ffffff;
+            border: 1px solid #e8ecef;
+            border-radius: 4px;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            font-size: 12px;
+            color: #495057;
+            transition: background 0.2s;
+        }
+
+       .day:not([data-day]) {
+            background: #f8f9fa;
+            pointer-events: none;
+        }
+
+      .day::before {
+            content: attr(data-day);
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            font-weight: 600;
+            font-size: 12px;
+            color: #6c757d;
+        }
+
+          .today {
+            background: #4caf50 !important;
+            color: #ffffff !important;
+            border-color: #4caf50;
+        }
+         .today::before {
+            color: #ffffff;
+        }
+           .holiday {
+            background: #fff5f5 !important;
+            color: #cc0000 !important;
+        }
+
+        .holiday-name {
+            font-size: 11px;
+            font-weight: 600;
+            color: #cc0000;
+            text-align: center;
+            margin-bottom: 4px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            width: 100%;
+        }
+
+        .schedule-wrapper {
+            margin-top: 18px;
+            width: 100%;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .schedule-item {
+            font-size: 12px;
+            color: #333;
+            word-break: break-word;
+            margin-bottom: 3px;
+        }
+
+        #addScheduleBtn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        #addScheduleBtn:hover {
+            background-color: #0056b3;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            overflow: auto;
+            padding: 20px;
+        }
+
+        .modal-content {
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            overflow-y: auto;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        #schedule-details li {
+            margin: 8px 0;
+            text-align: left;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        #schedule-details h3 {
+            text-align: left;
+            margin-top: 15px;
+            margin-bottom: 10px;
+            color: #333;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 5px;
+        }
+
+        .schedule-entry {
+            margin-bottom: 20px;
+            padding: 10px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .schedule-entry h4 {
+            margin-bottom: 6px;
+            font-size: 16px;
+            color: #222;
+        }
+
+        .nutrients {
+            font-size: 14px;
+            color: #666;
+        }
+        .today.holiday {
+    background: #cc0033 !important;  /* 원하는 공휴일+오늘 스타일 */
+    color: #fff !important;
+}
+    </style>
+
+    <script>
+
+        function fetchHolidays(year, month, callback) {
+            $.ajax({
+                url: "https://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getRestDeInfo",
+                method: "GET",
+                dataType: "text",
+                data: {
+                    serviceKey:  "0sU7LdhuRgHBWZiz3kXvAm1vlbK9QAv9SjIqtR2+++VxXbrXsrdS3IE6jpqX3DSZKXzYHxQAx/HnCCAZ3+vRfw==",
+                    solYear: year,
+                    solMonth: month < 10 ? "0" + month : month,
+                    _type: "json"  // _type=json 이면 보통 JSON 형태 응답 기대
+                },
+                success: function (data) {
+                    console.log("원본 응답:", data);
+                    try {
+                        const json = JSON.parse(data);
+                        if (json.response && json.response.body && json.response.body.items) {
+                            callback(null, json.response.body.items.item || []);
+                        } else {
+                            callback(null, []);
+                        }
+                    } catch (e) {
+                        console.error("JSON 파싱 실패:", e);
+                        // 혹시 XML 오류 메시지라면 XML 파싱 시도도 가능
+                        const xml = $.parseXML(data);
+                        // xml 내용 확인 후 적절한 처리 필요
+                        callback(e, null);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("AJAX 에러:", error);
+                    callback(error, null);
+                }
+            });
+        }
+    $(function () {
+   let slist = [];
+   const today = new Date();
+   let currentDate = new Date();
+   let num = 0;
+   let formattedDate = ""; // 🔑 전역 변수로 설정
+
+   window.scheduleReload = function() {
+       $.ajax({
+           url: "/api/schedules",
+           method: "GET",
+           dataType: "json",
+           data: { num },
+           success: function (data) {
+               slist = data;
+               renderCalendar(currentDate);
+           },
+           error: function () {
+               alert("스케줄 불러오기 실패");
+           }
+       });
+
+       $.ajax({
+           url: "/schedule/todayCal",
+           method: "GET",
+           dataType: "json",
+           success: function (data){
+               let food = parseInt(data.foodcal)
+               let exercise = parseInt(data.exercisecal)
+               if(food!=0 && exercise!=0){
+                   $("#todayCal").text(food+" kcal")
+                   $("#useCal").text(exercise+" Kcal")
+               }else if(food!=0 && exercise==0){
+                   $("#todayCal").text(food+" kcal")
+                    $("#useCal").text("오늘의 운동 스케줄을 등록하세요!!!")
+               }else if(food==0 && exercise!=0){
+                    $("#todayCal").text("오늘의 식단을 등록하세요!!!")
+                    $("#useCal").text(exercise+" Kcal")
+               }else{
+                     $("#todayCal").text("오늘의 식단을 등록하세요!!!")
+                      $("#useCal").text("오늘의 운동 스케줄을 등록하세요!!!")
+               }
+           },
+           error: function () {
+               alert("오류 : 칼로리 가져오기 실패");
+           }
+       });
+   }
+
+   function renderCalendar(date) {
+                var $calendarDays = $("#calendarDays");
+                var $monthYear = $("#monthYear");
+
+                $calendarDays.empty();
+
+                var year = date.getFullYear();
+                var month = date.getMonth() + 1;
+                var firstDay = new Date(year, month - 1, 1).getDay();
+                var lastDate = new Date(year, month, 0).getDate();
+
+                $monthYear.text(year + "년 " + month + "월");
+
+                fetchHolidays(year, month, function (error, holidays) {
+                    if (error) {
+                        console.error("공휴일 로딩 실패:", error);
+                        holidays = [];
+                    }
+
+                    // 공휴일 날짜와 이름을 객체로 저장 (ex: {6: "현충일", 15: "광복절"})
+                    var holidayMap = {};
+                    for (var i = 0; i < holidays.length; i++) {
+                        var locdate = holidays[i].locdate.toString();
+                        var day = parseInt(locdate.slice(6, 8));
+                        var name = holidays[i].dateName || holidays[i].name || "";
+                        if(name) {
+                            holidayMap[day] = name;
+                        }
+                    }
+
+                    var dayCount = 1;
+                    for (var i = 0; i < 42; i++) {
+                        if (i < firstDay || dayCount > lastDate) {
+                            $calendarDays.append('<div class="day"></div>');
+                        } else {
+                            var isToday =
+                                dayCount === today.getDate() &&
+                                (month - 1) === today.getMonth() &&
+                                year === today.getFullYear();
+
+                            var isHoliday = holidayMap.hasOwnProperty(dayCount);
+
+                            var scheduleHtml = "";
+                            for (var j = 0; j < slist.length; j++) {
+                                if (slist[j].day === dayCount) {
+                                    scheduleHtml += '<div class="schedule-item">' +
+                                        slist[j].time.slice(0, 5) + " - " + slist[j].item + "</div>";
+                                }
+                            }
+
+                            var holidayNameHtml = "";
+                            if (isHoliday) {
+                                holidayNameHtml = '<div class="holiday-name">' + holidayMap[dayCount] + '</div>';
+                            }
+
+                            var dayClass = "day";
+                            if (isToday) dayClass += " today";
+                            if (isHoliday) dayClass += " holiday";
+
+                            $calendarDays.append(
+                                '<div class="' + dayClass + '" data-day="' + dayCount + '">' +
+                                holidayNameHtml +  // 여기서 공휴일 이름을 날짜 위에 넣음
+                                scheduleHtml +
+                                '</div>'
+                            );
+
+                            dayCount++;
+                        }
+                    }
+                });
+            }
+
+   // 이전 / 다음 달 이동
+   $("#prevMonth").on("click", function () {
+       currentDate.setMonth(currentDate.getMonth() - 1);
+       num--;
+       scheduleReload();
+   });
+
+   $("#nextMonth").on("click", function () {
+       currentDate.setMonth(currentDate.getMonth() + 1);
+       num++;
+       scheduleReload();
+   });
+
+   // 일정 추가 버튼
+   $("#addScheduleBtn").on("click", function () {
+       window.open("/add_schedule", "스케줄 추가", "width=400,height=500,top=100,left=100");
+   });
+
+   // 모달 닫기
+   $("#closeBtn").on("click", function () {
+       $("#scheduleModal").hide();
+   });
+
+   // 모달 열기
+   $("#calendarDays").on("click", ".day", function () {
+       $("#schedule-details").empty();
+       let id = $("#name").val();
+       const day = parseInt($(this).attr("data-day"));
+       const year = currentDate.getFullYear();
+       const month = currentDate.getMonth();
+
+       const fullDate = new Date(year, month, day);
+       const yyyy = fullDate.getFullYear();
+       const mm = String(fullDate.getMonth() + 1).padStart(2, '0');
+       const dd = String(fullDate.getDate()).padStart(2, '0');
+
+       formattedDate = `${yyyy}-${mm}-${dd}`;
+       $("#modal-date-title").text(`${yyyy}년 ${mm}월 ${dd}일 스케줄`);
+       $("#scheduleModal").show();
+
+       $.ajax({
+           url: "/schedule/detail",
+           method: "POST",
+           dataType: "json",
+           data: { id, date: formattedDate },
+           success: renderDetails,
+           error: function () {
+               alert("스케줄 상세 정보를 불러오는 데 실패했습니다.");
+           }
+       });
+   });
+
+   // 삭제 버튼 클릭
+   $("#schedule-details").on("click", ".delete-btn", function () {
+       let id = $(this).data("id");
+       let name = $(this).data("name");
+       let time = $(this).data("time");
+
+       $.ajax({
+           url: "/del/schedule",
+           method: "POST",
+           dataType: "json",
+           data: {
+               id: id,
+               date: formattedDate,
+               name: name,
+               time: time
+           },
+           success: function (data) {
+               renderDetails(data);
+               scheduleReload();
+           },
+           error: function () {
+               alert("삭제 실패");
+           }
+       });
+   });
+
+   // 상세 뷰 렌더링 함수 분리
+   function renderDetails(data) {
+       $("#schedule-details").empty();
+       let a = 0;
+       let b = 0;
+
+
+       $.each(data.exerciseRoutineList, function (index, routine) {
+           if (a === 0) {
+               $("#schedule-details").append('<h3>운동</h3>');
+           }
+           $("#schedule-details").append(
+               "<li>일정: " + routine.schedule +
+               "   운동명: " + routine.routine +
+               "   운동시간: " + routine.time + "분 " +
+               "   칼로리소비: " + routine.calorie +
+               ' <button class="delete-btn" data-id="' + $("#name").val() +
+               '" data-name="' + routine.routine +
+               '" data-time="' + routine.schedule +
+               '" data-date="' + formattedDate + '">삭제</button>' +
+               "</li>"
+           );
+           a++;
+       });
+
+       $.each(data.dflist, function (index, dfood) {
+           if (b === 0) {
+               $("#schedule-details").append('<h3>식단</h3>');
+           }
+
+
+           $("#schedule-details").append(
+               "<li>일정:" + dfood.time +
+               "   식단명: " + dfood.name +
+               "   섭취칼로리: " + dfood.calories +
+               "kal   탄수화물: " + dfood.carbohydrate +
+               "g   단백질: " + dfood.protein +
+               "g   지방: " + dfood.fat + "g" +
+               ' <button class="delete-btn" data-id="' + $("#name").val() +
+               '" data-name="' + dfood.name +
+               '" data-time="' + dfood.time +
+               '" data-date="' + formattedDate + '">삭제</button>' +
+               "</li>"
+           );
+           b++;
+
+       });
+
+       if (a === 0 && b === 0) {
+           $("#schedule-details").append('<h1>일정없음</h1>');
+       }
+
+
+   }
+
+   // 초기 호출
+   scheduleReload();
+});
+
+
+    </script>
+</section>
