@@ -2,6 +2,7 @@ package com.Fitory.fitory.service;
 
 import com.Fitory.fitory.dto.FoodlistDTO;
 import com.Fitory.fitory.entity.Diet_food;
+import com.Fitory.fitory.entity.Food_nutrition;
 
 import java.util.List;
 
@@ -12,4 +13,7 @@ public interface IF_Food_nutritionService {
 
     public void delete(int did);
 	public int getCal(int id);
+
+
+	Food_nutrition getid(int foodNutritionId);
 }

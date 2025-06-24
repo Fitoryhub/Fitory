@@ -9,13 +9,14 @@ import java.util.List;
 
 public interface Food_nutritionRepository extends JpaRepository<Food_nutrition, Integer>{
 	
-	@Query("select f.food_nutrition_id From Food_nutrition f where f.dietId= :did")
+	@Query("select f.foodnutritionid From Food_nutrition f where f.dietId= :did")
 	public List<Integer> findBydietId(@Param("did") int id);
 
 	public void deleteAllBydietId(int diet_id);
 
 
-	@Query("select calories from Food_nutrition  WHERE food_nutrition_id=:id")
+	@Query("select calories from Food_nutrition  WHERE foodnutritionid=:id")
 	int getCaloriesByFood_nutrition_id(@Param("id") int id);
 
+	Food_nutrition findByFoodnutritionid(int foodNutritionId);
 }

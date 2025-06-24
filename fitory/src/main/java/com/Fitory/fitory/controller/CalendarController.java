@@ -149,27 +149,30 @@ public class CalendarController {
     @PostMapping("/schedule/detail")
     @ResponseBody
     public Map<String, Object> sdetail(@ModelAttribute IdDate iddate) {
-        List<String> foodnames = new ArrayList<>();
-        List<Schedule> slist = scheduleService.finddetail(iddate);
+        List<String> foodnames = new ArrayList<>(); // 음식 이름 저장 리스트
+        List<Schedule> slist = scheduleService.finddetail(iddate); // 해당 ID와 날짜로 스케줄 가져옴
+
         if (slist.isEmpty()) {
-            System.out.println("1못가져옴");
+            System.out.println("1못가져옴"); // 스케줄이 비어 있을 경우 확인용 출력
         }
 
-        List<IdEname> elist = new ArrayList<>();
-        List<IdEname> dlist = new ArrayList<>();
-        List<LocalTime> etimeList = new ArrayList<>();
-        List<LocalTime> dtimeList = new ArrayList<>();
+        List<IdEname> elist = new ArrayList<>(); // 운동용 ID + 이름 객체
+        List<IdEname> dlist = new ArrayList<>(); // 식단용 ID + 이름 객체
+        List<LocalTime> etimeList = new ArrayList<>(); // 운동 시간 저장 리스트
+        List<LocalTime> dtimeList = new ArrayList<>(); // 식사 시간 저장 리스트
 
-        int a = 0; // 식단 개수 체크용
+        int a = 0; // 식단 개수 카운팅
 
+        // 스케줄 목록 순회
         for (Schedule schedule : slist) {
             IdEname idename = new IdEname();
-            if (schedule.getType().equals("exercise")) {
+
+            if (schedule.getType().equals("exercise")) { // 운동일 경우
                 idename.setEname(schedule.getItem());
                 idename.setId(iddate.getId());
                 elist.add(idename);
                 etimeList.add(schedule.getTime());
-            } else {
+            } else { // 식단일 경우
                 foodnames.add(schedule.getItem());
                 idename.setEname(schedule.getItem());
                 idename.setId(iddate.getId());
@@ -180,58 +183,73 @@ public class CalendarController {
         }
 
         Map<String, Object> map = new HashMap<>();
-        List<detailfood> dflist = new ArrayList<>();
+        List<detailfood> dflist = new ArrayList<>(); // 반환용 식단 상세 정보 리스트
 
-        if (a > 0) {
-            List<Diet> dietList1 = dietService.findbyuserId(iddate.getId());
-            List did = new ArrayList();
+        if (a > 0) { // 식단이 존재할 경우
+            List<Diet> dietList1 = dietService.findbyuserId(iddate.getId()); // 해당 유저의 전체 식단 조회
+            List did = new ArrayList(); // diet_id 저장용
 
             for (Diet dl : dietList1) {
-
-                did.add(dl.getDiet_id());
-
+                did.add(dl.getDiet_id()); // 식단 ID 저장
             }
 
-            List<Diet_nutrition> dn = new ArrayList<>();
+            List<Diet_nutrition> dn = new ArrayList<>(); // 식단별 영양정보
             for (int i = 0; i < did.size(); i++) {
                 dn.add(nutritionService.finddid(Integer.parseInt(did.get(i).toString())));
             }
 
             List<Diet_food> dnn1 = new ArrayList<>();
+                List<Double> fcal = new ArrayList();
             for (String name : foodnames) {
-                dnn1.add(diet_foodService.findByfoodname(name));
+
+                Diet_food dietFood =diet_foodService.findByfoodname(name);
+
+               Food_nutrition foodNutrition= food_nutritionService.getid(dietFood.getFood_nutrition_id());
+
+               ;
+
+                dnn1.add(dietFood);
+                fcal.add(foodNutrition.getCalories());
+
             }
 
             List<Diet_nutrition> dnn = new ArrayList<>();
+
+            // ❗ 문제 발생 위치: diet_id가 일치하면 해당 diet의 nutrition 정보를 음식에 할당함
+            // => 이건 해당 음식 하나의 영양이 아니라, diet 전체 영양정보임
             for (Diet_nutrition d : dn) {
                 for (Diet_food d2 : dnn1) {
                     if (d.getDietid() == d2.getDietId()) {
-                        dnn.add(d);
+                        dnn.add(d); // ❗ 이로 인해 여러 음식에 같은 영양정보가 붙게 됨
                     }
                 }
             }
 
-            // 여기서 i 기준이 꼬일 수 있으니, dflist 생성은 dnn과 foodnames, dtimeList 개수가 같다고 가정하는 게 위험함
-            // 하지만 원래 코드 구조 유지 위해 그대로 둠
+            // 🔧 수정 필요: dnn.size() == foodnames.size()가 보장되지 않으면 예외 발생 가능
             for (int i = 0; i < dnn.size(); i++) {
                 detailfood df = new detailfood();
                 df.setName(foodnames.get(i));
                 df.setTime(dtimeList.get(i));
-                df.setCalories(dnn.get(i).getCalories());
+
+                // ❗ 문제 발생 위치: 해당 음식의 영양정보가 아니라, diet 단위의 영양정보가 사용됨
+                df.setCalories(fcal.get(i));
                 df.setProtein(dnn.get(i).getProtein());
                 df.setCarbohydrate(dnn.get(i).getCarbohydrate());
                 df.setFat(dnn.get(i).getFat());
+
                 dflist.add(df);
             }
 
-            map.put("dflist", dflist);
+            map.put("dflist", dflist); // 식단 상세 정보 결과 반환
         }
 
+        // 운동 루틴 처리
         List<ExerciseRoutine> exerciseRoutineList = new ArrayList<>();
         for (IdEname idename : elist) {
             exerciseRoutineList.add(exerciseRoutineService.findByidename(idename));
         }
 
+        // 운동 결과 담기
         List<schedultimeenamecal> li = new ArrayList<>();
         for (int i = 0; i < exerciseRoutineList.size(); i++) {
             schedultimeenamecal s = new schedultimeenamecal();
@@ -242,10 +260,11 @@ public class CalendarController {
             li.add(s);
         }
 
-        map.put("exerciseRoutineList", li);
+        map.put("exerciseRoutineList", li); // 운동 결과 반환
 
         return map;
     }
+
 
     @PostMapping("/del/schedule")
     @ResponseBody

@@ -9,7 +9,7 @@ import java.time.LocalTime;
 @Setter
 public class detailfood {
 
-    private int calories;
+    private double calories;
 
 
     private double protein;

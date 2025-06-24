@@ -13,14 +13,14 @@ import org.hibernate.annotations.DynamicInsert;
 public class Food_nutrition {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(columnDefinition = "BIGINT")
-	private int food_nutrition_id;
+	@Column(name = "food_nutrition_id", columnDefinition = "BIGINT")
+	private int foodnutritionid;
 	
 	@Column(name = "diet_id",columnDefinition = "BIGINT")
 	private int dietId;
 	
 	@Column(name="calories", columnDefinition = "INT(11)")
-	private int calories;
+	private double calories;
 	
 	@Column(name="protein", columnDefinition = "DECIMAL(6,2)")
 	private double protein;

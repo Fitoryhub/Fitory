@@ -50,4 +50,11 @@ public class Food_nutritionService implements IF_Food_nutritionService{
 		return fnrepo.getCaloriesByFood_nutrition_id(id);
 	}
 
+	@Override
+	public Food_nutrition getid(int foodNutritionId) {
+      return fnrepo.findByFoodnutritionid(foodNutritionId);
+    }
+
+
+
 }
