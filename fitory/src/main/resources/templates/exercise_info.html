@@ -347,4 +347,23 @@
             document.getElementsByName("selectExercise").forEach(e => e.checked = false);
         });
     });
+window.onload = function(){
+     $.ajax({
+           url: "http://127.0.0.1:5000/api/data",
+           method: "GET",
+           dataType: "json",
+           success: function(data){
+           console.log(data);
+           let html = "";
+           const sortedEntries = Object.entries(data).sort((a, b) => b[1] - a[1]);
+           sortedEntries.forEach(([item, value]) => {
+           html += `<li>${item} - ${value} 명</li>`;
+           });
+           document.getElementById("exercisetop5").innerHTML = html;
+            },
+           error: function(){
+               alert("실패.")
+           }
+       });
+}
 </script>
