@@ -61,7 +61,7 @@
         $("#type").change(function () {
             let id = $("#id").val();
             const itemSelect = document.getElementById('item');
-            alert("들어옴ㅋㅋ");
+
 
             let choose;
             if ($("#type").val() === 'exercise') {
@@ -78,11 +78,11 @@
                     userid:id
                 },
                 success: function (data) {
-                        alert("성공");
+
                     if (data.list.length < 1) {
                         $("#item").html('<option>추가항목없음</option>');
                     } else {
-                        alert("데이터 가져옴 ㅋ")
+
                         $('#item').empty();
                         $.each(data.list, function (index, item) {
                             // item.name은 변수니까 문자열로 묶지 말기
