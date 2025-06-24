@@ -76,6 +76,7 @@ public class BoderController {
         model.addAttribute("nowpage", nowpage);
         model.addAttribute("startpage", startpage);
         model.addAttribute("endpage", endpage);
+        model.addAttribute("selectedCategory", pcategory);
         return "/boardlist";
     }
 
