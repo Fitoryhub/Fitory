@@ -5,14 +5,12 @@ import com.Fitory.fitory.dto.UserDTO;
 import com.Fitory.fitory.dto.UserHealthInfoDTO;
 import com.Fitory.fitory.entity.ExerciseRoutine;
 import com.Fitory.fitory.entity.User;
-import com.Fitory.fitory.repository.UserRepository;
 import com.Fitory.fitory.service.ExerciseRoutineService;
 import com.Fitory.fitory.service.UserHealthServiceImpl;
 import com.Fitory.fitory.service.UserService;
 import com.Fitory.fitory.service.UserServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,9 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @Controller
 public class MemberContoller {
@@ -139,6 +134,22 @@ public class MemberContoller {
     @PostMapping("/user")
     public String demoController(@ModelAttribute UserDTO body) {
         userServiceImpl.usersave(body);
+        return "main";
+    }
+
+    @PostMapping("/user/update")
+    public String updateUser(HttpSession session,@ModelAttribute UserDTO body) {
+        SessionUserDTO userInfo = (SessionUserDTO) session.getAttribute("userInfo");
+        body.setId(userInfo.getId());
+        userServiceImpl.usersave(body);
+        return "main";
+    }
+
+    @GetMapping("/user/withdraw")
+    public String deleteUser(HttpSession session) {
+        SessionUserDTO userInfo = (SessionUserDTO) session.getAttribute("userInfo");
+        userServiceImpl.deleteUser(userInfo.getId());
+        session.invalidate();
         return "main";
     }
 

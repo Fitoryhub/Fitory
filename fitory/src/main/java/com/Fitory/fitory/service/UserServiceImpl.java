@@ -3,11 +3,10 @@ package com.Fitory.fitory.service;
 import com.Fitory.fitory.dto.UserDTO;
 import com.Fitory.fitory.entity.User;
 import com.Fitory.fitory.repository.UserRepository;
-
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -55,6 +54,11 @@ public class UserServiceImpl implements UserService {
         } else {
             return null;
         }
+    }
+
+    @Override
+    public void deleteUser(String id){
+        userRepository.deleteById(id);
     }
 
     @Override

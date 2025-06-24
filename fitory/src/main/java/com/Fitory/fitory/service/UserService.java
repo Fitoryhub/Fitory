@@ -17,4 +17,6 @@ public interface UserService {
     public UserDTO userInfo(String id);
 
     public Optional<User> findById(String id);
+
+    public void deleteUser(String id);
 }
