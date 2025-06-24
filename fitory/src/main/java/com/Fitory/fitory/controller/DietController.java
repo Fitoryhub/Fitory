@@ -1,5 +1,6 @@
 package com.Fitory.fitory.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -121,6 +122,9 @@ public class DietController {
 	@ResponseBody
 	public Map<String, String> save(@RequestBody DietsaveDTO dsv) {
 		dservice.insert(dsv.getDiet());
+		Diet dd=dsv.getDiet();
+
+		System.out.println("식단 유저 아이디~~~~$#%^!$^ㅛ@ㅃ$"+dd.getUserid());
 		List<FoodlistDTO> flist=dsv.getFoodlist();
 		int did=dservice.getid(dsv.getDiet().getTitle());
 		List<Diet_food> dflist=fnservice.insert(flist, did);
@@ -153,6 +157,24 @@ public class DietController {
 		pvo.setPage(currpage);
 		pvo.setTotalCount(totalCount);
 		return pvo;
+	}
+
+	@GetMapping("/mymeal")
+	@ResponseBody
+	public Map<String, Object> mymeal(@RequestParam("userid") String userid) {
+
+		List <Diet> diets = dservice.selectdiet_id(userid);
+		ArrayList<String> foodname = new ArrayList<>();
+		for(Diet diet:diets){
+			Long did=diet.getDiet_id();
+			List<Diet_food> foods=dfservice.getdflist(did.intValue());
+			for(Diet_food food:foods){
+				foodname.add(food.getFoodname());
+			}
+		}
+		Map<String, Object> list = new HashMap<>();
+		list.put("list", foodname);
+		return list;
 	}
 
 }

@@ -78,9 +78,8 @@
                     userid:id
                 },
                 success: function (data) {
-
+                        alert("성공");
                     if (data.list.length < 1) {
-                        // 올바르게 value를 설정하려면 jQuery의 val() 사용
                         $("#item").html('<option>추가항목없음</option>');
                     } else {
                         alert("데이터 가져옴 ㅋ")

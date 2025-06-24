@@ -48,7 +48,10 @@ public class CalendarController {
     private Diet_nutritionService nutritionService;
     @Autowired
     private Food_nutritionService food_nutritionService;
-
+    /*
+    @Autowired
+    private UserHealthProfile userHealthProfile;
+*/
     @GetMapping("/add_schedule")
     public String addSchedule() {
         return "add_schedule"; // add_schedule.html 렌더링
@@ -89,6 +92,7 @@ public class CalendarController {
             temp[3] = 4.68;
         }
         int bmr = Math.toIntExact(Math.round(temp[0] + (temp[1] * w) + (temp[2] * h) - (temp[3] * age)));
+
         model.addAttribute("BMR", bmr);
         model.addAttribute("BMI", bmi);
         model.addAttribute("user", user);
