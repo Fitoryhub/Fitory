@@ -20,37 +20,37 @@
         }
 
         header {
-          height: 80px;
-          background-color: #10b981; /* emerald-500 */
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding: 0 40px;
-          box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            height: 80px;
+            background-color: #10b981; /* emerald-500 */
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
         }
 
         #logo img {
-          height: 60px;
+            height: 60px;
         }
 
         nav.headMenu {
-          display: flex;
-          gap: 25px;
-          align-items: center; /* 세로 가운데 정렬 */
+            display: flex;
+            gap: 25px;
+            align-items: center; /* 세로 가운데 정렬 */
         }
 
         nav.headMenu a {
-          color: white;
-          font-weight: 600;
-          text-decoration: none;
-          font-size: 18px;
-          transition: color 0.2s;
-          line-height: 1;
-          padding: 8px 0;
+            color: white;
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 18px;
+            transition: color 0.2s;
+            line-height: 1;
+            padding: 8px 0;
         }
 
         nav.headMenu a:hover {
-          color: #d1fae5; /* 밝은 그린 */
+            color: #d1fae5; /* 밝은 그린 */
         }
 
         #board-section {
@@ -180,44 +180,44 @@
             font-weight: bold;
         }
         .user-info {
-          display: flex;
-          align-items: center;
-          gap: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .user-info {
-          font-weight: 700;
-          font-size: 18px;
-          line-height: 1;
-          padding: 8px 0;
-          color: white;
-          white-space: nowrap;
+            font-weight: 700;
+            font-size: 18px;
+            line-height: 1;
+            padding: 8px 0;
+            color: white;
+            white-space: nowrap;
         }
         .nickname {
-          text-decoration: underline;
-          font-weight: 700;
-          font-size: 18px;
-          line-height: 1;
-          padding: 8px 0;
-          color: white;
-          white-space: nowrap;
+            text-decoration: underline;
+            font-weight: 700;
+            font-size: 18px;
+            line-height: 1;
+            padding: 8px 0;
+            color: white;
+            white-space: nowrap;
         }
 
         .user-info .logout {
-          font-weight: 500;
-          font-size: 16px;
-          color: white;
-          border: 1px solid white;
-          border-radius: 4px;
-          padding: 4px 10px;
-          transition: background-color 0.3s, color 0.3s;
-          cursor: pointer;
+            font-weight: 500;
+            font-size: 16px;
+            color: white;
+            border: 1px solid white;
+            border-radius: 4px;
+            padding: 4px 10px;
+            transition: background-color 0.3s, color 0.3s;
+            cursor: pointer;
         }
 
         .user-info .logout:hover {
-          background-color: white;
-          color: #10b981;
-          text-decoration: none;
+            background-color: white;
+            color: #10b981;
+            text-decoration: none;
         }
         footer {
             background-color: #1f2937;
@@ -256,19 +256,17 @@
     <h2>게시판</h2>
     <div id="board-controls">
         <form th:action="@{/boardlist}" method="get">
-            <select name="pcategory" >
-                <option value="all">전체게시글</option>
-                <option value="운동꿀팁">운동꿀팁</option>
-                <option value="운동질문">운동질문</option>
-                <option value="식단후기">식단후기</option>
+            <select name="pcategory">
+                <option value="all" th:selected="${selectedCategory == 'all'}">전체게시글</option>
+                <option value="운동꿀팁" th:selected="${selectedCategory == '운동꿀팁'}">운동꿀팁</option>
+                <option value="운동질문" th:selected="${selectedCategory == '운동질문'}">운동질문</option>
+                <option value="식단후기" th:selected="${selectedCategory == '식단후기'}">식단후기</option>
             </select>
-
-            <input type="text" placeholder="제목 검색" name="ptitle" >
-            <button type="submit">검색</button> <!-- 여기엔 onclick 빼기 -->
-            <button type="button" onclick="window.location.href='/write'">글쓰기</button>
+            <input type="text" name="ptitle" placeholder="제목 검색" th:value="${param.ptitle}">
+            <button type="submit">검색</button>
         </form>
-        </div>
-       <table id="board-list">
+    </div>
+    <table id="board-list">
         <thead>
         <tr>
             <th>카테고리</th>
@@ -313,6 +311,7 @@
             다음
         </a>
     </div>
+
 </section>
 
 <footer>

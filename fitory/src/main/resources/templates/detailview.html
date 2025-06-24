@@ -6,264 +6,424 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        * {
-            box-sizing: border-box;
+        .back-button {
+            position: fixed;      /* 화면에 고정 */
+            top: 20px;            /* 상단에서 20px 떨어짐 */
+            left: 20px;           /* 왼쪽에서 20px 떨어짐 */
+            padding: 8px 14px;    /* 버튼 크기 조절 */
+            background-color: #007bff; /* 파란색 배경 */
+            color: white;         /* 글자 흰색 */
+            border: none;         /* 테두리 없애기 */
+            border-radius: 5px;   /* 둥근 모서리 */
+            font-size: 16px;      /* 글자 크기 */
+            cursor: pointer;      /* 마우스 올리면 포인터 모양 */
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2); /* 살짝 그림자 */
+            z-index: 1000;        /* 다른 요소 위에 표시 */
+            transition: background-color 0.3s ease;
         }
 
+        .back-button:hover {
+            background-color: #0056b3; /* 마우스 올리면 진한 파랑 */
+        }
+        /* 전체 배경과 폰트 */
         body {
-            font-family: 'Helvetica Neue', sans-serif;
-            background: linear-gradient(135deg, #d4fcd6, #b2f0c5);
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #d9ead3; /* 부드러운 연초록 */
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            color: #2f4f2f;
         }
 
+        /* 컨테이너 박스 */
         .container {
-            max-width: 850px;
-            margin: 0 auto;
-            background-color: #ffffff;
-            padding: 40px;
+            max-width: 900px;
+            margin: 30px auto;
+            background: #fff;
             border-radius: 12px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            padding: 25px 30px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
         }
 
+        /* 제목 */
         .title {
-            font-size: 28px;
-            font-weight: 600;
+            font-size: 2.2rem;
+            font-weight: 700;
             margin-bottom: 20px;
-            color: #222;
+            color: #356f35;
         }
 
+        /* 메타 정보 */
         .meta {
-            font-size: 14px;
-            color: #888;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
-            margin-bottom: 30px;
             display: flex;
-            align-items: center;
             flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+            font-size: 0.9rem;
+            color: #4a6b4a;
+            margin-bottom: 25px;
         }
 
-        .meta span {
-            margin-right: 20px;
-        }
-
-        .meta div {
-            display: inline-flex;
-            gap: 10px;
-        }
-
-        .like-form {
-            display: inline-block;
-            margin-right: 10px;
-        }
-
-        .like-button {
-            background: none;
-            border: none;
-            font-size: 18px;
-            cursor: pointer;
-        }
-
-        .category {
-            font-size: 14px;
-            color: #555;
-            margin-bottom: 20px;
-        }
-
-        .content {
-            font-size: 16px;
-            line-height: 1.7;
-            color: #333;
-            margin-bottom: 30px;
-            white-space: pre-wrap;
-        }
-
-        .images img {
-            width: 100%;
-            max-height: 400px;
-            object-fit: cover;
-            margin-bottom: 15px;
+        /* 작성자, 날짜, 조회수 */
+        .meta > span {
+            background: #b7d7a8;
+            padding: 6px 12px;
             border-radius: 8px;
         }
 
+        /* 좋아요 버튼 영역 */
+        .like-button {
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 1.3rem;
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #4a6b4a;
+            transition: transform 0.2s ease;
+        }
+        .like-button:hover {
+            transform: scale(1.3);
+        }
+
+        /* 좋아요 아이콘 */
+        .like-button .like-icon {
+            user-select: none;
+        }
+
+        /* 좋아요 숫자 */
+        [id^="like-count"] {
+            font-weight: 600;
+            color: #2f5d2f;
+        }
+
+        /* 수정/삭제 버튼 박스 */
+        .meta > div {
+            display: flex;
+            gap: 10px;
+            margin-left: 20px;
+        }
+
+        /* 수정/삭제 버튼 */
+        .meta form button {
+            background-color: #a7c774;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            color: #2e4a2e;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .meta form button:hover {
+            background-color: #7f9a3d;
+            color: white;
+        }
+
+        /* 카테고리 */
+        .category {
+            font-weight: 600;
+            color: #5d7d5d;
+            margin-bottom: 25px;
+        }
+
+        /* 본문 */
+        .content {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #355f35;
+            white-space: pre-wrap;
+            margin-bottom: 35px;
+        }
+
+        /* 첨부 이미지 */
+        .images img {
+            max-width: 100%;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        /* 댓글 섹션 */
         .comment-section {
-            margin-top: 50px;
+            border-top: 3px solid #a4c264;
+            padding-top: 25px;
         }
 
         .comment-section h3 {
-            font-size: 20px;
             margin-bottom: 20px;
-            border-left: 4px solid #28a745;
-            padding-left: 10px;
-            color: #333;
+            color: #4a6b4a;
+            font-size: 1.5rem;
         }
 
+        /* 댓글 폼 */
         .comment-form textarea {
             width: 100%;
-            height: 100px;
+            min-height: 80px;
+            border-radius: 10px;
+            border: 1.8px solid #a7c774;
             padding: 12px;
-            font-size: 15px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            resize: none;
-            margin-bottom: 10px;
-            background: #f8f8f8;
+            font-size: 1rem;
+            resize: vertical;
+            color: #2f4a2f;
+            margin-bottom: 12px;
         }
 
         .comment-form button {
-            float: right;
-            padding: 10px 20px;
-            background: #28a745;
-            color: white;
+            background-color: #a7c774;
             border: none;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-
-        .comments-list {
-            margin-top: 30px;
-        }
-
-        .comment-item {
-            padding: 15px 20px;
-            background: #f5f5f5;
+            padding: 10px 22px;
             border-radius: 10px;
-            margin-bottom: 15px;
+            cursor: pointer;
+            font-weight: 700;
+            color: #2e4a2e;
+            transition: background-color 0.3s ease;
+        }
+        .comment-form button:hover {
+            background-color: #7f9a3d;
+            color: white;
         }
 
+        /* 댓글 리스트 */
+        .comments-list {
+            margin-top: 20px;
+        }
+
+        /* 각 댓글 아이템 */
+        .comment-item {
+            border-bottom: 1px solid #d7e4be;
+            padding: 20px 0;
+        }
+
+        /* 댓글 헤더 - 작성자, 날짜, 버튼들 */
         .comment-header {
-            font-size: 14px;
-            color: #666;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            font-size: 0.9rem;
+            color: #4a6b4a;
+            margin-bottom: 8px;
         }
 
-        .comment-header div {
-            display: inline-flex;
+        /* 작성자와 날짜 묶음 */
+        .comment-header > span {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        /* 댓글 수정/삭제 버튼 그룹 */
+        .comment-header > div {
+            display: flex;
             gap: 10px;
         }
 
-        .comment-author {
-            font-weight: bold;
-            color: #28a745;
+        /* 댓글 수정/삭제 버튼 */
+        .comment-header button,
+        .delete-comment-btn button {
+            background-color: #a7c774;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: #2e4a2e;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
         }
 
-        .comment-body {
-            font-size: 15px;
-            color: #333;
+        .comment-header button:hover,
+        .delete-comment-btn button:hover {
+            background-color: #7f9a3d;
+            color: white;
+        }
+
+        /* 댓글 내용 */
+        .body {
+            font-size: 1rem;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            margin-bottom: 12px;
+            color: #355f35;
+        }
+
+        /* 댓글 수정 폼 */
+        [id^="editForm-"] {
+            margin-top: 12px;
+        }
+
+        [id^="editForm-"] textarea {
+            width: 100%;
+            border-radius: 10px;
+            border: 1.8px solid #a7c774;
+            padding: 10px;
+            font-size: 1rem;
+            resize: vertical;
+            color: #2f4a2f;
             margin-bottom: 10px;
         }
 
+        /* 댓글 좋아요 버튼 및 숫자 */
+        .like-button2 {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.3rem;
+            color: #4a6b4a;
+            padding: 2px 6px;
+            user-select: none;
+            transition: transform 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .like-button2:hover {
+            transform: scale(1.3);
+        }
+
+        #like-count2- {
+            font-weight: 600;
+            color: #2f5d2f;
+        }
+
+        /* 댓글 푸터 - 좋아요와 숫자 */
         .comment-footer {
             display: flex;
             align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+            color: #4a6b4a;
         }
 
-        .comment-footer form {
-            display: inline-block;
-            margin-right: 10px;
-        }
-
+        /* 답글 박스 */
         .reply-box {
-            margin-top: 15px;
-            padding: 15px 20px;
-            background: #e6ffec;
-            border-left: 4px solid #34c759;
-            border-radius: 10px;
-            box-shadow: 0 2px 6px rgba(52, 199, 89, 0.1);
+            margin-left: 25px;
+            margin-top: 18px;
+            border-left: 3px solid #a7c774;
+            padding-left: 20px;
+            color: #3a6a3a;
+            font-size: 0.95rem;
         }
 
-        .reply-form textarea {
-            margin-top: 10px;
-            height: 80px;
-            background-color: #f0fff5;
-            border: 1px solid #b2eec2;
-            border-radius: 8px;
-            padding: 10px;
-            font-size: 14px;
-            color: #333;
-        }
-
-        .reply-form button {
-            margin-top: 8px;
-            float: right;
-            background: #34c759;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            font-size: 14px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
-
-        .reply-form button:hover {
-            background: #2fa74e;
-        }
-
+        /* 답글 아이템 */
         .reply-item {
-            font-size: 14px;
-            color: #2e7d32;
-            margin-top: 10px;
-            padding: 10px 15px;
-            background: #f3fff8;
-            border: 1px solid #bce5c4;
-            border-radius: 8px;
-            box-shadow: 0 1px 4px rgba(0, 100, 0, 0.05);
+            margin-bottom: 14px;
             display: flex;
-            align-items: center;
             flex-wrap: wrap;
-        }
-
-        .reply-item span:first-child {
-            font-weight: bold;
-            color: #1e9442;
-            margin-right: 8px;
-        }
-
-        .reply-item span:nth-child(2) {
-            color: #333;
-            margin-right: 10px;
-        }
-
-        .reply-item span:nth-child(3) {
-            font-size: 12px;
-            color: #777;
-            margin-right: 10px;
-        }
-
-        .reply-item form {
-            display: inline-block;
-            margin-right: 10px;
-        }
-
-        .reply-item form button {
-            background: none;
-            border: none;
-            font-size: 16px;
-            cursor: pointer;
-        }
-
-        .reply-item form button:hover {
-            transform: scale(1.1);
-        }
-
-        .reply-item div {
-            display: inline-flex;
+            align-items: center;
             gap: 10px;
         }
 
-        @media (max-width: 600px) {
-            .container {
-                padding: 20px;
-            }
+        /* 답글 작성자 */
+        .reply-item > span:first-child {
+            font-weight: 700;
+            color: #4a6b4a;
         }
+
+        /* 답글 내용 */
+        .reply-item span[id^="rbody-"] {
+            white-space: pre-wrap;
+        }
+
+        /* 답글 날짜 */
+        .reply-item > span:last-child {
+            font-size: 0.85rem;
+            color: #6b8e4a;
+        }
+
+        /* 답글 좋아요 버튼 */
+        .like-button3 {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: #4a6b4a;
+            user-select: none;
+            padding: 2px 6px;
+            transition: transform 0.2s ease;
+        }
+
+        .like-button3:hover {
+            transform: scale(1.2);
+        }
+
+        /* 답글 좋아요 숫자 */
+        #like-count3- {
+            font-weight: 600;
+            color: #2f5d2f;
+        }
+
+        /* 답글 수정 / 삭제 버튼 */
+        .edit-reply-btn,
+        .delete-reply {
+            background-color: #a7c774;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            color: #2e4a2e;
+            font-size: 0.85rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .edit-reply-btn:hover,
+        .delete-reply:hover {
+            background-color: #7f9a3d;
+            color: white;
+        }
+
+        /* 대댓글 수정 폼 */
+        [id^="replyEditForm-"] {
+            display: none;
+            width: 100%;
+            margin-top: 12px;
+        }
+
+        [id^="replyEditForm-"] textarea {
+            width: 100%;
+            border-radius: 10px;
+            border: 1.8px solid #a7c774;
+            padding: 10px;
+            font-size: 1rem;
+            resize: vertical;
+            color: #2f4a2f;
+            margin-bottom: 10px;
+        }
+
+        /* 답글 작성 폼 */
+        .reply-form textarea {
+            width: 100%;
+            min-height: 55px;
+            border-radius: 10px;
+            border: 1.8px solid #a7c774;
+            padding: 10px;
+            font-size: 1rem;
+            resize: vertical;
+            margin-bottom: 12px;
+            color: #2f4a2f;
+        }
+
+        .reply-form button {
+            background-color: #a7c774;
+            border: none;
+            padding: 8px 22px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 700;
+            color: #2e4a2e;
+            transition: background-color 0.3s ease;
+        }
+
+        .reply-form button:hover {
+            background-color: #7f9a3d;
+            color: white;
+        }
+
     </style>
 </head>
 <body>
+<button class="back-button" onclick="history.back()">← 뒤로가기</button>
 
 <div class="container">
     <div class="title" th:text="${board.ptitle}">제목</div>
@@ -465,7 +625,9 @@
             url: '/commentmod',
             method: 'POST',
             dataType: 'json',
-            data: { cnum, pnum, cbody },
+            data: { cnum,
+                pnum,
+                cbody },
             success: function(data) {
                 renderCommentsAndReplies(data.comments, data.replies, data.loginNickname,data.uid);
                 bindLikeEvents();
@@ -664,17 +826,22 @@
                     html += '        <span id="like-count3-' + reply.rnum + '">' + reply.rlikes + '</span>';
                     html += '      </div>';
                     if (reply.nickname === loginNickname) {
-                        html += '      <button type="button" onclick="showReplyEditForm(' + reply.rnum + ')">수정</button>';
+                        html += '      <button type="button" class="edit-reply-btn" onclick="showReplyEditForm(' + reply.rnum + ')">수정</button>';
                         html += '      <div class="delete-reply-btn" data-pnum="' + reply.pnum + '" data-rnum="' + reply.rnum + '">';
                         html += '        <button type="button" class="delete-reply">삭제</button>';
                         html += '      </div>';
-                        html += '      <div id="replyEditForm-' + reply.rnum + '" style="display:none;">';
-                        html += '        <textarea id="rbody-edit-' + reply.rnum + '">' + reply.rbody + '</textarea>';
+
+                        // 수정된 편집폼 (form 태그, 숨겨진 input, textarea, 버튼 포함)
+                        html += '      <form id="replyEditForm-' + reply.rnum + '" style="display:none; width: 100%; margin-top:10px;">';
+                        html += '        <input type="hidden" name="rnum" value="' + reply.rnum + '">';
+                        html += '        <input type="hidden" name="pnum" value="' + reply.pnum + '">';
+                        html += '        <textarea name="rbody" rows="2" style="width:100%;">' + reply.rbody + '</textarea>';
                         html += '        <button type="button" onclick="submitReplyEdit(' + reply.rnum + ')">확인</button>';
                         html += '        <button type="button" onclick="cancelReplyEditForm(' + reply.rnum + ')">취소</button>';
-                        html += '      </div>';
+                        html += '      </form>';
                     }
                     html += '    </div>';
+
                 }
             }
 

@@ -123,8 +123,6 @@ public class DietController {
 	public Map<String, String> save(@RequestBody DietsaveDTO dsv) {
 		dservice.insert(dsv.getDiet());
 		Diet dd=dsv.getDiet();
-
-		System.out.println("식단 유저 아이디~~~~$#%^!$^ㅛ@ㅃ$"+dd.getUserid());
 		List<FoodlistDTO> flist=dsv.getFoodlist();
 		int did=dservice.getid(dsv.getDiet().getTitle());
 		List<Diet_food> dflist=fnservice.insert(flist, did);
