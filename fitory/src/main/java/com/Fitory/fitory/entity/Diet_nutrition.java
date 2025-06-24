@@ -12,28 +12,18 @@ import org.hibernate.annotations.DynamicInsert;
 @DynamicInsert
 public class Diet_nutrition {
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(columnDefinition = "BIGINT")
-	private int food_nutrition_id;
-
-	@Column(columnDefinition = "BIGINT")
+	@Column(name = "diet_id", columnDefinition = "BIGINT")
 	private int dietid;
-	
+
 	@Column(name="calories", columnDefinition = "INT(11)")
 	private int calories;
-	
+
 	@Column(name="protein", columnDefinition = "DECIMAL(6,2)")
 	private double protein;
-	
+
 	@Column(name="carbohydrate", columnDefinition = "DECIMAL(6,2)")
 	private double carbohydrate;
-	
+
 	@Column(name="fat", columnDefinition = "DECIMAL(6,2)")
 	private double fat;
-
-	@Column(name="sodium", columnDefinition = "DECIMAL(8,2)")
-	private double sodium;
-
-	@Column(name="sugar", columnDefinition = "DECIMAL(6,2)")
-	private double sugar;
 }

@@ -98,11 +98,11 @@
                   <input type="hidden" id="diet_id" th:value="${diet.diet_id}">
                 </td>
                 <td th:if="${userInfo != null}">
-                  <button id="delete" th:text="삭제" th:if="${userInfo.id==diet.user_id}"></button>
+                  <button id="delete" th:text="삭제" th:if="${userInfo.id==diet.userid}"></button>
                 </td>
             </tr>
             <tr>
-                <td th:text="'작성자: '+${diet.user_id}">작성자</td>
+                <td th:text="'작성자: '+${diet.userid}">작성자</td>
                 <td th:text="'작성일: '+${diet.created_at}">작성일</td>
                 <td th:text="'조회수: '+${diet.diet_view}">조회수</td>
                 <td>
@@ -128,7 +128,7 @@
                             <td>식단내용</td>
                         </tr>
                         <tr th:each="food : ${dflist}">
-                            <td th:text="${food.food_name}"></td>
+                            <td th:text="${food.foodname}"></td>
                         </tr>
                         <tr>
                             <td th:text="'총 칼로리: '+${dnutrition.calories}+'kcal'"></td>
