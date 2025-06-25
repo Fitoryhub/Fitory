@@ -220,16 +220,17 @@
             color: #cc0000 !important;
         }
 
+        /* 공휴일 이름은 줄바꿈 허용 */
         .holiday-name {
             font-size: 11px;
             font-weight: 600;
             color: #cc0000;
             text-align: center;
             margin-bottom: 4px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            width: 100%;
+            white-space: normal;       /* ✅ 줄바꿈 허용 */
+            word-break: keep-all;
+            overflow: visible;         /* ✅ 말줄임 제거 */
+            line-height: 1.2;
         }
 
         .schedule-wrapper {
@@ -244,6 +245,9 @@
             color: #333;
             word-break: break-word;
             margin-bottom: 3px;
+            white-space: nowrap;       /* ✅ 한 줄로 표시 */
+            overflow: hidden;
+            text-overflow: ellipsis;   /* ✅ 말줄임(...) 처리 */
         }
 
         #addScheduleBtn {
