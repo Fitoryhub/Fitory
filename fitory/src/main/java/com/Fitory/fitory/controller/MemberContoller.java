@@ -165,7 +165,14 @@ public class MemberContoller {
     public String healthInfo_mod(HttpSession session, @ModelAttribute UserHealthInfoDTO udto) {
         SessionUserDTO userInfo = (SessionUserDTO) session.getAttribute("userInfo");
         udto.setUid(userInfo.getId());
-
+        System.out.println(udto.getTargetWeight()+"getTargetWeight입니당!@%!#%!");
+        System.out.println(udto.getBodyFat()+"getBodyFat입니당!@%!#%!");
+        if(udto.getTargetWeight().isEmpty()){
+            udto.setTargetWeight("0.0");
+        }
+        if(udto.getBodyFat().isEmpty()){
+            udto.setBodyFat("0.0");
+        }
         userhealthserviceimpl.Infosave(udto);
         return "redirect:/mypage";
     }
