@@ -165,6 +165,7 @@ public class MemberContoller {
     public String healthInfo_mod(HttpSession session, @ModelAttribute UserHealthInfoDTO udto) {
         SessionUserDTO userInfo = (SessionUserDTO) session.getAttribute("userInfo");
         udto.setUid(userInfo.getId());
+
         userhealthserviceimpl.Infosave(udto);
         return "redirect:/mypage";
     }
