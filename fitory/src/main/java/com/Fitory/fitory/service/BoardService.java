@@ -117,5 +117,10 @@ public class BoardService implements IF_BoardService {
         return boardrepository.findByUid(uid);
     }
 
+    @Override
+    public List<Board> top5(String category) {
+        return boardrepository.findTop5ByPcategoryOrderByPdateDesc(category);
+    }
+
 
 }

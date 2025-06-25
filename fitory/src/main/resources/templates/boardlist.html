@@ -265,6 +265,7 @@
             <input type="text" name="ptitle" placeholder="제목 검색" th:value="${param.ptitle}">
             <button type="submit">검색</button>
         </form>
+        <button th:onclick="|location.href='/write'|">글쓰기</button>
     </div>
     <table id="board-list">
         <thead>

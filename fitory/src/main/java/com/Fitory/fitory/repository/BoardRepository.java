@@ -40,4 +40,6 @@ public interface BoardRepository extends JpaRepository<Board, Integer> {
 
 
     List<Board> findByUid(String uid);
+
+    List<Board> findTop5ByPcategoryOrderByPdateDesc(String category);
 }

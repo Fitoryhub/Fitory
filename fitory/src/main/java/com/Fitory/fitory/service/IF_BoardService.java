@@ -31,4 +31,5 @@ public interface IF_BoardService {
 
     List<Board> myboardlist(String uid);
 
+    List<Board> top5(String category);
 }

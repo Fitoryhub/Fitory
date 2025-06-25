@@ -6,418 +6,229 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        .back-button {
-            position: fixed;      /* 화면에 고정 */
-            top: 20px;            /* 상단에서 20px 떨어짐 */
-            left: 20px;           /* 왼쪽에서 20px 떨어짐 */
-            padding: 8px 14px;    /* 버튼 크기 조절 */
-            background-color: #007bff; /* 파란색 배경 */
-            color: white;         /* 글자 흰색 */
-            border: none;         /* 테두리 없애기 */
-            border-radius: 5px;   /* 둥근 모서리 */
-            font-size: 16px;      /* 글자 크기 */
-            cursor: pointer;      /* 마우스 올리면 포인터 모양 */
-            box-shadow: 0 2px 6px rgba(0,0,0,0.2); /* 살짝 그림자 */
-            z-index: 1000;        /* 다른 요소 위에 표시 */
-            transition: background-color 0.3s ease;
-        }
-
-        .back-button:hover {
-            background-color: #0056b3; /* 마우스 올리면 진한 파랑 */
-        }
-        /* 전체 배경과 폰트 */
+        /* 기본 레이아웃 */
         body {
-            font-family: 'Noto Sans KR', sans-serif;
-            background-color: #d9ead3; /* 부드러운 연초록 */
+            font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
             margin: 0;
-            padding: 0;
-            color: #2f4f2f;
+            padding: 20px;
         }
 
-        /* 컨테이너 박스 */
         .container {
-            max-width: 900px;
-            margin: 30px auto;
-            background: #fff;
+            max-width: 800px;
+            margin: auto;
+            background-color: #fff;
+            padding: 30px;
             border-radius: 12px;
-            padding: 25px 30px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        /* 뒤로가기 버튼 */
+        .back-button {
+            background: none;
+            border: none;
+            color: #0077cc;
+            font-size: 16px;
+            cursor: pointer;
+            margin-bottom: 20px;
         }
 
         /* 제목 */
         .title {
-            font-size: 2.2rem;
-            font-weight: 700;
-            margin-bottom: 20px;
-            color: #356f35;
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 10px;
         }
 
         /* 메타 정보 */
         .meta {
             display: flex;
             flex-wrap: wrap;
-            gap: 12px;
+            gap: 10px 20px;
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 20px;
             align-items: center;
-            font-size: 0.9rem;
-            color: #4a6b4a;
-            margin-bottom: 25px;
         }
 
-        /* 작성자, 날짜, 조회수 */
-        .meta > span {
-            background: #b7d7a8;
-            padding: 6px 12px;
-            border-radius: 8px;
+        .meta form {
+            display: inline;
         }
 
-        /* 좋아요 버튼 영역 */
-        .like-button {
+        .meta button {
+            padding: 5px 10px;
+            border-radius: 4px;
+            border: none;
+            background-color: #dee2e6;
+            color: #333;
             cursor: pointer;
+            font-size: 13px;
+        }
+
+        .meta button:hover {
+            background-color: #ced4da;
+        }
+
+        /* 좋아요 버튼 */
+        .like-button, .like-button2, .like-button3 {
+            border: none;
             background: none;
-            border: none;
-            font-size: 1.3rem;
-            margin-left: auto;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            color: #4a6b4a;
-            transition: transform 0.2s ease;
-        }
-        .like-button:hover {
-            transform: scale(1.3);
-        }
-
-        /* 좋아요 아이콘 */
-        .like-button .like-icon {
-            user-select: none;
-        }
-
-        /* 좋아요 숫자 */
-        [id^="like-count"] {
-            font-weight: 600;
-            color: #2f5d2f;
-        }
-
-        /* 수정/삭제 버튼 박스 */
-        .meta > div {
-            display: flex;
-            gap: 10px;
-            margin-left: 20px;
-        }
-
-        /* 수정/삭제 버튼 */
-        .meta form button {
-            background-color: #a7c774;
-            border: none;
-            padding: 6px 16px;
-            border-radius: 8px;
-            font-weight: 600;
-            color: #2e4a2e;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            font-size: 20px;
         }
-        .meta form button:hover {
-            background-color: #7f9a3d;
-            color: white;
+
+        .like-icon {
+            font-size: 20px;
+            vertical-align: middle;
         }
 
         /* 카테고리 */
         .category {
-            font-weight: 600;
-            color: #5d7d5d;
-            margin-bottom: 25px;
+            font-size: 15px;
+            font-style: italic;
+            color: #888;
+            margin-bottom: 10px;
         }
 
         /* 본문 */
         .content {
-            font-size: 1.1rem;
-            line-height: 1.6;
-            color: #355f35;
+            line-height: 1.8;
+            font-size: 16px;
+            margin-bottom: 20px;
             white-space: pre-wrap;
-            margin-bottom: 35px;
         }
 
-        /* 첨부 이미지 */
+        /* 이미지 */
+        .images {
+            margin: 20px 0;
+        }
+
         .images img {
             max-width: 100%;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 10px;
         }
 
-        /* 댓글 섹션 */
+        /* 댓글 영역 */
         .comment-section {
-            border-top: 3px solid #a4c264;
-            padding-top: 25px;
+            margin-top: 50px;
         }
 
         .comment-section h3 {
-            margin-bottom: 20px;
-            color: #4a6b4a;
-            font-size: 1.5rem;
+            margin-bottom: 15px;
         }
 
-        /* 댓글 폼 */
-        .comment-form textarea {
+        /* 댓글 작성 폼 */
+        .comment-form textarea,
+        .reply-form textarea {
             width: 100%;
-            min-height: 80px;
-            border-radius: 10px;
-            border: 1.8px solid #a7c774;
-            padding: 12px;
-            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            padding: 10px;
+            font-size: 14px;
             resize: vertical;
-            color: #2f4a2f;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
-        .comment-form button {
-            background-color: #a7c774;
+        .comment-form button,
+        .reply-form button {
+            padding: 6px 14px;
             border: none;
-            padding: 10px 22px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 700;
-            color: #2e4a2e;
-            transition: background-color 0.3s ease;
-        }
-        .comment-form button:hover {
-            background-color: #7f9a3d;
+            background-color: #007bff;
             color: white;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
         }
 
-        /* 댓글 리스트 */
-        .comments-list {
-            margin-top: 20px;
+        .comment-form button:hover,
+        .reply-form button:hover {
+            background-color: #0056b3;
         }
 
-        /* 각 댓글 아이템 */
+        /* 댓글 아이템 */
         .comment-item {
-            border-bottom: 1px solid #d7e4be;
-            padding: 20px 0;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
         }
 
-        /* 댓글 헤더 - 작성자, 날짜, 버튼들 */
+        /* 댓글 헤더 */
         .comment-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            font-size: 0.9rem;
-            color: #4a6b4a;
             margin-bottom: 8px;
+            font-size: 14px;
         }
 
-        /* 작성자와 날짜 묶음 */
-        .comment-header > span {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-
-        /* 댓글 수정/삭제 버튼 그룹 */
-        .comment-header > div {
-            display: flex;
-            gap: 10px;
-        }
-
-        /* 댓글 수정/삭제 버튼 */
-        .comment-header button,
-        .delete-comment-btn button {
-            background-color: #a7c774;
-            border: none;
-            padding: 6px 14px;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            color: #2e4a2e;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .comment-header button:hover,
-        .delete-comment-btn button:hover {
-            background-color: #7f9a3d;
-            color: white;
+        .comment-author {
+            font-weight: bold;
+            color: #343a40;
         }
 
         /* 댓글 내용 */
         .body {
-            font-size: 1rem;
-            line-height: 1.5;
+            margin-bottom: 10px;
             white-space: pre-wrap;
-            margin-bottom: 12px;
-            color: #355f35;
         }
 
         /* 댓글 수정 폼 */
-        [id^="editForm-"] {
-            margin-top: 12px;
-        }
-
-        [id^="editForm-"] textarea {
+        textarea[id^="cbody-"],
+        form[id^="replyEditForm-"] textarea {
             width: 100%;
-            border-radius: 10px;
-            border: 1.8px solid #a7c774;
-            padding: 10px;
-            font-size: 1rem;
-            resize: vertical;
-            color: #2f4a2f;
-            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            padding: 8px;
+            border-radius: 4px;
+            margin-bottom: 8px;
+            font-size: 14px;
         }
 
-        /* 댓글 좋아요 버튼 및 숫자 */
-        .like-button2 {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 1.3rem;
-            color: #4a6b4a;
-            padding: 2px 6px;
-            user-select: none;
-            transition: transform 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .like-button2:hover {
-            transform: scale(1.3);
-        }
-
-        #like-count2- {
-            font-weight: 600;
-            color: #2f5d2f;
-        }
-
-        /* 댓글 푸터 - 좋아요와 숫자 */
+        /* 댓글 하단 버튼 영역 */
         .comment-footer {
             display: flex;
             align-items: center;
             gap: 6px;
-            font-size: 0.9rem;
-            color: #4a6b4a;
         }
 
-        /* 답글 박스 */
+        /* 답글 영역 */
         .reply-box {
-            margin-left: 25px;
-            margin-top: 18px;
-            border-left: 3px solid #a7c774;
             padding-left: 20px;
-            color: #3a6a3a;
-            font-size: 0.95rem;
+            margin-top: 15px;
         }
 
-        /* 답글 아이템 */
         .reply-item {
-            margin-bottom: 14px;
+            background-color: #e9ecef;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+
+        /* 답글 푸터 */
+        .reply-footer {
             display: flex;
-            flex-wrap: wrap;
             align-items: center;
-            gap: 10px;
+            gap: 6px;
+            margin-top: 6px;
         }
 
-        /* 답글 작성자 */
-        .reply-item > span:first-child {
-            font-weight: 700;
-            color: #4a6b4a;
-        }
-
-        /* 답글 내용 */
-        .reply-item span[id^="rbody-"] {
-            white-space: pre-wrap;
-        }
-
-        /* 답글 날짜 */
-        .reply-item > span:last-child {
-            font-size: 0.85rem;
-            color: #6b8e4a;
-        }
-
-        /* 답글 좋아요 버튼 */
-        .like-button3 {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 1.2rem;
-            color: #4a6b4a;
-            user-select: none;
-            padding: 2px 6px;
-            transition: transform 0.2s ease;
-        }
-
-        .like-button3:hover {
-            transform: scale(1.2);
-        }
-
-        /* 답글 좋아요 숫자 */
-        #like-count3- {
-            font-weight: 600;
-            color: #2f5d2f;
-        }
-
-        /* 답글 수정 / 삭제 버튼 */
+        /* 수정 / 삭제 버튼 */
         .edit-reply-btn,
         .delete-reply {
-            background-color: #a7c774;
+            padding: 5px 10px;
+            font-size: 12px;
+            background-color: #adb5bd;
+            color: white;
             border: none;
-            padding: 4px 12px;
-            border-radius: 8px;
+            border-radius: 4px;
             cursor: pointer;
-            color: #2e4a2e;
-            font-size: 0.85rem;
-            transition: background-color 0.3s ease;
         }
 
         .edit-reply-btn:hover,
         .delete-reply:hover {
-            background-color: #7f9a3d;
-            color: white;
-        }
-
-        /* 대댓글 수정 폼 */
-        [id^="replyEditForm-"] {
-            display: none;
-            width: 100%;
-            margin-top: 12px;
-        }
-
-        [id^="replyEditForm-"] textarea {
-            width: 100%;
-            border-radius: 10px;
-            border: 1.8px solid #a7c774;
-            padding: 10px;
-            font-size: 1rem;
-            resize: vertical;
-            color: #2f4a2f;
-            margin-bottom: 10px;
-        }
-
-        /* 답글 작성 폼 */
-        .reply-form textarea {
-            width: 100%;
-            min-height: 55px;
-            border-radius: 10px;
-            border: 1.8px solid #a7c774;
-            padding: 10px;
-            font-size: 1rem;
-            resize: vertical;
-            margin-bottom: 12px;
-            color: #2f4a2f;
-        }
-
-        .reply-form button {
-            background-color: #a7c774;
-            border: none;
-            padding: 8px 22px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 700;
-            color: #2e4a2e;
-            transition: background-color 0.3s ease;
-        }
-
-        .reply-form button:hover {
-            background-color: #7f9a3d;
-            color: white;
+            background-color: #868e96;
         }
 
     </style>
