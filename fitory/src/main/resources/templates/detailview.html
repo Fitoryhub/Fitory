@@ -1,10 +1,13 @@
-<!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>게시글 상세보기</title>
+<!-- board-detail.html (Thymeleaf fragment) -->
+<section xmlns:th="http://www.thymeleaf.org"
+         xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+         layout:decorate="~{common}"
+         layout:fragment="content">
+
+    <!-- 외부 라이브러리 -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- 페이지 전용 스타일 -->
     <style>
         /* 기본 레이아웃 */
         body {
@@ -12,7 +15,6 @@
             background-color: #f4f6f9;
             color: #333;
             margin: 0;
-            padding: 20px;
         }
 
         .container {
@@ -232,156 +234,157 @@
         }
 
     </style>
-</head>
-<body>
-<button class="back-button" onclick="history.back()">← 뒤로가기</button>
 
-<div class="container">
-    <div class="title" th:text="${board.ptitle}">제목</div>
+    <!-- ===================== 실제 화면 ===================== -->
 
-    <div class="meta">
-        <span th:text="'작성자: ' + ${board.nickname}">작성자</span>
-        <span th:text="'작성일: ' + ${board.pdate}">작성일</span>
-        <span th:text="'조회수: ' + ${board.plook}">조회수</span>
+    <button class="back-button" onclick="history.back()">← 뒤로가기</button>
 
-        <button class="like-button" th:data-pnum="${board.pnum}" th:data-liked="${plike != null}"
-                th:data-uid="${session.userInfo.id}">
-            <span class="like-icon" th:text="${plike != null ? '❤️' : '🤍'}"></span>
-        </button>
-        <span th:id="'like-count-'+${board.pnum}" th:text="${board.plike}"></span>
+    <div class="container">
+        <div class="title" th:text="${board.ptitle}">제목</div>
 
+        <div class="meta">
+            <span th:text="'작성자: ' + ${board.nickname}">작성자</span>
+            <span th:text="'작성일: ' + ${board.pdate}">작성일</span>
+            <span th:text="'조회수: ' + ${board.plook}">조회수</span>
 
-        <div th:if="${board.nickname==session.userInfo.nickname}">
-            <form th:action="@{/boardmod}" method="get">
-                <input type="hidden" th:name="pnum" th:value="${board.pnum}"/>
-                <button type="submit">수정</button>
-            </form>
-            <form th:action="@{/boarddelete}" method="get">
-                <input type="hidden" th:name="pnum" th:value="${board.pnum}"/>
-                <button>삭제</button>
-            </form>
+            <button class="like-button"
+                    th:data-pnum="${board.pnum}"
+                    th:data-liked="${plike != null}"
+                    th:data-uid="${session.userInfo.id}">
+                <span class="like-icon" th:text="${plike != null ? '❤️' : '🤍'}"></span>
+            </button>
+            <span th:id="'like-count-'+${board.pnum}" th:text="${board.plike}"></span>
 
+            <div th:if="${board.nickname==session.userInfo.nickname}">
+                <form th:action="@{/boardmod}" method="get">
+                    <input type="hidden" name="pnum" th:value="${board.pnum}"/>
+                    <button type="submit">수정</button>
+                </form>
+                <form th:action="@{/boarddelete}" method="get">
+                    <input type="hidden" name="pnum" th:value="${board.pnum}"/>
+                    <button>삭제</button>
+                </form>
+            </div>
         </div>
-    </div>
 
-    <div class="category" th:text="'카테고리: ' + ${board.pcategory}">카테고리</div>
-    <div class="content" th:text="${board.pbody}">본문 내용</div>
+        <div class="category" th:text="'카테고리: ' + ${board.pcategory}">카테고리</div>
+        <div class="content" th:text="${board.pbody}">본문 내용</div>
 
-    <div class="images" th:if="${files != null}">
-        <div th:each="file : ${files}">
-            <img th:src="@{'/files/' + ${file.filename}}" alt="첨부 이미지">
+        <div class="images" th:if="${files != null}">
+            <div th:each="file : ${files}">
+                <img th:src="@{'/files/' + ${file.filename}}" alt="첨부 이미지">
+            </div>
         </div>
-    </div>
 
-    <div class="comment-section">
-        <h3>댓글</h3>
+        <!-- ================= 댓글 ================= -->
+        <div class="comment-section">
+            <h3>댓글</h3>
 
-        <form id="comment-Form" class="comment-form">
-            <input type="hidden" name="nickname" th:value="${session.userInfo.nickname}">
-            <input type="hidden" name="uid" th:value="${session.userInfo.id}">
-            <input type="hidden" name="pnum" th:value="${board.pnum}">
-            <textarea name="cbody" placeholder="댓글을 입력하세요..."></textarea>
-            <button type="submit">댓글 등록</button>
-        </form>
+            <form id="comment-Form" class="comment-form">
+                <input type="hidden" name="nickname" th:value="${session.userInfo.nickname}">
+                <input type="hidden" name="uid"      th:value="${session.userInfo.id}">
+                <input type="hidden" name="pnum"     th:value="${board.pnum}">
+                <textarea name="cbody" placeholder="댓글을 입력하세요..."></textarea>
+                <button type="submit">댓글 등록</button>
+            </form>
 
-        <div class="comments-list">
-            <div th:each="comment : ${commentlist}" class="comment-item">
-                <div class="comment-header">
-                    <span class="comment-author" th:text="${comment.nickname}">작성자</span>
-                    <span th:text="${comment.cdate}">작성일</span>
-                    <div th:if="${comment.nickname==session.userInfo.nickname}">
+            <div class="comments-list">
+                <div th:each="comment : ${commentlist}" class="comment-item">
+                    <div class="comment-header">
+                        <span class="comment-author" th:text="${comment.nickname}">작성자</span>
+                        <span th:text="${comment.cdate}">작성일</span>
+                        <div th:if="${comment.nickname==session.userInfo.nickname}">
 
-                        <button type="button" th:onclick="'showEditForm(' + ${comment.cnum} + ')'">수정</button>
+                            <button type="button" th:onclick="'showEditForm(' + ${comment.cnum} + ')'">수정</button>
 
-                        <div class="delete-comment-btn" th:data-cnum="${comment.cnum}" th:data-pnum="${board.pnum}">
-                            <button type="button">삭제</button>
-                        </div>
-
-                    </div>
-                </div>
-
-                <div class="body" th:id="'body-' + ${comment.cnum}" th:text="${comment.cbody}">댓글 내용</div>
-
-
-                <div th:id="'editForm-' + ${comment.cnum}" style="display:none; width: 100%; margin-top:10px;">
-                    <input type="hidden" th:id="'cnum-' + ${comment.cnum}" th:value="${comment.cnum}"/>
-                    <input type="hidden" th:id="'pnum-' + ${comment.cnum}" th:value="${board.pnum}"/>
-                    <textarea th:id="'cbody-' + ${comment.cnum}" rows="3" style="width:100%;" th:text="${comment.cbody}"></textarea>
-                    <button type="button" th:onclick="'submitEdit(' + ${comment.cnum} + ')'">확인</button>
-                    <button type="button" th:onclick="'hideEditForm(' + ${comment.cnum} + ')'">취소</button>
-                </div>
-
-
-                <div class="comment-footer">
-                    <button class="like-button2"
-                            th:data-cnum="${comment.cnum}"
-                            th:data-pnum="${comment.pnum}"
-                            th:data-liked="${comment.liked}"
-                            th:data-uid="${session.userInfo.id}">
-                        <span class="like-icon" th:text="${comment.liked} ? '❤️' : '🤍'"></span>
-                    </button>
-                    <span th:id="'like-count2-'+${comment.cnum}" th:text="${comment.clike}">0</span>
-                </div>
-
-                <div class="reply-box">
-                    <div class="reply-item" th:each="reply : ${replies}" th:if="${reply.cnum == comment.cnum}">
-                        <span th:text="'↪'+${reply.nickname}">닉네임</span>
-                        <span th:id="'rbody-' + ${reply.rnum}" th:text="${reply.rbody}">내용</span>
-                        <span th:text="${reply.rdate}">날짜</span>
-
-
-                        <div class="reply-footer">
-                            <button class="like-button3"
-                                    th:data-rnum="${reply.rnum}"
-                                    th:data-pnum="${board.pnum}"
-                                    th:data-cnum="${comment.cnum}"
-                                    th:data-liked="${reply.check}"
-                                    th:data-uid="${session.userInfo.id}">
-                                <span class="like-icon" th:text="${reply.check} ? '❤️' : '🤍'"></span>
-                            </button>
-                            <span th:id="'like-count3-'+${reply.rnum}" th:text="${reply.rlikes}">0</span>
-                        </div>
-
-
-                        <!-- 수정/삭제 -->
-                        <div th:if="${reply.nickname==session.userInfo.nickname}">
-
-                            <button type="button" class="edit-reply-btn" th:data-rnum="${reply.rnum}" th:onclick="'showReplyEditForm(' + ${reply.rnum} + ')'">수정</button>
-                            <div class="delete-reply-btn"
-                                 th:id="'replyDeleteContainer-' + ${reply.rnum}"
-                                 th:data-rnum="${reply.rnum}"
-                                 th:data-pnum="${board.pnum}">
-                                <button type="button" class="delete-reply">삭제</button>
+                            <div class="delete-comment-btn" th:data-cnum="${comment.cnum}" th:data-pnum="${board.pnum}">
+                                <button type="button">삭제</button>
                             </div>
+
                         </div>
+                    </div>
 
-                        <!-- 대댓글 수정 폼 -->
+                    <div class="body" th:id="'body-' + ${comment.cnum}" th:text="${comment.cbody}">댓글 내용</div>
 
-                        <form th:id="'replyEditForm-' + ${reply.rnum}"
-                              style="display:none; width: 100%; margin-top:10px;">
-                            <input type="hidden" name="rnum" th:value="${reply.rnum}"/>
-                            <input type="hidden" name="pnum" th:value="${board.pnum}"/>
-                            <textarea name="rbody" rows="2" style="width:100%;" th:text="${reply.rbody}"></textarea>
-                            <button type="button" th:onclick="'submitReplyEdit(' + ${reply.rnum} + ')'">확인</button>
-                            <button type="button" th:onclick="'cancelReplyEditForm(' + ${reply.rnum} + ')'">취소</button>
-                        </form>
 
+                    <div th:id="'editForm-' + ${comment.cnum}" style="display:none; width: 100%; margin-top:10px;">
+                        <input type="hidden" th:id="'cnum-' + ${comment.cnum}" th:value="${comment.cnum}"/>
+                        <input type="hidden" th:id="'pnum-' + ${comment.cnum}" th:value="${board.pnum}"/>
+                        <textarea th:id="'cbody-' + ${comment.cnum}" rows="3" style="width:100%;" th:text="${comment.cbody}"></textarea>
+                        <button type="button" th:onclick="'submitEdit(' + ${comment.cnum} + ')'">확인</button>
+                        <button type="button" th:onclick="'hideEditForm(' + ${comment.cnum} + ')'">취소</button>
                     </div>
 
 
-                    <form th:action="@{/replies}" method="post" class="reply-form">
-                        <textarea name="rbody" placeholder="답글을 입력하세요..."></textarea>
-                        <input type="hidden" name="cnum" th:value="${comment.cnum}">
-                        <input type="hidden" name="uid" th:value="${session.userInfo.id}">
-                        <input type="hidden" name="nickname" th:value="${session.userInfo.nickname}">
-                        <input type="hidden" name="pnum" th:value="${board.pnum}">
-                        <button type="submit">답글 작성</button>
-                    </form>
+                    <div class="comment-footer">
+                        <button class="like-button2"
+                                th:data-cnum="${comment.cnum}"
+                                th:data-pnum="${comment.pnum}"
+                                th:data-liked="${comment.liked}"
+                                th:data-uid="${session.userInfo.id}">
+                            <span class="like-icon" th:text="${comment.liked} ? '❤️' : '🤍'"></span>
+                        </button>
+                        <span th:id="'like-count2-'+${comment.cnum}" th:text="${comment.clike}">0</span>
+                    </div>
+
+                    <div class="reply-box">
+                        <div class="reply-item" th:each="reply : ${replies}" th:if="${reply.cnum == comment.cnum}">
+                            <span th:text="'↪'+${reply.nickname}">닉네임</span>
+                            <span th:id="'rbody-' + ${reply.rnum}" th:text="${reply.rbody}">내용</span>
+                            <span th:text="${reply.rdate}">날짜</span>
+
+                            <div class="reply-footer">
+                                <button class="like-button3"
+                                        th:data-rnum="${reply.rnum}"
+                                        th:data-pnum="${board.pnum}"
+                                        th:data-cnum="${comment.cnum}"
+                                        th:data-liked="${reply.check}"
+                                        th:data-uid="${session.userInfo.id}">
+                                    <span class="like-icon" th:text="${reply.check} ? '❤️' : '🤍'"></span>
+                                </button>
+                                <span th:id="'like-count3-'+${reply.rnum}" th:text="${reply.rlikes}">0</span>
+                            </div>
+
+                            <!-- 수정/삭제 -->
+                            <div th:if="${reply.nickname==session.userInfo.nickname}">
+
+                                <button type="button" class="edit-reply-btn" th:data-rnum="${reply.rnum}" th:onclick="'showReplyEditForm(' + ${reply.rnum} + ')'">수정</button>
+                                <div class="delete-reply-btn"
+                                     th:id="'replyDeleteContainer-' + ${reply.rnum}"
+                                     th:data-rnum="${reply.rnum}"
+                                     th:data-pnum="${board.pnum}">
+                                    <button type="button" class="delete-reply">삭제</button>
+                                </div>
+                            </div>
+
+                            <!-- 대댓글 수정 폼 -->
+
+                            <form th:id="'replyEditForm-' + ${reply.rnum}"
+                                  style="display:none; width: 100%; margin-top:10px;">
+                                <input type="hidden" name="rnum" th:value="${reply.rnum}"/>
+                                <input type="hidden" name="pnum" th:value="${board.pnum}"/>
+                                <textarea name="rbody" rows="2" style="width:100%;" th:text="${reply.rbody}"></textarea>
+                                <button type="button" th:onclick="'submitReplyEdit(' + ${reply.rnum} + ')'">확인</button>
+                                <button type="button" th:onclick="'cancelReplyEditForm(' + ${reply.rnum} + ')'">취소</button>
+                            </form>
+
+                        </div>
+
+                        <form th:action="@{/replies}" method="post" class="reply-form">
+                            <textarea name="rbody" placeholder="답글을 입력하세요..."></textarea>
+                            <input type="hidden" name="cnum" th:value="${comment.cnum}">
+                            <input type="hidden" name="uid" th:value="${session.userInfo.id}">
+                            <input type="hidden" name="nickname" th:value="${session.userInfo.nickname}">
+                            <input type="hidden" name="pnum" th:value="${board.pnum}">
+                            <button type="submit">답글 작성</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
+
 <script>
     // -------------------------
     // 1. 댓글 등록 (AJAX)
@@ -692,5 +695,4 @@
         bindLikeEvents();
     });
 </script>
-</body>
-</html>
+

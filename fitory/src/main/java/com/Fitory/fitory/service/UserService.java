@@ -19,4 +19,6 @@ public interface UserService {
     public Optional<User> findById(String id);
 
     public void deleteUser(String id);
+
+    public boolean findByEmail(String email);
 }

@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <title>회원가입 - Fitory</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet" />
   <style>
@@ -261,9 +262,30 @@
       result.textContent = "※ 이메일 형식이 올바르지 않습니다. 다시 입력해 주세요";
       chk[3] = false;
       return;
-    } else{
-      result.textContent = "";
-      chk[3] = true;
+    }
+     else{
+      $.ajax({
+           url: "/api/signup/emailchk",
+           method: "GET",
+           dataType: "text",
+           data: { inputEmail : inputEmail },
+           success: function (data) {
+                  console.log(data)
+               if(data=="false"){
+                  result.style.color = "green";
+                  result.textContent = "사용가능한 이메일 입니다.";
+                  chk[3] = true;
+               }else{
+                  result.textContent = "※중복된 이메일입니다. 다른 이메일을 입력해주세요";
+                  chk[3] = false;
+                  return;
+               }
+           },
+           error: function () {
+               alert("이메일 중복확인 실패");
+           }
+       });
+
     }
   }
 
@@ -321,6 +343,7 @@
       document.getElementById('nickname').focus();
        return false;
     } else{
+      alert("회원가입이 성공했습니다")
       return true;
     }
   }
