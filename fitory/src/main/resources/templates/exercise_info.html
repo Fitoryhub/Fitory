@@ -2,7 +2,7 @@
          xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
          layout:decorate="~{common}"
          layout:fragment="content">
-
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -201,7 +201,8 @@
             border-radius: 16px;
             padding: 20px 30px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            height: 150px;
+            height: auto;
+            overflow: visible;
         }
 
         hr {
@@ -287,8 +288,8 @@
                 </div>
 
                 <div class="exerciselist-top5">
-                    <!-- 새로 보여줄 내용 -->
-                    <p>다른 사용자들이 많이 선택한 운동 top5 출력하기</p>
+                    <h1>Fitroy 운동 TOP5</h1><hr>
+                    <ul id="exercisetop5"></ul>
                 </div>
             </div>
 
@@ -362,7 +363,7 @@ window.onload = function(){
            document.getElementById("exercisetop5").innerHTML = html;
             },
            error: function(){
-               alert("실패.")
+               alert("실패, 요청 주소 : " + url)
            }
        });
 }
