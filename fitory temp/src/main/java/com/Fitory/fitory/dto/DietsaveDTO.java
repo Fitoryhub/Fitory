@@ -3,6 +3,7 @@ package com.Fitory.fitory.dto;
 import com.Fitory.fitory.entity.Diet;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 

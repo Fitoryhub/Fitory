@@ -50,6 +50,12 @@
           font-weight: bold;
         }
 
+        #detail_content td img { 
+          width: 300px;
+          height: 200px;
+          display: inline-block;
+        }
+
         #title td button{
           background-color: #10b981; 
           color: white;
@@ -135,6 +141,14 @@
                         </tr>
                     </table>
                 </td>
+            </tr>
+            <tr th:if="${files != null}">
+              <td style="width: 50px;">🖼️이미지</td>
+              <td colspan="3">
+                <div th:each="file: ${files}">
+                  <img th:src="@{'/files/'+${file.filename}}" alt="이미지">
+                </div>
+              </td>
             </tr>
         </table>
     </section>

@@ -58,6 +58,12 @@
                     </td>
                 </tr>
                 <tr>
+                    <td>이미지 추가(필수 X)</td>
+                    <td>
+                        <input type="file" id="dimgfile" accept="image/*" multiple>
+                    </td>
+                </tr>
+                <tr>
                     <td colspan="2" style="text-align: center; padding-top: 20px;">
                         <input type="button" value="등록" onclick="save()" style="padding: 10px 30px; background-color: #10b981; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer;">
                     </td>
@@ -243,7 +249,6 @@
             let foodname=$('#food_name').val();
 
             getdata2(0,foodname).then(rdata=>{
-                temporary=rdata;
                 $.ajax({
                     async:true,
                     url:'/diet/foodlist',
@@ -429,30 +434,35 @@
                 alert('필수 항목을 채워주세요');
                 return;
             }
+            let formdata= new FormData();
+
+            let fileinput=document.getElementById('dimgfile').files;
+            for(let file of fileinput){
+                formdata.append('files',file);
+            }
+            
             let foodlist = Array.from(document.getElementsByName('Foodlist')).map(input =>
                 JSON.parse(decodeURIComponent(atob(input.value)))
             );
-            fetch("/diet/save",{
+            formdata.append('dsv',new Blob([JSON.stringify({
+                diet:{
+                    title:document.getElementsByName('title')[0].value,
+                    explanation:document.getElementsByName('explanation')[0].value,
+                    goal_type:document.getElementsByName('goal_type')[0].value,
+                    plan_type:document.getElementsByName('plan_type')[0].value,
+                    userid:document.getElementsByName('user_id')[0].value
+                },
+                foodlist:foodlist
+            })],{type:'application/json'}))
+            
+            fetch('/diet/save',{
                 method:'POST',
-                headers:{"Content-Type": "application/json"},
-                body:JSON.stringify({
-                    diet:{
-                        title:document.getElementsByName('title')[0].value,
-                        explanation:document.getElementsByName('explanation')[0].value,
-                        goal_type:document.getElementsByName('goal_type')[0].value,
-                        plan_type:document.getElementsByName('plan_type')[0].value,
-                        userid:document.getElementsByName('user_id')[0].value
-                    },
-                    foodlist:foodlist
-                })
+                body:formdata
             })
-            .then(response => response.json())
-            .then(data => {
-                window.location.href = data.url;
-            })
-            .catch(error => {
-                alert('save 오류');
-            });
+            .then(res=>res.json())
+            .then(data=>location.href=data.url)
+            .catch(error=>console.log(error));
+            temporary=formdata;
         }
 
         async function getpage(foodname) {
