@@ -58,6 +58,12 @@
                     </td>
                 </tr>
                 <tr>
+                    <td>이미지 추가(필수 X)</td>
+                    <td>
+                        <input type="file" id="dimgfile" accept="image/*" multiple>
+                    </td>
+                </tr>
+                <tr>
                     <td colspan="2" style="text-align: center; padding-top: 20px;">
                         <input type="button" value="등록" onclick="save()" style="padding: 10px 30px; background-color: #10b981; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer;">
                     </td>
@@ -425,34 +431,39 @@
         }
 
         function save(){
-            if(document.getElementsByName('goal_type')[0].value=='none' || document.getElementsByName('plan_type')[0].value=='none'){
+            if(document.getElementsByName('goal_type')[0].value=='none' || document.getElementsByName('plan_type')[0].value=='none'||document.getElementById('sel_food').innerText==''){
                 alert('필수 항목을 채워주세요');
                 return;
             }
+            let formdata= new FormData();
+
+            let fileinput=document.getElementById('dimgfile').files;
+            for(let file of fileinput){
+                formdata.append('files',file);
+            }
+
             let foodlist = Array.from(document.getElementsByName('Foodlist')).map(input =>
                 JSON.parse(decodeURIComponent(atob(input.value)))
             );
-            fetch("/diet/save",{
+            formdata.append('dsv',new Blob([JSON.stringify({
+                diet:{
+                    title:document.getElementsByName('title')[0].value,
+                    explanation:document.getElementsByName('explanation')[0].value,
+                    goal_type:document.getElementsByName('goal_type')[0].value,
+                    plan_type:document.getElementsByName('plan_type')[0].value,
+                    userid:document.getElementsByName('user_id')[0].value
+                },
+                foodlist:foodlist
+            })],{type:'application/json'}))
+
+            fetch('/diet/save',{
                 method:'POST',
-                headers:{"Content-Type": "application/json"},
-                body:JSON.stringify({
-                    diet:{
-                        title:document.getElementsByName('title')[0].value,
-                        explanation:document.getElementsByName('explanation')[0].value,
-                        goal_type:document.getElementsByName('goal_type')[0].value,
-                        plan_type:document.getElementsByName('plan_type')[0].value,
-                        userid:document.getElementsByName('user_id')[0].value
-                    },
-                    foodlist:foodlist
-                })
+                body:formdata
             })
-            .then(response => response.json())
-            .then(data => {
-                window.location.href = data.url;
-            })
-            .catch(error => {
-                alert('save 오류');
-            });
+            .then(res=>res.json())
+            .then(data=>location.href=data.url)
+            .catch(error=>console.log(error));
+            temporary=formdata;
         }
 
         async function getpage(foodname) {
@@ -504,17 +515,29 @@
             }
         } 
 
-        async function getdata2(page,foodname){
-            let url='http://192.168.0.41:3000/getdata?foodname='+foodname+'&page='+page;
-            try{
-                const response= await fetch(url);
-                const data= await response.json();
-                const rdata=data.foods_search;
-                return rdata;
-            }catch (error) {
-                console.log(error);
-                alert('get page2 오류');
-            }
-        }
+    async function translateToEnglish(text) {
+        const response = await fetch(`http://192.168.0.63:3000/translate?text=${encodeURIComponent(text)}`);
+        const data = await response.json();
+        return data.translatedText;
+    }
+
+    async function getdata2(page, foodname) {
+    // 한글이면 번역 처리
+    const isKorean = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(foodname);
+    if (isKorean) {
+        foodname = await translateToEnglish(foodname);
+        console.log("번역된 foodname:", foodname);
+    }
+
+    const url = `http://192.168.0.41:3000/getdata?foodname=${encodeURIComponent(foodname)}&page=${page}`;
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        return data.foods_search;
+    } catch (error) {
+        console.log(error);
+        alert('getdata2 오류');
+    }
+}
     </script>
 </section>

@@ -11,5 +11,7 @@ public interface FileRepository extends JpaRepository<Files, Integer> {
 
     List<Files> findByPnum(Integer pnum);
 
+    List<Files> findByDnum(Integer dnum);
+
     void deleteByPnum(Integer pnum);
 }

@@ -25,4 +25,11 @@ public class FileService implements IF_FileService{
     public List<Files> findfile(Integer pnum) {
         return fileRepository.findByPnum(pnum);
     }
+
+    @Override
+    public List<Files> findfile2(Integer dnum) {
+        return fileRepository.findByDnum(dnum);
+    }
+
+
 }

@@ -136,6 +136,14 @@
                     </table>
                 </td>
             </tr>
+            <tr th:if="${files != null}">
+                <td colspan="4">
+                    <div class="imgbox" th:each="file: ${files}">
+                        <img th:src="@{'./image/'+${file.filename}}" alt="이미지">
+                        <br th:if="${fileStat.index%4==3}">
+                    </div>
+                </td>
+            </tr>
         </table>
     </section>
     <script>
