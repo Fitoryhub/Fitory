@@ -50,10 +50,15 @@
           font-weight: bold;
         }
 
-        #detail_content td img { 
-          width: 300px;
-          height: 200px;
+        #detail_content td div {
+          width: 200px;
+          height: 125px;
           display: inline-block;
+        }
+
+        #detail_content td img { 
+          width: 200px;
+          height: 125px;
         }
 
         #title td button{
@@ -143,10 +148,11 @@
                 </td>
             </tr>
             <tr th:if="${files != null}">
-              <td style="width: 50px;">🖼️이미지</td>
-              <td colspan="3">
-                <div th:each="file: ${files}">
+              <td colspan="4">
+                🖼️이미지<br>
+                <div class="imgbox" th:each="file: ${files}">
                   <img th:src="@{'/files/'+${file.filename}}" alt="이미지">
+                  <br th:if="${fileStat.index%4==3}">
                 </div>
               </td>
             </tr>
