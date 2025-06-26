@@ -1,4 +1,3 @@
-<!-- board-detail.html (Thymeleaf fragment) -->
 <section xmlns:th="http://www.thymeleaf.org"
          xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
          layout:decorate="~{common}"
@@ -9,38 +8,32 @@
 
     <!-- 페이지 전용 스타일 -->
     <style>
-        /* 기본 레이아웃 */
+        /* 페이지 전용 스타일 */
         body {
             font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
             background-color: #f4f6f9;
             color: #333;
             margin: 0;
+            line-height: 1.6;
         }
 
         .container {
             max-width: 800px;
-            margin: auto;
+            margin: 30px auto;
             background-color: #fff;
             padding: 30px;
             border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
-        /* 뒤로가기 버튼 */
-        .back-button {
-            background: none;
-            border: none;
-            color: #0077cc;
-            font-size: 16px;
-            cursor: pointer;
-            margin-bottom: 20px;
-        }
+
 
         /* 제목 */
         .title {
             font-size: 28px;
-            font-weight: bold;
-            margin-bottom: 10px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #222;
         }
 
         /* 메타 정보 */
@@ -55,29 +48,38 @@
         }
 
         .meta form {
-            display: inline;
+            display: inline-block;
         }
 
         .meta button {
-            padding: 5px 10px;
+            padding: 6px 12px;
             border-radius: 4px;
             border: none;
             background-color: #dee2e6;
             color: #333;
             cursor: pointer;
             font-size: 13px;
+            transition: background-color 0.2s;
         }
 
         .meta button:hover {
             background-color: #ced4da;
         }
 
-        /* 좋아요 버튼 */
+        /* 좋아요 버튼 공통 스타일 */
         .like-button, .like-button2, .like-button3 {
-            border: none;
             background: none;
+            border: none;
             cursor: pointer;
             font-size: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: transform 0.2s;
+        }
+
+        .like-button:hover, .like-button2:hover, .like-button3:hover {
+            transform: scale(1.1);
         }
 
         .like-icon {
@@ -90,15 +92,16 @@
             font-size: 15px;
             font-style: italic;
             color: #888;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
 
         /* 본문 */
         .content {
             line-height: 1.8;
             font-size: 16px;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             white-space: pre-wrap;
+            color: #333;
         }
 
         /* 이미지 */
@@ -111,38 +114,58 @@
             height: auto;
             border-radius: 8px;
             margin-bottom: 10px;
+            display: block;
         }
 
-        /* 댓글 영역 */
+        /* 댓글 섹션 */
         .comment-section {
-            margin-top: 50px;
+            margin-top: 40px;
         }
 
         .comment-section h3 {
-            margin-bottom: 15px;
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #222;
         }
 
         /* 댓글 작성 폼 */
+        .comment-form, .reply-form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
         .comment-form textarea,
         .reply-form textarea {
             width: 100%;
-            border: 1px solid #ccc;
+            min-height: 80px;
+            border: 1px solid #ddd;
             border-radius: 6px;
-            padding: 10px;
+            padding: 12px;
             font-size: 14px;
             resize: vertical;
-            margin-bottom: 10px;
+            transition: border-color 0.2s;
+        }
+
+        .comment-form textarea:focus,
+        .reply-form textarea:focus {
+            border-color: #007bff;
+            outline: none;
         }
 
         .comment-form button,
         .reply-form button {
-            padding: 6px 14px;
+            align-self: flex-end;
+            padding: 8px 16px;
             border: none;
             background-color: #007bff;
             color: white;
             border-radius: 4px;
             font-size: 14px;
             cursor: pointer;
+            transition: background-color 0.2s;
         }
 
         .comment-form button:hover,
@@ -162,77 +185,201 @@
         .comment-header {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 8px;
+            align-items: center;
             font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
         }
 
         .comment-author {
-            font-weight: bold;
+            font-weight: 600;
             color: #343a40;
         }
 
         /* 댓글 내용 */
         .body {
+            font-size: 15px;
+            line-height: 1.6;
             margin-bottom: 10px;
             white-space: pre-wrap;
+            color: #333;
         }
 
         /* 댓글 수정 폼 */
         textarea[id^="cbody-"],
         form[id^="replyEditForm-"] textarea {
             width: 100%;
+            min-height: 60px;
             border: 1px solid #ddd;
-            padding: 8px;
             border-radius: 4px;
-            margin-bottom: 8px;
+            padding: 10px;
             font-size: 14px;
+            resize: vertical;
+            margin-bottom: 10px;
         }
 
-        /* 댓글 하단 버튼 영역 */
+        textarea[id^="cbody-"]:focus,
+        form[id^="replyEditForm-"] textarea:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        .edit-form-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .edit-form-buttons button {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .edit-form-buttons button:first-child {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .edit-form-buttons button:first-child:hover {
+            background-color: #0056b3;
+        }
+
+        .edit-form-buttons button:last-child {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .edit-form-buttons button:last-child:hover {
+            background-color: #5a6268;
+        }
+
+        /* 댓글 푸터 */
         .comment-footer {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
+            font-size: 14px;
         }
 
         /* 답글 영역 */
         .reply-box {
             padding-left: 20px;
             margin-top: 15px;
+            border-left: 2px solid #e9ecef;
         }
 
+        /* 답글 아이템 */
         .reply-item {
-            background-color: #e9ecef;
-            padding: 12px;
-            border-radius: 6px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        /* 답글 헤더 */
+        .reply-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .reply-header span:first-child {
+            font-weight: 600;
+            color: #343a40;
+        }
+
+        .reply-header span:last-child {
+            font-size: 13px;
+        }
+
+        /* 답글 내용 */
+        .reply-body {
+            font-size: 15px;
+            line-height: 1.6;
             margin-bottom: 10px;
+            white-space: pre-wrap;
+            color: #333;
         }
 
         /* 답글 푸터 */
         .reply-footer {
             display: flex;
             align-items: center;
-            gap: 6px;
-            margin-top: 6px;
+            gap: 8px;
+            font-size: 14px;
         }
 
-        /* 수정 / 삭제 버튼 */
-        .edit-reply-btn,
-        .delete-reply {
-            padding: 5px 10px;
+        /* 수정/삭제 버튼 공통 스타일 */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-buttons button {
+            padding: 5px 12px;
             font-size: 12px;
-            background-color: #adb5bd;
-            color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            transition: background-color 0.2s;
         }
 
-        .edit-reply-btn:hover,
-        .delete-reply:hover {
-            background-color: #868e96;
+        .action-buttons .edit-btn {
+            background-color: #6c757d;
+            color: white;
         }
 
+        .action-buttons .edit-btn:hover {
+            background-color: #5a6268;
+        }
+
+        .action-buttons .delete-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .action-buttons .delete-btn:hover {
+            background-color: #c82333;
+        }
+
+        /* 반응형 디자인 */
+        @media (max-width: 768px) {
+            .container {
+                margin: 15px;
+                padding: 20px;
+            }
+
+            .title {
+                font-size: 24px;
+            }
+
+            .meta {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .comment-section h3 {
+                font-size: 20px;
+            }
+
+            .reply-box {
+                padding-left: 15px;
+            }
+
+            .reply-item {
+                padding: 12px;
+            }
+
+
+        }
     </style>
 
     <!-- ===================== 실제 화면 ===================== -->
@@ -282,8 +429,8 @@
 
             <form id="comment-Form" class="comment-form">
                 <input type="hidden" name="nickname" th:value="${session.userInfo.nickname}">
-                <input type="hidden" name="uid"      th:value="${session.userInfo.id}">
-                <input type="hidden" name="pnum"     th:value="${board.pnum}">
+                <input type="hidden" name="uid" th:value="${session.userInfo.id}">
+                <input type="hidden" name="pnum" th:value="${board.pnum}">
                 <textarea name="cbody" placeholder="댓글을 입력하세요..."></textarea>
                 <button type="submit">댓글 등록</button>
             </form>
@@ -293,28 +440,25 @@
                     <div class="comment-header">
                         <span class="comment-author" th:text="${comment.nickname}">작성자</span>
                         <span th:text="${comment.cdate}">작성일</span>
-                        <div th:if="${comment.nickname==session.userInfo.nickname}">
-
-                            <button type="button" th:onclick="'showEditForm(' + ${comment.cnum} + ')'">수정</button>
-
+                        <div th:if="${comment.nickname==session.userInfo.nickname}" class="action-buttons">
+                            <button type="button" class="edit-btn" th:onclick="'showEditForm(' + ${comment.cnum} + ')'">수정</button>
                             <div class="delete-comment-btn" th:data-cnum="${comment.cnum}" th:data-pnum="${board.pnum}">
-                                <button type="button">삭제</button>
+                                <button type="button" class="delete-btn">삭제</button>
                             </div>
-
                         </div>
                     </div>
 
                     <div class="body" th:id="'body-' + ${comment.cnum}" th:text="${comment.cbody}">댓글 내용</div>
 
-
                     <div th:id="'editForm-' + ${comment.cnum}" style="display:none; width: 100%; margin-top:10px;">
                         <input type="hidden" th:id="'cnum-' + ${comment.cnum}" th:value="${comment.cnum}"/>
                         <input type="hidden" th:id="'pnum-' + ${comment.cnum}" th:value="${board.pnum}"/>
                         <textarea th:id="'cbody-' + ${comment.cnum}" rows="3" style="width:100%;" th:text="${comment.cbody}"></textarea>
-                        <button type="button" th:onclick="'submitEdit(' + ${comment.cnum} + ')'">확인</button>
-                        <button type="button" th:onclick="'hideEditForm(' + ${comment.cnum} + ')'">취소</button>
+                        <div class="edit-form-buttons">
+                            <button type="button" th:onclick="'submitEdit(' + ${comment.cnum} + ')'">확인</button>
+                            <button type="button" th:onclick="'hideEditForm(' + ${comment.cnum} + ')'">취소</button>
+                        </div>
                     </div>
-
 
                     <div class="comment-footer">
                         <button class="like-button2"
@@ -329,10 +473,20 @@
 
                     <div class="reply-box">
                         <div class="reply-item" th:each="reply : ${replies}" th:if="${reply.cnum == comment.cnum}">
-                            <span th:text="'↪'+${reply.nickname}">닉네임</span>
-                            <span th:id="'rbody-' + ${reply.rnum}" th:text="${reply.rbody}">내용</span>
-                            <span th:text="${reply.rdate}">날짜</span>
-
+                            <div class="reply-header">
+                                <span th:text="'↪'+${reply.nickname}">닉네임</span>
+                                <span th:text="${reply.rdate}">날짜</span>
+                                <div th:if="${reply.nickname==session.userInfo.nickname}" class="action-buttons">
+                                    <button type="button" class="edit-btn" th:data-rnum="${reply.rnum}" th:onclick="'showReplyEditForm(' + ${reply.rnum} + ')'">수정</button>
+                                    <div class="delete-reply-btn"
+                                         th:id="'replyDeleteContainer-' + ${reply.rnum}"
+                                         th:data-rnum="${reply.rnum}"
+                                         th:data-pnum="${board.pnum}">
+                                        <button type="button" class="delete-btn">삭제</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="reply-body" th:id="'rbody-' + ${reply.rnum}" th:text="${reply.rbody}">내용</div>
                             <div class="reply-footer">
                                 <button class="like-button3"
                                         th:data-rnum="${reply.rnum}"
@@ -344,30 +498,16 @@
                                 </button>
                                 <span th:id="'like-count3-'+${reply.rnum}" th:text="${reply.rlikes}">0</span>
                             </div>
-
-                            <!-- 수정/삭제 -->
-                            <div th:if="${reply.nickname==session.userInfo.nickname}">
-
-                                <button type="button" class="edit-reply-btn" th:data-rnum="${reply.rnum}" th:onclick="'showReplyEditForm(' + ${reply.rnum} + ')'">수정</button>
-                                <div class="delete-reply-btn"
-                                     th:id="'replyDeleteContainer-' + ${reply.rnum}"
-                                     th:data-rnum="${reply.rnum}"
-                                     th:data-pnum="${board.pnum}">
-                                    <button type="button" class="delete-reply">삭제</button>
-                                </div>
-                            </div>
-
-                            <!-- 대댓글 수정 폼 -->
-
                             <form th:id="'replyEditForm-' + ${reply.rnum}"
                                   style="display:none; width: 100%; margin-top:10px;">
                                 <input type="hidden" name="rnum" th:value="${reply.rnum}"/>
                                 <input type="hidden" name="pnum" th:value="${board.pnum}"/>
                                 <textarea name="rbody" rows="2" style="width:100%;" th:text="${reply.rbody}"></textarea>
-                                <button type="button" th:onclick="'submitReplyEdit(' + ${reply.rnum} + ')'">확인</button>
-                                <button type="button" th:onclick="'cancelReplyEditForm(' + ${reply.rnum} + ')'">취소</button>
+                                <div class="edit-form-buttons">
+                                    <button type="button" th:onclick="'submitReplyEdit(' + ${reply.rnum} + ')'">확인</button>
+                                    <button type="button" th:onclick="'cancelReplyEditForm(' + ${reply.rnum} + ')'">취소</button>
+                                </div>
                             </form>
-
                         </div>
 
                         <form th:action="@{/replies}" method="post" class="reply-form">
@@ -397,7 +537,7 @@
             dataType: 'json',
             data: $(this).serialize(),
             success: function(data) {
-                renderCommentsAndReplies(data.comments, data.replies, data.loginNickname,data.uid);
+                renderCommentsAndReplies(data.comments, data.replies, data.loginNickname, data.uid);
                 bindLikeEvents();
                 $('textarea[name="cbody"]').val('');
             },
@@ -420,7 +560,7 @@
             dataType: 'json',
             data: { pnum, cnum },
             success: function(data) {
-                renderCommentsAndReplies(data.comments, data.replies, data.loginNickname,data.uid);
+                renderCommentsAndReplies(data.comments, data.replies, data.loginNickname, data.uid);
                 bindLikeEvents();
             },
             error: function() {
@@ -439,11 +579,9 @@
             url: '/commentmod',
             method: 'POST',
             dataType: 'json',
-            data: { cnum,
-                pnum,
-                cbody },
+            data: { cnum, pnum, cbody },
             success: function(data) {
-                renderCommentsAndReplies(data.comments, data.replies, data.loginNickname,data.uid);
+                renderCommentsAndReplies(data.comments, data.replies, data.loginNickname, data.uid);
                 bindLikeEvents();
             },
             error: function() {
@@ -464,7 +602,7 @@
             dataType: 'json',
             data: $(this).serialize(),
             success: function(data) {
-                renderCommentsAndReplies(data.comments, data.replies, data.loginNickname ,data.uid);
+                renderCommentsAndReplies(data.comments, data.replies, data.loginNickname, data.uid);
                 bindLikeEvents();
             },
             error: function() {
@@ -486,7 +624,7 @@
             dataType: 'json',
             data: { pnum, rnum },
             success: function(data) {
-                renderCommentsAndReplies(data.comments, data.replies, data.loginNickname,data.uid);
+                renderCommentsAndReplies(data.comments, data.replies, data.loginNickname, data.uid);
                 bindLikeEvents();
             },
             error: function() {
@@ -506,10 +644,8 @@
             data: form.serialize(),
             dataType: 'json',
             success: function(data) {
-                // 댓글과 대댓글 다시 렌더링
                 renderCommentsAndReplies(data.comments, data.replies, data.loginNickname, data.uid);
                 bindLikeEvents();
-                // 수정 폼 숨기기
                 $('#replyEditForm-' + rnum).hide();
             },
             error: function() {
@@ -596,7 +732,7 @@
     // -------------------------
     // 8. 렌더함수 + 초기 바인딩
     // -------------------------
-    function renderCommentsAndReplies(comments, replies, loginNickname , uid) {
+    function renderCommentsAndReplies(comments, replies, loginNickname, uid) {
         let html = '';
         for (let i = 0; i < comments.length; i++) {
             let comment = comments[i];
@@ -605,17 +741,21 @@
             html += '    <span class="comment-author">' + comment.nickname + '</span>';
             html += '    <span>' + comment.cdate + '</span>';
             if (comment.nickname === loginNickname) {
-                html += '    <button type="button" onclick="showEditForm(' + comment.cnum + ')">수정</button>';
-                html += '    <div class="delete-comment-btn" data-pnum="' + comment.pnum + '" data-cnum="' + comment.cnum + '"><button type="button">삭제</button></div>';
+                html += '    <div class="action-buttons">';
+                html += '      <button type="button" class="edit-btn" onclick="showEditForm(' + comment.cnum + ')">수정</button>';
+                html += '      <div class="delete-comment-btn" data-pnum="' + comment.pnum + '" data-cnum="' + comment.cnum + '"><button type="button" class="delete-btn">삭제</button></div>';
+                html += '    </div>';
             }
             html += '  </div>';
-            html += '  <div class="comment-body" id="body-' + comment.cnum + '">' + comment.cbody + '</div>';
+            html += '  <div class="body" id="body-' + comment.cnum + '">' + comment.cbody + '</div>';
             if (comment.nickname === loginNickname) {
                 html += '  <div id="editForm-' + comment.cnum + '" style="display:none;">';
                 html += '    <input type="hidden" id="pnum-' + comment.cnum + '" value="' + comment.pnum + '">';
                 html += '    <textarea id="cbody-' + comment.cnum + '">' + comment.cbody + '</textarea>';
-                html += '    <button type="button" onclick="submitEdit(' + comment.cnum + ')">확인</button>';
-                html += '    <button type="button" onclick="hideEditForm(' + comment.cnum + ')">취소</button>';
+                html += '    <div class="edit-form-buttons">';
+                html += '      <button type="button" onclick="submitEdit(' + comment.cnum + ')">확인</button>';
+                html += '      <button type="button" onclick="hideEditForm(' + comment.cnum + ')">취소</button>';
+                html += '    </div>';
                 html += '  </div>';
             }
             html += '  <div class="comment-footer">';
@@ -630,9 +770,17 @@
                 let reply = replies[j];
                 if (reply.cnum === comment.cnum) {
                     html += '    <div class="reply-item">';
-                    html += '      <span>↪' + reply.nickname + '</span>';
-                    html += '      <span id="rbody-' + reply.rnum + '">' + reply.rbody + '</span>';
-                    html += '      <span>' + reply.rdate + '</span>';
+                    html += '      <div class="reply-header">';
+                    html += '        <span>↪' + reply.nickname + '</span>';
+                    html += '        <span>' + reply.rdate + '</span>';
+                    if (reply.nickname === loginNickname) {
+                        html += '        <div class="action-buttons">';
+                        html += '          <button type="button" class="edit-btn" onclick="showReplyEditForm(' + reply.rnum + ')">수정</button>';
+                        html += '          <div class="delete-reply-btn" data-pnum="' + reply.pnum + '" data-rnum="' + reply.rnum + '"><button type="button" class="delete-btn">삭제</button></div>';
+                        html += '        </div>';
+                    }
+                    html += '      </div>';
+                    html += '      <div class="reply-body" id="rbody-' + reply.rnum + '">' + reply.rbody + '</div>';
                     html += '      <div class="reply-footer">';
                     html += '        <button class="like-button3" data-pnum="' + reply.pnum + '" data-cnum="' + reply.cnum + '" data-rnum="' + reply.rnum + '" data-uid="' + reply.uid + '" data-liked="' + reply.check + '">';
                     html += '          <span class="like-icon">' + (reply.check ? '❤️' : '🤍') + '</span>';
@@ -640,22 +788,17 @@
                     html += '        <span id="like-count3-' + reply.rnum + '">' + reply.rlikes + '</span>';
                     html += '      </div>';
                     if (reply.nickname === loginNickname) {
-                        html += '      <button type="button" class="edit-reply-btn" onclick="showReplyEditForm(' + reply.rnum + ')">수정</button>';
-                        html += '      <div class="delete-reply-btn" data-pnum="' + reply.pnum + '" data-rnum="' + reply.rnum + '">';
-                        html += '        <button type="button" class="delete-reply">삭제</button>';
-                        html += '      </div>';
-
-                        // 수정된 편집폼 (form 태그, 숨겨진 input, textarea, 버튼 포함)
                         html += '      <form id="replyEditForm-' + reply.rnum + '" style="display:none; width: 100%; margin-top:10px;">';
                         html += '        <input type="hidden" name="rnum" value="' + reply.rnum + '">';
                         html += '        <input type="hidden" name="pnum" value="' + reply.pnum + '">';
                         html += '        <textarea name="rbody" rows="2" style="width:100%;">' + reply.rbody + '</textarea>';
-                        html += '        <button type="button" onclick="submitReplyEdit(' + reply.rnum + ')">확인</button>';
-                        html += '        <button type="button" onclick="cancelReplyEditForm(' + reply.rnum + ')">취소</button>';
+                        html += '        <div class="edit-form-buttons">';
+                        html += '          <button type="button" onclick="submitReplyEdit(' + reply.rnum + ')">확인</button>';
+                        html += '          <button type="button" onclick="cancelReplyEditForm(' + reply.rnum + ')">취소</button>';
+                        html += '        </div>';
                         html += '      </form>';
                     }
                     html += '    </div>';
-
                 }
             }
 
@@ -695,4 +838,3 @@
         bindLikeEvents();
     });
 </script>
-

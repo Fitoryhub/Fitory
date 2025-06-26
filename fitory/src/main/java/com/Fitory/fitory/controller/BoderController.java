@@ -144,9 +144,8 @@ public class BoderController {
 
         for (CommentDTO commentDTO : commentDTOS) {
             for (Clike c : clike) {
-                if (c.getUid().equals(uid) && commentDTO.getCnum() == (c.getCnum())) {
-                    boolean liked = true;
-                    commentDTO.setLiked(liked);
+                if (c.getUid().equals(uid) && commentDTO.getCnum().equals(c.getCnum())) {
+                    commentDTO.setLiked(true);
                 }
             }
         }
@@ -174,7 +173,7 @@ public class BoderController {
 
         for (RepliesDTO repliesDTO : replies) {
             for (Rlikes rlike : rlikes) {
-                if (rlike.getUid().equals(uid) && rlike.getRnum() == repliesDTO.getRnum()) {
+                if (rlike.getUid().equals(uid) && rlike.getRnum().equals(repliesDTO.getRnum())) {
                     repliesDTO.setCheck(true);
                 }
             }
