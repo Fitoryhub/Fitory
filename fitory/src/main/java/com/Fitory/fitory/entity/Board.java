@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -20,8 +20,9 @@ public class Board {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer pnum;
     private String ptitle;
-   @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate pdate;
+
+   @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime pdate;
    private String pbody;
    private String pcategory;
    @Column(columnDefinition = "INT DEFAULT 0")
@@ -32,7 +33,7 @@ public class Board {
     @PrePersist
     public void prePersist() {
         if (pdate == null) {
-            pdate = LocalDate.now();  // 날짜만 포함
+            pdate = LocalDateTime.now();  // 날짜만 포함
         }
     }
 }

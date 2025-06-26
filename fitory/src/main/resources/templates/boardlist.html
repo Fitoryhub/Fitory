@@ -260,7 +260,7 @@
                 <option value="all" th:selected="${selectedCategory == 'all'}">전체게시글</option>
                 <option value="운동꿀팁" th:selected="${selectedCategory == '운동꿀팁'}">운동꿀팁</option>
                 <option value="운동질문" th:selected="${selectedCategory == '운동질문'}">운동질문</option>
-                <option value="식단후기" th:selected="${selectedCategory == '식단후기'}">식단후기</option>
+                <option value="오늘의 식단" th:selected="${selectedCategory == '오늘의 식단'}">오늘의 식단</option>
             </select>
             <input type="text" name="ptitle" placeholder="제목 검색" th:value="${param.ptitle}">
             <button type="submit">검색</button>
@@ -283,7 +283,7 @@
             <td th:text="${list.pcategory}"></td>
             <td th:text="${list.ptitle}"></td>
             <td th:text="${list.nickname}"></td>
-            <td th:text="${list.pdate}"></td>
+            <td th:text="${list.pdate.toLocalDate()}"></td>
             <td th:text="${list.plike}"></td>
             <td th:text="${list.plook}"></td>
         </tr>

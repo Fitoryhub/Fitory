@@ -391,7 +391,7 @@
 
         <div class="meta">
             <span th:text="'작성자: ' + ${board.nickname}">작성자</span>
-            <span th:text="'작성일: ' + ${board.pdate}">작성일</span>
+            <span th:text="'작성일: ' + ${board.pdate.toLocalDate()}">작성일</span>
             <span th:text="'조회수: ' + ${board.plook}">조회수</span>
 
             <button class="like-button"
@@ -419,7 +419,7 @@
 
         <div class="images" th:if="${files != null}">
             <div th:each="file : ${files}">
-                <img th:src="@{'/files/' + ${file.filename}}" alt="첨부 이미지">
+                <img th:src="@{'/image/' + ${file.filename}}" alt="첨부 이미지">
             </div>
         </div>
 

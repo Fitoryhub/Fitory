@@ -32,7 +32,7 @@ public class MainController {
         SessionUserDTO userInfo = (SessionUserDTO) session.getAttribute("userInfo");
         model.addAttribute("userInfo", userInfo);
         String category ="운동꿀팁";
-        List<Board> boardList =boardService.top5(category);
+        List<Board> boardList =boardService.top7(category);
 
         model.addAttribute("boardList", boardList);
         return "main";
@@ -47,7 +47,7 @@ public class MainController {
     @GetMapping("/boards")
     @ResponseBody
     public  Map<String,Object> selectboards(@RequestParam String category) {
-        List<Board> boardList =boardService.top5(category);
+        List<Board> boardList =boardService.top7(category);
         Map<String,Object> map = new HashMap<>();
         map.put("boardList",boardList);
         return map;

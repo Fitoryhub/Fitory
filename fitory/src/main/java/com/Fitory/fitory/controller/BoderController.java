@@ -89,7 +89,7 @@ public class BoderController {
         System.out.println("확인한다" + board.getNickname());
 
         boardService.savepost(board);
-        String ProjectPath = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\files";
+        String ProjectPath = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\image";
 
 
 
@@ -399,7 +399,7 @@ public class BoderController {
         Board first =boardService.searchoneboard(board.getPnum());
         List <Files> files=fileService.findfile(first.getPnum());
 
-        String ProjectPath = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\files";
+        String ProjectPath = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\image";
 
         for(Files f : files) {
             String name=f.getFilename();
@@ -439,7 +439,7 @@ public class BoderController {
         boardService.boarddelete(pnum);
 
 
-        String basePath = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\files";
+        String basePath = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\image";
 
         for (Files file : files) {
             String filename = file.getFilename();

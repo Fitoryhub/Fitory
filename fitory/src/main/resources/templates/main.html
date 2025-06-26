@@ -24,7 +24,7 @@
 
         header {
             height: 80px;
-            background-color: #10b981; /* emerald-500 */
+            background-color: #10b981;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -39,7 +39,7 @@
         nav.headMenu {
             display: flex;
             gap: 25px;
-            align-items: center; /* 세로 가운데 정렬 */
+            align-items: center;
         }
 
         nav.headMenu a {
@@ -53,7 +53,7 @@
         }
 
         nav.headMenu a:hover {
-            color: #d1fae5; /* 밝은 그린 */
+            color: #d1fae5;
         }
 
         .user-info {
@@ -62,17 +62,7 @@
             gap: 10px;
         }
 
-        .user-info {
-            font-weight: 700;
-            font-size: 18px;
-            line-height: 1;
-            padding: 8px 0;
-            color: white;
-            white-space: nowrap;
-        }
-
-        .nickname {
-            text-decoration: underline;
+        .user-info, .nickname {
             font-weight: 700;
             font-size: 18px;
             line-height: 1;
@@ -101,10 +91,11 @@
         section#body1 {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: stretch;
             background-color: #e0f7ec;
-            padding: 40px 3%;
-            height: 320px;
+            padding: 20px 3%;
+            min-height: 320px; /* Changed from height: 320px to min-height to allow growth */
+            gap: 15px;
         }
 
         section#body1 > div {
@@ -113,18 +104,119 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
             height: 100%;
             display: flex;
-            justify-content: center;
-            align-items: center;
             flex-direction: column;
-            padding: 20px;
+            padding: 8px;
+            overflow: auto;
+            flex-grow: 1; /* Ensure boards grow to fill available space */
         }
 
-        #board1, #board2 {
-            width: 30%;
+        #board1, #board2, #board3 {
+            flex: 1;
+            max-width: 33.33%;
         }
 
-        #board3 {
-            width: 30%;
+        #board1 {
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+
+        #board1 table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 12px;
+            overflow: hidden;
+            table-layout: fixed;
+            background-color: #ffffff;
+            height: 100%; /* Ensure table fills the container height */
+        }
+
+        #board1 thead tr:first-child td {
+            padding: 2px;
+            text-align: center;
+            background-color: #e8f5e9;
+            border-bottom: 1px solid #dfe8e1;
+            position: sticky;
+            top: 0;
+            z-index: 3;
+        }
+
+        #board1 thead tr:first-child td button {
+            background-color: #2ecc71;
+            border: none;
+            padding: 3px 6px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.75rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            width: 100%;
+        }
+
+        #board1 thead tr:first-child td button:hover {
+            background-color: #27ae60;
+            transform: translateY(-1px);
+        }
+
+        #board1 thead tr:first-child td button:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+        }
+
+        #board1 thead tr:last-child {
+            background-color: #27ae60;
+            color: white;
+        }
+
+        #board1 thead tr:last-child th {
+            padding: 4px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            word-break: keep-all;
+            user-select: none;
+            border-bottom: 1px solid #e8f5e9;
+        }
+
+        #board1 thead tr:last-child th:nth-child(1),
+        #board1 tbody tr td:first-child {
+            width: 60%;
+        }
+
+        #board1 thead tr:last-child th:nth-child(2),
+        #board1 tbody tr td:nth-child(2) {
+            width: 20%;
+        }
+
+        #board1 thead tr:last-child th:nth-child(3),
+        #board1 tbody tr td:nth-child(3) {
+            width: 20%;
+        }
+
+        #board1 tbody tr {
+            transition: background-color 0.2s ease;
+        }
+
+        #board1 tbody tr:hover {
+            background-color: #e8f5e9;
+            cursor: pointer;
+        }
+
+        #board1 tbody tr td {
+            padding: 4px;
+            font-size: 0.8rem;
+            color: #333;
+            border-bottom: 1px solid #dfe8e1;
+            text-align: center;
+        }
+
+        #board1 tbody tr td:first-child {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        #board1 tbody tr:last-child td {
+            border-bottom: none;
         }
 
         section#body2 {
@@ -184,86 +276,34 @@
             justify-content: center;
             font-size: 14px;
         }
-        #board1 {
-            width: 100%;
-            max-width: 480px;
-            margin: 0 auto;
-            font-family: 'Noto Sans KR', sans-serif;
-            padding: 10px;
-            box-sizing: border-box;
-            /* 높이 조금만 더 키움 */
-            max-height: 350px;
-            /* 스크롤 없이 전체 다 보이도록 */
-            overflow-y: visible;
+
+        @media (max-width: 1200px) {
+            body {
+                min-width: 100%;
+            }
+
+            section#body1 {
+                flex-direction: column;
+                min-height: auto; /* Reset min-height for mobile */
+                padding: 15px 3%;
+            }
+
+            #board1, #board2, #board3 {
+                max-width: 100%;
+                margin-bottom: 15px;
+            }
+
+            #board1 thead tr:first-child td button {
+                font-size: 0.7rem;
+                padding: 2px 5px;
+            }
+
+            #board1 thead tr:last-child th,
+            #board1 tbody tr td {
+                font-size: 0.75rem;
+                padding: 3px;
+            }
         }
-
-        #board1 table {
-            width: 100%;
-            border-collapse: collapse;
-            box-shadow: 0 0 8px rgba(0,0,0,0.1);
-            border-radius: 8px;
-            overflow: hidden;
-            table-layout: fixed;
-        }
-
-        #board1 thead tr:first-child td {
-            padding: 8px;
-            text-align: center;
-            background-color: #f0f7f4;
-            border-bottom: none;
-
-            /* 맨 위 버튼행 고정 */
-            position: sticky;
-            top: 0;
-            z-index: 3;
-        }
-
-        #board1 thead tr:first-child td button {
-            background-color: #27ae60;
-            border: none;
-            padding: 6px 12px;
-            color: white;
-            font-weight: 600;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.25s ease;
-            font-size: 0.9rem;
-        }
-
-        #board1 thead tr:first-child td button:hover {
-            background-color: #2ecc71;
-        }
-
-        /* 두 번째 헤더 행 스타일 */
-        #board1 thead tr:last-child {
-            background-color: #2ecc71;
-            color: white;
-
-            /* 두 번째 행 hover 제거 */
-            cursor: default !important;
-        }
-
-        #board1 thead tr:last-child:hover {
-            background-color: #2ecc71 !important; /* hover 효과 제거 */
-        }
-
-        #board1 thead tr:last-child th {
-            padding: 10px 8px;
-            font-weight: 600;
-            font-size: 0.95rem;
-            word-break: keep-all;
-            user-select: none; /* 선택 방지 */
-        }
-
-        #board1 tbody tr:hover {
-            background-color: #d4f0e4;
-            cursor: pointer;
-        }
-
-        #board1 tbody tr:last-child td {
-            border-bottom: none;
-        }
-
     </style>
 </head>
 <body>
@@ -302,7 +342,7 @@
                     <button onclick="selectboards('운동질문')">운동질문 게시판</button>
                 </td>
                 <td>
-                    <button onclick="selectboards('식단후기')">식단후기 게시판</button>
+                    <button onclick="selectboards('오늘의 식단')">오늘의 식단 게시판</button>
                 </td>
             </tr>
             <tr>
@@ -325,6 +365,7 @@
 
     <div id="board2">
         <h2>게시판 2</h2>
+
     </div>
     <div id="board3">
         <h2>공지사항</h2>
