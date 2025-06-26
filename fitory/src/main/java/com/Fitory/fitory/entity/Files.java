@@ -21,6 +21,8 @@ public class Files {
 
     private String filename;
 
+    private Integer dnum;
+
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate fdate;
 

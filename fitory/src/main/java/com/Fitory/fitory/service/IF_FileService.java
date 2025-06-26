@@ -10,4 +10,6 @@ public interface IF_FileService {
     void filesave(Files files);
 
     List<Files> findfile(Integer pnum);
+
+    List<Files> findfile2(Integer dnum);
 }
