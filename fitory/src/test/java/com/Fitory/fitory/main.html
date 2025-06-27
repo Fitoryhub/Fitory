@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Fitory 건강한 삶을 위한 첫 걸음</title>
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
+    <!-- 구글 폰트 또는 pretendard 사용 -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet"/>
+
+    <style>
+       * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+
+        body {
+            min-width: 1200px;
+            background-color: #f9fafb;
+            color: #333;
+        }
+
+        /* === 헤더 영역 === */
+        header {
+            height: 80px;
+            background-color: #10b981;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        #logo img {
+            height: 60px;
+        }
+
+        /* === 네비게이션 메뉴 === */
+        nav.headMenu {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+
+        nav.headMenu a {
+            color: white;
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 18px;
+            padding: 8px 0;
+            transition: color 0.2s;
+        }
+
+        nav.headMenu a:hover {
+            color: #d1fae5;
+        }
+
+        /* === 드롭다운 메뉴 === */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content a {
+            color: #333 !important;
+            font-size: 7px;
+            padding: 6px 10px;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.2s, color 0.2s;
+            border: none;
+        }
+
+        .dropdown-content {
+            display: none; /* 처음엔 숨김 */
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: white;
+            white-space: nowrap;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            border-radius: 6px;
+            padding: 6px 10px;
+            gap: 10px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .dropdown.show .dropdown-content {
+            display: flex;
+        }
+
+        /* === 유저 정보 (닉네임, 로그아웃) === */
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nickname {
+            font-weight: 700;
+            font-size: 18px;
+            color: white;
+            white-space: nowrap;
+        }
+
+        .logout {
+            font-weight: 500;
+            font-size: 16px;
+            color: white;
+            border: 1px solid white;
+            border-radius: 4px;
+            padding: 4px 10px;
+            transition: background-color 0.3s, color 0.3s;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .logout:hover {
+            background-color: white;
+            color: #10b981;
+        }
+
+
+        section#body1 {
+            display: flex;
+            justify-content: space-between;
+            align-items: stretch;
+            background-color: #e0f7ec;
+            padding: 20px 3%;
+            min-height: 320px; /* Changed from height: 320px to min-height to allow growth */
+            gap: 15px;
+            height: 90px;
+        }
+
+        section#body1 > div {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 8px;
+            overflow: auto;
+            flex-grow: 1; /* Ensure boards grow to fill available space */
+        }
+
+        #board1, #board2, #board3 {
+            flex: 1;
+            max-width: 33.33%;
+            height: 900px;
+        }
+
+        #board1 {
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+
+        #board1 table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 12px;
+            overflow: hidden;
+            table-layout: fixed;
+            background-color: #ffffff;
+            height: 100%; /* Ensure table fills the container height */
+        }
+
+        #board1 thead tr:first-child td {
+            padding: 2px;
+            text-align: center;
+            background-color: #e8f5e9;
+            border-bottom: 1px solid #dfe8e1;
+            position: sticky;
+            top: 0;
+            z-index: 3;
+        }
+
+        #board1 thead tr:first-child td button {
+            background-color: #2ecc71;
+            border: none;
+            padding: 3px 6px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.75rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            width: 100%;
+        }
+
+        #board1 thead tr:first-child td button:hover {
+            background-color: #27ae60;
+            transform: translateY(-1px);
+        }
+
+        #board1 thead tr:first-child td button:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+        }
+
+        #board1 thead tr:last-child {
+            background-color: #27ae60;
+            color: white;
+        }
+
+        #board1 thead tr:last-child th {
+            padding: 4px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            word-break: keep-all;
+            user-select: none;
+            border-bottom: 1px solid #e8f5e9;
+        }
+
+        #board1 thead tr:last-child th:nth-child(1),
+        #board1 tbody tr td:first-child {
+            width: 60%;
+        }
+
+        #board1 thead tr:last-child th:nth-child(2),
+        #board1 tbody tr td:nth-child(2) {
+            width: 20%;
+        }
+
+        #board1 thead tr:last-child th:nth-child(3),
+        #board1 tbody tr td:nth-child(3) {
+            width: 20%;
+        }
+
+        #board1 tbody tr {
+            transition: background-color 0.2s ease;
+        }
+
+        #board1 tbody tr:hover {
+            background-color: #e8f5e9;
+            cursor: pointer;
+        }
+
+        #board1 tbody tr td {
+            padding: 4px;
+            font-size: 0.8rem;
+            color: #333;
+            border-bottom: 1px solid #dfe8e1;
+            text-align: center;
+        }
+
+        #board1 tbody tr td:first-child {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        #board1 tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        section#body2 {
+            padding: 60px 5%;
+            background-color: #fff;
+        }
+
+        #body2title {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        #body2title h2 {
+            font-size: 32px;
+            color: #111827;
+        }
+
+        .menu {
+            width: 21.7%;
+            margin: 1.5%;
+            background-color: #f0fdf4;
+            border: 1px solid #d1fae5;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+            vertical-align: top;
+        }
+
+        .menu:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
+        }
+
+        .menu h2 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #065f46;
+        }
+
+        .menu h3 {
+            font-size: 16px;
+            font-weight: 400;
+            color: #374151;
+        }
+
+        footer {
+            background-color: #1f2937;
+            color: #d1d5db;
+            height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        @media (max-width: 1200px) {
+            body {
+                min-width: 100%;
+            }
+
+            section#body1 {
+                flex-direction: column;
+                min-height: auto; /* Reset min-height for mobile */
+                padding: 15px 3%;
+            }
+
+            #board1, #board2, #board3 {
+                max-width: 100%;
+                margin-bottom: 15px;
+            }
+
+            #board1 thead tr:first-child td button {
+                font-size: 0.7rem;
+                padding: 2px 5px;
+            }
+
+            #board1 thead tr:last-child th,
+            #board1 tbody tr td {
+                font-size: 0.75rem;
+                padding: 3px;
+            }
+        }
+        #board3 {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+            padding: 8px 12px;
+            font-family: 'Noto Sans KR', sans-serif;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        #board3 .notice-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #10b981;
+            padding-bottom: 4px;
+            border-bottom: 2px solid #d1fae5;
+            display: flex;
+            align-items: center;
+        }
+
+        #board3 table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+            background-color: #ffffff;
+            border-radius: 8px;
+        }
+
+        #board3 thead {
+            background-color: #10b981;
+            color: white;
+        }
+
+        #board3 thead th {
+            padding: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        #board3 tbody td {
+            padding: 5px 5px;
+            font-size: 13px;
+            color: #374151;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        #board3 tbody tr:hover {
+            background-color: #f0fdf4;
+            transition: background-color 0.2s ease;
+        }
+
+        #board3 tbody td:first-child {
+            text-align: center;
+            font-weight: 600;
+            color: #10b981;
+            width: 15%;
+        }
+    </style>
+</head>
+<body>
+
+<!-- 헤더 -->
+<header>
+    <div id="logo">
+        <a href="/"><img src="/image/logo2.png" alt="Fitory 로고"/></a>
+    </div>
+    <nav class="headMenu">
+    <a href="/">홈</a>
+
+    <div class="dropdown" id="boardDropdown">
+        <a href="javascript:void(0);" id="boardToggle">게시판</a>
+        <div class="dropdown-content" id="dropdownMenu">
+            <a href="/boardlist?category=all">전체 게시판</a>
+            <a href="/boardlist?category=운동">운동 게시판</a>
+            <a href="/boardlist?category=식단">식단 게시판</a>
+            <a href="/boardlist?category=자유">자유 게시판</a>
+        </div>
+    </div>
+
+    <a href="/diet/board" id="diet">식단</a>
+    <a href="#">운동</a>
+    <a href="#">건강정보</a>
+    <a href="/mypage" id="myPage">마이페이지</a>
+
+    <div class="user-info" th:if="${userInfo != null}">
+        <p class="nickname" th:text="${userInfo.nickname} + '님'"></p>
+        <a href="/logout" class="logout">로그아웃</a>
+    </div>
+    <a href="/login" th:if="${userInfo == null}">로그인</a>
+</nav>
+</header>
+
+<!-- 본문 1 -->
+<section id="body1">
+    <div id="board1">
+        <table>
+            <thead>
+            <tr>
+                <td>
+                    <button onclick="selectboards('운동꿀팁')">운동꿀팁 게시판</button>
+                </td>
+                <td>
+                    <button onclick="selectboards('운동질문')">운동질문 게시판</button>
+                </td>
+                <td>
+                    <button onclick="selectboards('오늘의 식단')">오늘의 식단 게시판</button>
+                </td>
+            </tr>
+            <tr>
+                <th>제목</th>
+                <th>좋아요</th>
+                <th>조회수</th>
+            </tr>
+            </thead>
+            <tbody id="board-body">
+            <tr th:each="list : ${boardList}"
+                th:onclick="|location.href='/detailview?pnum=' + ${list.pnum}|"
+                style="cursor: pointer;">
+                <td th:text="${list.ptitle}">제목</td>
+                <td th:text="'좋아요: ' + ${list.plike}">좋아요</td>
+                <td th:text="'조회수: ' + ${list.plook}">조회수</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="board2">
+        <h2>게시판 2</h2>
+
+    </div>
+    <div id="board3">
+    <div class="notice-title">📢 공지사항</div>
+        <table>
+            <thead>
+            <tr>
+                <th style="width: 12%; border-right: 2px solid">번호</th>
+                <th>내용</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr><td>1</td><td>운동 루틴 추천 기능이 추가되었습니다.</td></tr>
+            <tr><td>2</td><td>로그인 시 세션 보안 강화 작업이 완료되었습니다.</td></tr>
+            <tr><td>3</td><td>식단 분석 페이지가 새롭게 개편되었습니다.</td></tr>
+            <tr><td>4</td><td>게시판 카테고리 선택 기능이 개선되었습니다.</td></tr>
+            <tr><td>5</td><td>일정 관리 서비스가 베타 오픈되었습니다.</td></tr>
+            <tr><td>6</td><td>사이트 정기 점검 일정 안내 (6/30 오전 2시)</td></tr>
+            <tr><td>7</td><td>건강정보 콘텐츠 업데이트 안내</td></tr>
+            <tr><td>8</td><td>마이페이지 기능 개선 예정 안내</td></tr>
+            <tr><td>9</td><td>피드백 이벤트 당첨자 발표</td></tr>
+            <tr><td>10</td><td>Fitory 서비스 이용약관 개정 안내</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- 본문 2 -->
+<section id="body2">
+    <div id="body2title">
+        <h2>우리의 서비스</h2>
+    </div>
+    <a class="menu">
+        <h2>맞춤 식단 추천</h2>
+        <h3>개인의 건강 상태와 목표에 <br>맞는 식단을 제공합니다.</h3>
+    </a>
+    <a class="menu" onclick="location.href='/diet/analyze'">
+        <h2>영양정보 분석</h2>
+        <h3>섭취한 식단의 영양을 빠르게 분석합니다.</h3>
+    </a>
+    <a class="menu" href="/exercise" id="exercise">
+        <h2>운동 루틴 추천</h2>
+        <h3>목표에 맞는 루틴을 <br> 계획해드립니다.</h3>
+    </a>
+    <a class="menu" href="/calendar">
+        <h2>일정 관리</h2>
+        <h3>운동 및 식단을 쉽게 <br> 스케줄링하세요.</h3>
+    </a>
+</section>
+
+<!-- 푸터 -->
+<footer>
+    © 2025 Fitory. 건강한 삶을 위한 파트너
+</footer>
+
+</body>
+</html>
+<script th:inline="javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("boardToggle").addEventListener("click", function (e) {
+            e.stopPropagation();
+            const dropdown = document.getElementById("boardDropdown");
+            dropdown.classList.toggle("show");
+        });
+
+        document.getElementById("dropdownMenu").addEventListener("click", function (e) {
+            e.stopPropagation();
+        });
+
+        document.addEventListener("click", function () {
+            document.getElementById("boardDropdown").classList.remove("show");
+        });
+
+        document.getElementById("myPage").addEventListener("click", () => {
+            let userId = [[${userInfo}]];
+            if (userId == null) {
+                alert("로그인이 필요합니다.");
+            }
+        });
+
+        document.getElementById("exercise").addEventListener("click", () => {
+            let userId = [[${userInfo}]];
+            if (userId == null) {
+                alert("로그인이 필요합니다.");
+            }
+        });
+    });
+
+    function selectboards(category) {
+        $.ajax({
+            url: "/boards",
+            method: "get",
+            dataType: "json",
+            data: {
+                category: category
+            }, success: function (data) {
+                let tbody = $('#board-body');
+                tbody.empty();
+
+                data.boardList.forEach(function (list) {
+                    let row = $('<tr>')
+                        .attr('onclick', `location.href='/detailview?pnum=${list.pnum}'`)
+                        .append($('<td>').text(list.ptitle))
+                        .append($('<td>').text(`좋아요: ${list.plike}`))
+                        .append($('<td>').text(`조회수: ${list.plook}`));
+                    tbody.append(row);
+                });
+            },
+            error: function () {
+                alert('게시글을 불러오지 못했습니다.');
+            }
+        })
+    }
+
+</script>
