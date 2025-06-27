@@ -96,6 +96,7 @@
             padding: 20px 3%;
             min-height: 320px; /* Changed from height: 320px to min-height to allow growth */
             gap: 15px;
+            height: 90px;
         }
 
         section#body1 > div {
@@ -113,6 +114,7 @@
         #board1, #board2, #board3 {
             flex: 1;
             max-width: 33.33%;
+            height: 900px;
         }
 
         #board1 {
@@ -304,6 +306,65 @@
                 padding: 3px;
             }
         }
+        #board3 {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+            padding: 8px 12px;
+            font-family: 'Noto Sans KR', sans-serif;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        #board3 .notice-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #10b981;
+            padding-bottom: 4px;
+            border-bottom: 2px solid #d1fae5;
+            display: flex;
+            align-items: center;
+        }
+
+        #board3 table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+            background-color: #ffffff;
+            border-radius: 8px;
+        }
+
+        #board3 thead {
+            background-color: #10b981;
+            color: white;
+        }
+
+        #board3 thead th {
+            padding: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        #board3 tbody td {
+            padding: 5px 5px;
+            font-size: 13px;
+            color: #374151;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        #board3 tbody tr:hover {
+            background-color: #f0fdf4;
+            transition: background-color 0.2s ease;
+        }
+
+        #board3 tbody td:first-child {
+            text-align: center;
+            font-weight: 600;
+            color: #10b981;
+            width: 15%;
+        }
     </style>
 </head>
 <body>
@@ -368,7 +429,27 @@
 
     </div>
     <div id="board3">
-        <h2>공지사항</h2>
+    <div class="notice-title">📢 공지사항</div>
+        <table>
+            <thead>
+            <tr>
+                <th style="width: 12%; border-right: 2px solid">번호</th>
+                <th>내용</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr><td>1</td><td>운동 루틴 추천 기능이 추가되었습니다.</td></tr>
+            <tr><td>2</td><td>로그인 시 세션 보안 강화 작업이 완료되었습니다.</td></tr>
+            <tr><td>3</td><td>식단 분석 페이지가 새롭게 개편되었습니다.</td></tr>
+            <tr><td>4</td><td>게시판 카테고리 선택 기능이 개선되었습니다.</td></tr>
+            <tr><td>5</td><td>일정 관리 서비스가 베타 오픈되었습니다.</td></tr>
+            <tr><td>6</td><td>사이트 정기 점검 일정 안내 (6/30 오전 2시)</td></tr>
+            <tr><td>7</td><td>건강정보 콘텐츠 업데이트 안내</td></tr>
+            <tr><td>8</td><td>마이페이지 기능 개선 예정 안내</td></tr>
+            <tr><td>9</td><td>피드백 이벤트 당첨자 발표</td></tr>
+            <tr><td>10</td><td>Fitory 서비스 이용약관 개정 안내</td></tr>
+            </tbody>
+        </table>
     </div>
 </section>
 

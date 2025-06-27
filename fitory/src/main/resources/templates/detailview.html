@@ -419,7 +419,7 @@
 
         <div class="images" th:if="${files != null}">
             <div th:each="file : ${files}">
-                <img th:src="@{'/image/' + ${file.filename}}" alt="첨부 이미지">
+                <img th:src="@{'./image/' + ${file.filename}}" alt="첨부 이미지">
             </div>
         </div>
 
