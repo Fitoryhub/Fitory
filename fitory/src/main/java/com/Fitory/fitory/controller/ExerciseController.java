@@ -136,4 +136,20 @@ public class ExerciseController {
         exerciseData.put("list", elist);
         return exerciseData;
     }
+
+
+    @GetMapping("/exerciselist")
+    public String exerciselist(HttpSession session, Model model) {
+        List<String> oxygen = EService.findByOxygen("N");
+        List<String> Noxygen =EService.findByOxygen("Y");
+        List<String> bodyweight =EService.findbyBodyweight("N");
+        List<String> Nbodyweight =EService.findbyBodyweight("Y");
+
+        model.addAttribute("oxygen", oxygen);
+        model.addAttribute("Noxygen", Noxygen);
+        model.addAttribute("bodyweight", bodyweight);
+        model.addAttribute("Nbodyweight", Nbodyweight);
+
+        return "exercise_list";
+    }
 }

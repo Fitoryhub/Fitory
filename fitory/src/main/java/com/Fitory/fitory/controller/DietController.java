@@ -15,10 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 
 @RequiredArgsConstructor
@@ -175,6 +172,23 @@ public class DietController {
 		pvo.setPage(currpage);
 		pvo.setTotalCount(totalCount);
 		return pvo;
+	}
+
+	@GetMapping("/mymeal")
+	@ResponseBody
+	public Map<String, Object> mymeal(@RequestParam("userid") String userid) {
+		List <Diet> diets = dservice.selectdiet_id(userid);
+		ArrayList<String> foodname = new ArrayList<>();
+		for(Diet diet:diets){
+			Long did=diet.getDiet_id();
+			List<Diet_food> foods=dfservice.getdflist(did.intValue());
+			for(Diet_food food:foods){
+				foodname.add(food.getFoodname());
+			}
+		}
+		Map<String, Object> list = new HashMap<>();
+		list.put("list", foodname);
+		return list;
 	}
 
 }

@@ -85,4 +85,14 @@ public class ExerciseServiceImpl implements ExerciseService {
     public List<Exercises> getMatchingExercises_v4(int met) {
         return ERepo.findAllByMetrank(met);
     }
+
+    @Override
+    public List<String> findByOxygen(String s) {
+        return ERepo.findByOxygen(s);
+    }
+
+    @Override
+    public List<String> findbyBodyweight(String s) {
+        return ERepo.findByBodyweight(s);
+    }
 }

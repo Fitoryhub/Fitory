@@ -309,24 +309,28 @@
         .then(() => fetch('/api/exercise/set'))
         .then(res => res.json())
         .then(data => {
-            const header = document.querySelector(".recommendation-header");
-            const list = document.querySelector(".recommendation-list");
-            header.innerHTML = `
-                <div id="setTime">선택 시간: ${data.time}분</div>
-                <div id="setCal">목표 칼로리: ${data.cal}kcal</div>
-            `;
-            list.innerHTML = '';
-            data.elist.forEach(exercise => {
-                const div = document.createElement('div');
-                div.classList.add('recommendation-item');
-                div.innerHTML = `
-                    <label>
-                        <input type="checkbox" name="selectExercise" value="${exercise.name}">
-                        <span>${exercise.name}</span>
-                    </label>
+                const header = document.querySelector(".recommendation-header");
+                const list = document.querySelector(".recommendation-list");
+                header.innerHTML = `
+                    <div id="setTime">선택 시간: ${data.time}분</div>
+                    <div id="setCal">목표 칼로리: ${data.cal}kcal</div>
                 `;
-                list.appendChild(div);
-            });
+                    list.innerHTML = '';
+                if(data != null){
+                    data.elist.forEach(exercise => {
+                        const div = document.createElement('div');
+                        div.classList.add('recommendation-item');
+                        div.innerHTML = `
+                            <label>
+                                <input type="checkbox" name="selectExercise" value="${exercise.name}">
+                                <span>${exercise.name}</span>
+                            </label>
+                        `;
+                        list.appendChild(div);
+                    });
+                }else{
+                         div.innerHTML = ``
+                }
         });
     });
 
