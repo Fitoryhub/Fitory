@@ -276,6 +276,7 @@
                   result.textContent = "사용가능한 이메일 입니다.";
                   chk[3] = true;
                }else{
+                  result.style.color = "red";
                   result.textContent = "※중복된 이메일입니다. 다른 이메일을 입력해주세요";
                   chk[3] = false;
                   return;

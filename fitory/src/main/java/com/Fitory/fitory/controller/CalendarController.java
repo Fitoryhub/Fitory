@@ -73,9 +73,13 @@ public class CalendarController {
         int tempage = Integer.parseInt(user.getBirth().substring(0, 4));
         int age = Year.now().getValue() - tempage;
 
-
-        UserHealthInfoDTO userHealthInfoDTO =  userHealthService.findInfo(userInfo.getId());
-        String targetW = userHealthInfoDTO.getTargetWeight();
+        String targetW;
+        if(userHealthService.findInfo(userInfo.getId())==null){
+            targetW = null;
+        }else{
+            UserHealthInfoDTO userHealthInfoDTO =  userHealthService.findInfo(userInfo.getId());
+            targetW = userHealthInfoDTO.getTargetWeight();
+        }
 
         double bmi = (w / ((h / 100.0) * (h / 100.0)));
 

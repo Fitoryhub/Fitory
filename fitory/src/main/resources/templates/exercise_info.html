@@ -353,6 +353,7 @@ window.onload = function(){
            url: "http://192.168.0.41:5000/api/data",
            method: "GET",
            dataType: "json",
+           timeout: 5000,
            success: function(data){
            console.log(data);
            let html = "";
@@ -362,8 +363,10 @@ window.onload = function(){
            });
            document.getElementById("exercisetop5").innerHTML = html;
             },
-           error: function(){
-               alert("실패, 요청 주소 : " + url)
+           error: function(jqXHR, textStatus, errorThrown){
+                 alert("top5 운동 요청 실패 (" + textStatus + "): " + errorThrown)
+                 html = '<li>사용자들이 선택한 운동 리스트를 가져오지 못했습니다.</li>'
+                  document.getElementById("exercisetop5").innerHTML = html;
            }
        });
 }
