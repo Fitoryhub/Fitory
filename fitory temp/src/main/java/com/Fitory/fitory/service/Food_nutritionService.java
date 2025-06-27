@@ -29,8 +29,7 @@ public class Food_nutritionService implements IF_Food_nutritionService{
 			temp_f.setProtein(fvo.getProtein());
 			temp_f.setCarbohydrate(fvo.getCarbohydrate());
 			temp_f.setFat(fvo.getFat());
-			temp_f.setSodium(fvo.getSodium());
-			temp_f.setSugar(fvo.getSugar());
+			temp_f.setStandard(fvo.getStandard());
 			fnrepo.save(temp_f);
 			tempdf.add(dfvo);
 		}

@@ -25,10 +25,7 @@ public class Diet {
 	
 	@Column(name="goal_type", columnDefinition="ENUM('WEIGHT_LOSS','MUSCLE_GAIN','MAINTAIN')")
 	private String goal_type;
-	
-	@Column(name="plan_type", columnDefinition="ENUM('DAY','WEEK')")
-	private String plan_type;
-	
+
 	@Column(name="created_at", columnDefinition = "DATETIME")
 	@ColumnDefault("SYSDATE()")
 	private String created_at;

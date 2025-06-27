@@ -14,6 +14,9 @@ public class FoodlistDTO {
 	private double fat;
 	private double protein;
 	private int calories;
-	private double sugar;
-	private double sodium;
+	private int amount;
+	private String mealtype;
+	private int totalcal;
+	private String standard;
+
 }

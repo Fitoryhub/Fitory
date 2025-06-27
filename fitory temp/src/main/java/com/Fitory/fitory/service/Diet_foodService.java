@@ -1,5 +1,6 @@
 package com.Fitory.fitory.service;
 
+import com.Fitory.fitory.dto.FoodlistDTO;
 import com.Fitory.fitory.entity.Diet_food;
 import com.Fitory.fitory.repository.Diet_foodRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,12 +14,14 @@ public class Diet_foodService implements IF_DIet_foodService{
 	
 	private final Diet_foodRepository dfrepo;
 	
-	public void insert(int did, List<Integer> fnid, List<Diet_food> dflist) {
+	public void insert(int did, List<Integer> fnid, List<Diet_food> dflist, List<FoodlistDTO> flist) {
 		for(int i=0; i<fnid.size(); i++) {
 			Diet_food df=new Diet_food();
 			df.setDietId(did);
 			df.setFood_nutrition_id(fnid.get(i));
 			df.setFoodname(dflist.get(i).getFoodname());
+			df.setMealtype(flist.get(i).getMealtype());
+			df.setAmount(flist.get(i).getAmount());
 			dfrepo.save(df);
 		}
 	}

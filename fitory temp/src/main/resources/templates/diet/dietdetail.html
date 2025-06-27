@@ -44,6 +44,10 @@
           cursor: pointer;
           font-size: 18px;
         }
+        
+        #delete{
+          float: right;
+        }
 
         #detail_content td span {
           margin-left: 6px;
@@ -125,8 +129,6 @@
                 </td>
             </tr>
             <tr>
-                <td th:if="${diet.plan_type=='WEEK'}">주기: 주간</td>
-                <td th:if="${diet.plan_type=='DAY'}">주기: 하루</td>
                 <td th:if="${diet.goal_type=='WEIGHT_LOSS'}">목표: 감량</td>
                 <td th:if="${diet.goal_type=='MUSCLE_GAIN'}">목표: 증량</td>
                 <td th:if="${diet.goal_type=='MAINTAIN'}">목표: 유지</td>
@@ -136,13 +138,34 @@
                 <td>
                     <table id="diet_list">
                         <tr>
-                            <td>식단내용</td>
+                            <td id="cont_title">식단내용</td>
                         </tr>
-                        <tr th:each="food : ${dflist}">
-                            <td th:text="${food.foodname}"></td>
+                        <tr id="breakfast">
+                          <td>아침:</td>
+                          <td th:each="food:${dflist}" th:if="${food.mealtype=='breakfast'}">
+                            <span th:text="${food.foodname}">음식이름</span>
+                          </td>
+                        </tr>
+                        <tr id="launch">
+                          <td>점심:</td>
+                          <td th:each="food:${dflist}" th:if="${food.mealtype=='launch'}">
+                            <span th:text="${food.foodname}">음식이름</span>
+                          </td>
+                        </tr>
+                        <tr id="dinner">
+                          <td>저녁:</td>
+                          <td th:each="food:${dflist}" th:if="${food.mealtype=='dinner'}">
+                            <span th:text="${food.foodname}">음식이름</span>
+                          </td>
+                        </tr>
+                        <tr id="else">
+                          <td>그외:</td>
+                          <td th:each="food:${dflist}" th:if="${food.mealtype=='else'}">
+                            <span th:text="${food.foodname}">음식이름</span>
+                          </td>
                         </tr>
                         <tr>
-                            <td th:text="'총 칼로리: '+${dnutrition.calories}+'kcal'"></td>
+                          <td id="tcal" th:text="'총 칼로리: '+${dnutrition.calories}+'kcal'"></td>
                         </tr>
                     </table>
                 </td>
@@ -151,7 +174,7 @@
               <td colspan="4">
                 🖼️이미지<br>
                 <div class="imgbox" th:each="file: ${files}">
-                  <img th:src="@{'/files/'+${file.filename}}" alt="이미지">
+                  <img th:src="@{'./files/'+${file.filename}}" alt="이미지">
                   <br th:if="${fileStat.index%4==3}">
                 </div>
               </td>
@@ -159,6 +182,22 @@
         </table>
     </section>
     <script>
+        $(document).ready(function(){
+          let maxcol=0;
+          $('#diet_list tr').each(function(index){
+            let row=$(this);
+            let rowcolcnt=row.find('td').length;
+            if(maxcol<=rowcolcnt){
+              maxcol=rowcolcnt
+            }
+            if(rowcolcnt==1 && index>0 && index<5){
+              row.append('<td><span>없음</span></td>')
+            }
+          })
+          $('#cont_title').attr('colspan',maxcol);
+          $('#tcal').attr('colspan',maxcol);
+        })
+
         $('#delete').click(()=>{
           let delconfirm=confirm('삭제하시겠습니까?');
           if(delconfirm){

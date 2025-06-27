@@ -22,8 +22,11 @@ public class Diet_food {
 	@Column(name="food_name", columnDefinition = "VARCHAR(100)")
 	private String foodname;
 	
-	@Column(name="quantity", columnDefinition = "VARCHAR(50)")
-	private String quantity;
+	@Column(name="amount", columnDefinition = "VARCHAR(50)")
+	private int amount;
+
+	@Column(name="mealtype", columnDefinition="ENUM('breakfast','launch','dinner','else')")
+	private String mealtype;
 	
 	@Column(name="food_nutrition_id", columnDefinition = "BIGINT")
 	private int food_nutrition_id;

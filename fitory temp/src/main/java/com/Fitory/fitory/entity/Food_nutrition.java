@@ -31,9 +31,6 @@ public class Food_nutrition {
 	@Column(name="fat", columnDefinition = "DECIMAL(6,2)")
 	private double fat;
 	
-	@Column(name="sodium", columnDefinition = "DECIMAL(8,2)")
-	private double sodium;
-	
-	@Column(name="sugar", columnDefinition = "DECIMAL(6,2)")
-	private double sugar;
+	@Column(name="standard")
+	private String standard;
 }

@@ -131,17 +131,17 @@ public class DietController {
 	@ResponseBody
 	public Map<String, String> save(@RequestPart DietsaveDTO dsv, @RequestPart(name = "files", required = false) MultipartFile[] files) throws Exception {
 		dservice.insert(dsv.getDiet());
-		List<FoodlistDTO> flist=dsv.getFoodlist();
-		int did=dservice.getid(dsv.getDiet().getTitle());
-		List<Diet_food> dflist=fnservice.insert(flist, did);
-		List<Integer> fnid=fnservice.getidlist(did);
-		dfservice.insert(did, fnid, dflist);
-		dnservice.insert(did,flist);
+		List<FoodlistDTO> flist = dsv.getFoodlist();
+		int did = dservice.getid(dsv.getDiet().getTitle());
+		List<Diet_food> dflist = fnservice.insert(flist, did);
+		List<Integer> fnid = fnservice.getidlist(did);
+		dfservice.insert(did, fnid, dflist, flist);
+		dnservice.insert(did, flist);
 
 		String ProjectPath = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\files";
-		for (MultipartFile onefile : files) {
-			if(!onefile.isEmpty()){
-				UUID uuid=UUID.randomUUID();
+		if(files!=null) {
+			for (MultipartFile onefile : files) {
+				UUID uuid = UUID.randomUUID();
 				String filename=uuid+"_"+onefile.getOriginalFilename();
 				File savfile=new File(ProjectPath,filename);
 				onefile.transferTo(savfile);
@@ -162,6 +162,7 @@ public class DietController {
 	@GetMapping("/diet/delete")
 	@ResponseBody
 	public String delete(@RequestParam(name = "diet_id") int did){
+		fileService.delete(did);
 		plikeService.deletdplike(did);
 		dfservice.delete(did);
 		fnservice.delete(did);

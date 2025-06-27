@@ -19,7 +19,8 @@ public class Diet_nutritionService implements IF_Diet_nutritionService{
 		Diet_nutrition dn=new Diet_nutrition();
 		int tcal=0, tpro=0, tcarbo=0, tfat=0;
 		for(int i=0; i<flist.size(); i++) {
-			tcal+=flist.get(i).getCalories();
+			int tg=flist.get(i).getAmount();
+			tcal+=flist.get(i).getTotalcal();
 			tcarbo+=flist.get(i).getCarbohydrate();
 			tfat+=flist.get(i).getFat();
 			tpro+=flist.get(i).getProtein();

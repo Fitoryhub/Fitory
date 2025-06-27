@@ -31,5 +31,10 @@ public class FileService implements IF_FileService{
         return fileRepository.findByDnum(dnum);
     }
 
+    @Override
+    public void delete(int dnum) {
+        fileRepository.deleteByDnum(dnum);
+    }
+
 
 }
