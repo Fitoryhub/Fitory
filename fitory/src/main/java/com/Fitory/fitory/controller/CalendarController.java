@@ -223,8 +223,7 @@ public class CalendarController {
 
             List<Diet_nutrition> dnn = new ArrayList<>();
 
-            // ❗ 문제 발생 위치: diet_id가 일치하면 해당 diet의 nutrition 정보를 음식에 할당함
-            // => 이건 해당 음식 하나의 영양이 아니라, diet 전체 영양정보임
+
             for (Diet_nutrition d : dn) {
                 for (Diet_food d2 : dnn1) {
                     if (d.getDietid() == d2.getDietId()) {
@@ -233,13 +232,13 @@ public class CalendarController {
                 }
             }
 
-            // 🔧 수정 필요: dnn.size() == foodnames.size()가 보장되지 않으면 예외 발생 가능
+
             for (int i = 0; i < dnn.size(); i++) {
                 detailfood df = new detailfood();
                 df.setName(foodnames.get(i));
                 df.setTime(dtimeList.get(i));
 
-                // ❗ 문제 발생 위치: 해당 음식의 영양정보가 아니라, diet 단위의 영양정보가 사용됨
+
                 df.setCalories(fcal.get(i));
                 df.setProtein(dnn.get(i).getProtein());
                 df.setCarbohydrate(dnn.get(i).getCarbohydrate());
