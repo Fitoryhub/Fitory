@@ -221,6 +221,83 @@
             border-bottom: none;
         }
 
+        .board-section {
+           
+            width: 80%;
+            text-align: center;
+        }
+
+        #board2 {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+
+        #board2 h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #10b981;
+            margin-bottom: 12px;
+        }
+
+        .slider-container {
+            position: relative;
+            width: 100%;
+            max-width: 100%;
+            height: 320px;
+            background-color: #f0fdf4;
+            border: 2px solid #d1fae5;
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slider img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* 🚫 cover → ✅ contain */
+            display: none;
+            transition: opacity 0.8s ease-in-out;
+            background-color: #fff;
+        }
+
+        .slider img.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .slider-description {
+            margin-top: 15px;
+            font-size: 0.95rem;
+            color: #374151;
+            text-align: center;
+            line-height: 1.5;
+            padding: 0 10px;
+        }
+
+        /* 반응형 대응 */
+        @media (max-width: 1200px) {
+            #board2 {
+                height: auto;
+            }
+
+            .slider-container {
+                height: 220px;
+            }
+
+            .slider-description {
+                font-size: 0.85rem;
+            }
+        }
+
         section#body2 {
             padding: 60px 5%;
             background-color: #fff;
@@ -424,10 +501,19 @@
         </table>
     </div>
 
-    <div id="board2">
-        <h2>게시판 2</h2>
+    <div id="board2" class="board-section">
+    <h2>오늘의 음식 사진</h2>
+        <div class="slider-container">
+            <div class="slider">
+            <!-- JS로 이미지 슬라이드 자동 생성 -->
+            </div>
+        </div>
 
+        <div class="slider-description">
+            <p>그날 그날 먹은 음식을 함께 공유해보세요! <br>인기 있는 메뉴를 구경하고 소통할 수 있어요</p>
+        </div>
     </div>
+
     <div id="board3">
     <div class="notice-title">📢 공지사항</div>
         <table>
@@ -484,6 +570,35 @@
 </body>
 </html>
 <script th:inline="javascript">
+     const images = [
+        './image/2b7f3cad-5558-418c-905c-64fb4f3066f4_312c3425-dd23-4068-922d-2d2065247f1d_fs2.jpg',
+        './image/84066aae-edb5-438d-9fde-c7a6aa2c5dd1_91b957c5-f658-4d09-8b55-7c4b1c0df937_fs2.jpg',
+        './image/02780ac8-e560-42b9-893b-d4c42467438f_zz.jpg',
+        './image/72e372e3-376f-4c60-97c1-233cc6f0db06_c86792bf-dc7c-4c80-a08c-b3ae703ad957_fs2.jpg',
+        './image/e11e8b95-bc9a-4186-bd71-c7722e086529_08a85954-b540-455f-ab26-c7c049dead91_fs2.jpg'
+    ];
+
+    const slider = document.querySelector('.slider');
+
+    // 이미지 요소 생성
+    images.forEach((src, index) => {
+        const img = document.createElement('img');
+        img.src = src;
+        if (index === 0) img.classList.add('active');
+        slider.appendChild(img);
+    });
+
+    let current = 0;
+    const changeSlide = () => {
+        const imgs = document.querySelectorAll('.slider img');
+        imgs[current].classList.remove('active');
+        current = (current + 1) % imgs.length;
+        imgs[current].classList.add('active');
+    };
+
+    setInterval(changeSlide, 10000); // 10초 간격
+
+
     document.getElementById("myPage").addEventListener("click", () => {
         let userId = [[${userInfo}]];
         if (userId == null) {
