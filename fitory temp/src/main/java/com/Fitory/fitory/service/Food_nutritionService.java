@@ -35,7 +35,11 @@ public class Food_nutritionService implements IF_Food_nutritionService{
 		}
 		return tempdf;
 	}
-	
+
+	public List<Food_nutrition> getfnlist(int did){
+		return fnrepo.findAllBydietId(did);
+	}
+
 	public List<Integer> getidlist(int id) {
 		return fnrepo.findBydietId(id);
 	}

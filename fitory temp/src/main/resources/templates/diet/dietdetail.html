@@ -32,9 +32,8 @@
           vertical-align: top;
         }
 
-        #detail_content td:first-child {
+        #detail_content td:first-child{
           font-weight: 600;
-          width: 25%;
           color: #111827;
         }
 
@@ -54,7 +53,7 @@
           font-weight: bold;
         }
 
-        #detail_content td div {
+        #detail_content td .imgbox{
           width: 200px;
           height: 125px;
           display: inline-block;
@@ -79,7 +78,7 @@
         }
 
         #diet_list {
-          width: 100%;
+          width: 70%;
           margin-top: 20px;
           border: 1px solid #d1fae5;
           border-radius: 8px;
@@ -103,6 +102,31 @@
           color: #065f46;
           font-weight: bold;
           font-size: 18px;
+        }
+
+        #diet_list td .fbox{
+          position: relative;
+          display: inline-block;
+        }
+
+        #diet_list td .foodname{
+          border: 1px solid;
+          border-color: #011f16;
+          border-radius: 20px;
+        }
+
+        #diet_list td .fdata {
+          display: none;
+          position: absolute;
+          background-color: #d7dfdc;
+          border-radius: 5px;
+          width: 150px;
+          padding: 6px;
+          z-index: 10;
+        }
+
+        #diet_list .fbox:hover .fdata{
+          display: inline-block;
         }
     </style>
     <section id="detail_view">
@@ -134,41 +158,79 @@
                 <td th:if="${diet.goal_type=='MAINTAIN'}">목표: 유지</td>
             </tr>
             <tr>
-                <td colspan="3" style="vertical-align: top; width: 510px;" th:text="${diet.explanation}">작성내용</td>
-                <td>
-                    <table id="diet_list">
-                        <tr>
-                            <td id="cont_title">식단내용</td>
-                        </tr>
-                        <tr id="breakfast">
-                          <td>아침:</td>
-                          <td th:each="food:${dflist}" th:if="${food.mealtype=='breakfast'}">
-                            <span th:text="${food.foodname}">음식이름</span>
-                          </td>
-                        </tr>
-                        <tr id="launch">
-                          <td>점심:</td>
-                          <td th:each="food:${dflist}" th:if="${food.mealtype=='launch'}">
-                            <span th:text="${food.foodname}">음식이름</span>
-                          </td>
-                        </tr>
-                        <tr id="dinner">
-                          <td>저녁:</td>
-                          <td th:each="food:${dflist}" th:if="${food.mealtype=='dinner'}">
-                            <span th:text="${food.foodname}">음식이름</span>
-                          </td>
-                        </tr>
-                        <tr id="else">
-                          <td>그외:</td>
-                          <td th:each="food:${dflist}" th:if="${food.mealtype=='else'}">
-                            <span th:text="${food.foodname}">음식이름</span>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td id="tcal" th:text="'총 칼로리: '+${dnutrition.calories}+'kcal'"></td>
-                        </tr>
-                    </table>
-                </td>
+                <td colspan="4" style="vertical-align: top; width: 510px;" th:text="${diet.explanation}">작성내용</td>
+            </tr>
+            <tr>
+              <td colspan="3" style="width: 70%;">
+                  <table id="diet_list">
+                      <tr>
+                          <td id="cont_title">식단내용</td>
+                      </tr>
+                      <tr id="breakfast">
+                        <td style="width: 70px;">아침:</td>
+                        <td>
+                          <div class="fbox" th:each="food:${dflist}" th:if="${food.mealtype=='breakfast'}">
+                            <span class="foodname" th:text="${food.foodname}">음식이름</span>
+                            <div class="fdata" th:each="nutr:${fnlist}" th:if="${nutr.food_nutrition_id==food.food_nutrition_id}">
+                              <span th:text="'칼로리: '+${nutr.calories}+'kcal'">칼로리</span><br>
+                              <span th:text="'탄수화물: '+${nutr.carbohydrate}+'g'">탄수화물</span><br>
+                              <span th:text="'단백질: '+${nutr.protein}+'g'">단백질</span><br>
+                              <span th:text="'지방: '+${nutr.fat}+'g'">지방</span><br>
+                              <span th:text="'기준량: '+${nutr.standard}">기준량</span>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr id="launch">
+                        <td>점심:</td>
+                        <td>
+                          <div class="fbox" th:each="food:${dflist}" th:if="${food.mealtype=='launch'}">
+                            <span class="foodname" th:text="${food.foodname}">음식이름</span>
+                            <div class="fdata" th:each="nutr:${fnlist}" th:if="${nutr.food_nutrition_id==food.food_nutrition_id}">
+                              <span th:text="'칼로리: '+${nutr.calories}+'kcal'">칼로리</span><br>
+                              <span th:text="'탄수화물: '+${nutr.carbohydrate}+'g'">탄수화물</span><br>
+                              <span th:text="'단백질: '+${nutr.protein}+'g'">단백질</span><br>
+                              <span th:text="'지방: '+${nutr.fat}+'g'">지방</span><br>
+                              <span th:text="'기준량: '+${nutr.standard}">기준량</span>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr id="dinner">
+                        <td>저녁:</td>
+                        <td>
+                          <div class="fbox" th:each="food:${dflist}" th:if="${food.mealtype=='dinner'}">
+                            <span class="foodname" th:text="${food.foodname}">음식이름</span>
+                            <div class="fdata" th:each="nutr:${fnlist}" th:if="${nutr.food_nutrition_id==food.food_nutrition_id}">
+                              <span th:text="'칼로리: '+${nutr.calories}+'kcal'">칼로리</span><br>
+                              <span th:text="'탄수화물: '+${nutr.carbohydrate}+'g'">탄수화물</span><br>
+                              <span th:text="'단백질: '+${nutr.protein}+'g'">단백질</span><br>
+                              <span th:text="'지방: '+${nutr.fat}+'g'">지방</span><br>
+                              <span th:text="'기준량: '+${nutr.standard}">기준량</span>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr id="else">
+                        <td>그외:</td>
+                        <td>
+                          <div class="fbox" th:each="food:${dflist}" th:if="${food.mealtype=='else'}">
+                            <span class="foodname" th:text="${food.foodname}">음식이름</span>
+                            <div class="fdata" th:each="nutr:${fnlist}" th:if="${nutr.food_nutrition_id==food.food_nutrition_id}">
+                              <span th:text="'칼로리: '+${nutr.calories}+'kcal'">칼로리</span><br>
+                              <span th:text="'탄수화물: '+${nutr.carbohydrate}+'g'">탄수화물</span><br>
+                              <span th:text="'단백질: '+${nutr.protein}+'g'">단백질</span><br>
+                              <span th:text="'지방: '+${nutr.fat}+'g'">지방</span><br>
+                              <span th:text="'기준량: '+${nutr.standard}">기준량</span>
+                            </div>
+                          </div> 
+                        </td>
+                      </tr>
+                      <tr>
+                        <td id="tcal" th:text="'총 칼로리: '+${dnutrition.calories}+'kcal'"></td>
+                      </tr>
+                  </table>
+              </td>
             </tr>
             <tr th:if="${files != null}">
               <td colspan="4">

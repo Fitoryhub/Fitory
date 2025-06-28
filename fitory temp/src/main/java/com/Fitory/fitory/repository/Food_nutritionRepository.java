@@ -18,4 +18,5 @@ public interface Food_nutritionRepository extends JpaRepository<Food_nutrition, 
 	@Query("select calories from Food_nutrition  WHERE food_nutrition_id=:id")
 	int getCaloriesByFood_nutrition_id(@Param("id") int id);
 
+	public List<Food_nutrition> findAllBydietId(int dietId);
 }

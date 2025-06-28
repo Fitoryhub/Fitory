@@ -59,6 +59,11 @@ public class DietController {
 		Diet_nutrition dnt=dnservice.getone(did);
 		model.addAttribute("dnutrition",dnt);
 
+		List<Food_nutrition> fnt=fnservice.getfnlist(did);
+		model.addAttribute("fnlist",fnt);
+		for(Food_nutrition fn:fnt){
+			System.out.println(fn.getFood_nutrition_id());
+		}
 		Plike dp=new Plike();
 		if(userInfo==null){
 			dp=null;
