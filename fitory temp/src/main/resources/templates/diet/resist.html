@@ -299,6 +299,9 @@
                                 fat:nut.fat,
                                 standard:nut.metric_serving_amount
                             }
+                            if(tempdata.standard==null){
+                                tempdata.standard='50g'
+                            }
                             templist.push(tempdata);
                         })
                         fcurrlist=templist;
@@ -368,6 +371,9 @@
                                 protein:nut.protein,
                                 fat:nut.fat,
                                 standard:nut.metric_serving_amount
+                            }
+                            if(tempdata.standard==null){
+                                tempdata.standard='50g'
                             }
                             templist.push(tempdata);
                         })
