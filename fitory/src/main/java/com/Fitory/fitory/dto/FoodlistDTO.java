@@ -8,12 +8,15 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class FoodlistDTO {
-	
+
 	private String food_name;
 	private double carbohydrate;
 	private double fat;
 	private double protein;
 	private int calories;
-	private double sugar;
-	private double sodium;
+	private int amount;
+	private String mealtype;
+	private int totalcal;
+	private String standard;
+
 }

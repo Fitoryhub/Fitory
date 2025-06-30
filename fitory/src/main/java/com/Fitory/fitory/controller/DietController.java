@@ -53,6 +53,9 @@ public class DietController {
 		Diet_nutrition dnt=dnservice.getone(did);
 		model.addAttribute("dnutrition",dnt);
 
+		List<Food_nutrition> fnt=fnservice.getfnlist(did);
+		model.addAttribute("fnlist",fnt);
+
 		Plike dp=new Plike();
 		if(userInfo==null){
 			dp=null;
@@ -129,7 +132,7 @@ public class DietController {
 		int did=dservice.getid(dsv.getDiet().getTitle());
 		List<Diet_food> dflist=fnservice.insert(flist, did);
 		List<Integer> fnid=fnservice.getidlist(did);
-		dfservice.insert(did, fnid, dflist);
+		dfservice.insert(did, fnid, dflist, flist);
 		dnservice.insert(did,flist);
 
 		String ProjectPath = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\image";
@@ -174,22 +177,6 @@ public class DietController {
 		return pvo;
 	}
 
-	@GetMapping("/mymeal")
-	@ResponseBody
-	public Map<String, Object> mymeal(@RequestParam("userid") String userid) {
-		List <Diet> diets = dservice.selectdiet_id(userid);
-		ArrayList<String> foodname = new ArrayList<>();
-		for(Diet diet:diets){
-			Long did=diet.getDiet_id();
-			List<Diet_food> foods=dfservice.getdflist(did.intValue());
-			for(Diet_food food:foods){
-				foodname.add(food.getFoodname());
-			}
-		}
-		Map<String, Object> list = new HashMap<>();
-		list.put("list", foodname);
-		return list;
-	}
 
 }
 

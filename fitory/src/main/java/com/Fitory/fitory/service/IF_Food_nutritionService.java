@@ -9,6 +9,7 @@ import java.util.List;
 public interface IF_Food_nutritionService {
 	
 	public List<Diet_food> insert(List<FoodlistDTO> flist, int did);
+	public List<Food_nutrition> getfnlist(int did);
 	public List<Integer> getidlist(int id);
 
     public void delete(int did);

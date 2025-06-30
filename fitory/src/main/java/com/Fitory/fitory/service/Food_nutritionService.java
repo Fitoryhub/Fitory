@@ -14,9 +14,9 @@ import java.util.List;
 @Service
 public class Food_nutritionService implements IF_Food_nutritionService{
 	
-	private final Food_nutritionRepository fnrepo; 
-	
-	
+	private final Food_nutritionRepository fnrepo;
+
+
 	public List<Diet_food> insert(List<FoodlistDTO> flist, int did) {
 		List<Diet_food> tempdf=new ArrayList<>();
 		for(int i=0; i<flist.size(); i++) {
@@ -29,12 +29,16 @@ public class Food_nutritionService implements IF_Food_nutritionService{
 			temp_f.setProtein(fvo.getProtein());
 			temp_f.setCarbohydrate(fvo.getCarbohydrate());
 			temp_f.setFat(fvo.getFat());
-			temp_f.setSodium(fvo.getSodium());
-			temp_f.setSugar(fvo.getSugar());
+			temp_f.setStandard(fvo.getStandard());
 			fnrepo.save(temp_f);
 			tempdf.add(dfvo);
 		}
 		return tempdf;
+	}
+
+
+	public List<Food_nutrition> getfnlist(int did){
+		return fnrepo.findAllBydietId(did);
 	}
 	
 	public List<Integer> getidlist(int id) {

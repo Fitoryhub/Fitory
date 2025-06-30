@@ -1,8 +1,8 @@
-<section xmlns:th="http://www.thymeleaf.org" 
-        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-        layout:decorate="~{common}" 
-        layout:fragment="content"
-        th:with="userInfo=${userInfo}">
+<section xmlns:th="http://www.thymeleaf.org"
+         xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+         layout:decorate="~{common}"
+         layout:fragment="content"
+         th:with="userInfo=${userInfo}">
     <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
     <section id="body2">
         <div id="body2title">
@@ -11,35 +11,20 @@
         <div>
             <input type="hidden" name="user_id" th:value="${userInfo.id}">
         </div>
-        <div style="display: flex; justify-content: space-between;">
-            <table id="resist_form" style="width: 48%; background: #ffffff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.06);">
+        <div style="display: flex; flex-wrap:wrap; justify-content: space-between;">
+            <table id="resist_form" style="width: 70%; background: #ffffff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.06);">
                 <tr>
-                    <td>제목</td>
+                    <td style="width: 85px;">제목</td>
                     <td><input type="text" name="title" style="width: 100%;"></td>
                 </tr>
                 <tr>
                     <td style="vertical-align: text-top;">설명</td>
-                    <td><textarea name="explanation" style="width: 100%; height: 300px;"></textarea></td>
-                </tr>
-                <tr>
-                    <td style="vertical-align: top;">식단</td>
-                    <td style="overflow-y: auto; max-height: 25px;"><span id="sel_food"></span></td>
-                </tr>
-                <tr>
-                    <td style="text-align: left;">
-                        <button onclick="del()" style="margin-left: 5px; background-color: #10b981; color: white; cursor: pointer; border: none; border-radius: 5px; width: 30px;">
-                            제외
-                        </button>
-                    </td>
-                    <td>
-                        총칼로리:
-                        <span id="sel_cal" style="display: inline-block;">0</span>kcal
-                    </td>
+                    <td><textarea name="explanation" style="resize:none; width: 100%; height: 300px;"></textarea></td>
                 </tr>
                 <tr>
                     <td>목표</td>
                     <td>
-                        <select name="goal_type" style="width: 100%;">
+                        <select name="goal_type" style="width: 30%;">
                             <option value="none">---</option>
                             <option value="WEIGHT_LOSS">감량</option>
                             <option value="MAINTAIN">유지</option>
@@ -48,17 +33,42 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>시간</td>
-                    <td>
-                        <select name="plan_type" style="width: 100%;">
-                            <option value="none">---</option>
-                            <option value="DAY">하루</option>
-                            <option value="WEEK">주간</option>
-                        </select>
+                    <td style="vertical-align: top;">식단</td>
+                    <td style="overflow-y: auto; max-height: 45px;">
+                        <table id="sel_food">
+                            <tr>
+                                <td>아침:</td>
+                                <td id="breakfast"></td>
+                            </tr>
+                            <tr>
+                                <td>점심:</td>
+                                <td id="launch"></td>
+                            </tr>
+                            <tr>
+                                <td>저녁:</td>
+                                <td id="dinner"></td>
+                            </tr>
+                            <tr>
+                                <td>그외:</td>
+                                <td id="else"></td>
+                            </tr>
+                        </table>
                     </td>
                 </tr>
                 <tr>
-                    <td>이미지 추가(필수 X)</td>
+                    <td style="text-align: left;">
+                        총칼로리
+                    </td>
+                    <td>
+                        <span id="sel_cal" style="display: inline-block;">0</span>kcal
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        이미지 추가
+                        <br>
+                        (필수 X)
+                    </td>
                     <td>
                         <input type="file" id="dimgfile" accept="image/*" multiple>
                     </td>
@@ -69,9 +79,18 @@
                     </td>
                 </tr>
             </table>
-            <table id="ftable" style="width: 48%; background: #ffffff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.06);">
+            <table id="ftable" style="width: 69%; background: #ffffff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.06);">
                 <tr>
-                    <td><h4 style="margin-bottom: 5px;">■ 음식 선택</h4></td>
+                    <td>
+                        <h4 style="margin-bottom: 5px; display:inline-block">■ 음식 선택</h4>
+                        <select name="mealtype" id="mealtype">
+                            <option value="else">-----</option>
+                            <option value="breakfast">아침</option>
+                            <option value="launch">점심</option>
+                            <option value="dinner">저녁</option>
+                        </select>
+                        <h6>(kor은 100g 기준)</h6>
+                    </td>
                 </tr>
                 <tr>
                     <td>
@@ -79,10 +98,10 @@
                             음식 검색:
                             <input type="text" name="food_name" id="food_name" placeholder="원하는 음식명을 입력하세요" style="display: inline-block;">
                             <button id="ksearch" style="margin-left: 5px; background-color: #10b981; color: white; cursor: pointer; border: none; border-radius: 5px; width: 65px;" >검색(kor)</button>
-                            <button id="esearch" style="margin-left: 5px; background-color: #10b981; color: white; cursor: pointer; border: none; border-radius: 5px; width: 65px;" >검색(eng)</button>
+                            <button id="esearch" style="margin-left: 5px; background-color: #10b981; color: white; cursor: pointer; border: none; border-radius: 5px; width: 70px;" >검색(eng)</button>
                             <button id="ftinsert" style="margin-left: 10px; background-color: #10b981; color: white; cursor: pointer; border: none; border-radius: 5px; width: 40px;">선택</button>
                         </div>
-                        <div id="fword" style="margin-bottom: 10px; color: #065f46; font-weight: bold; height: 25px;"></div>
+                        <div id="fword" style="margin-bottom: 10px; color: #065f46; font-weight: bold; height: 30px;"></div>
                         <table id="ftable_title" style="width: 100%; font-size: 13px; background-color: #f0fdf4;">
                             <tr>
                                 <th style="width: 170px;">음식명</th>
@@ -90,8 +109,7 @@
                                 <th style="width: 60px;">탄수화물</th>
                                 <th style="width: 60px;">단백질</th>
                                 <th style="width: 60px;">지방</th>
-                                <th style="width: 60px;">당류</th>
-                                <th style="width: 60px;">염분</th>
+                                <th style="width: 60px;">식사량<br>(기본 100g)</th>
                             </tr>
                         </table>
                         <div style="height: 350px; overflow-x: hidden; overflow-y: auto;">
@@ -127,7 +145,7 @@
         let fcurrlist=[];
         const servicekey='jL8PHgOttipXdQtu%2BF4YntDmduAIvBCSdB7OP5VHXLcT8zpvkYvHRaPOAiwsFhAZVTG9hy%2FiVtBt%2Bqn7aQmT0w%3D%3D';
         const base='https://apis.data.go.kr/1471000/FoodNtrCpntDbInfo02';
-        
+
         $('#ksearch').click(()=>{
             let foodname=$('#food_name').val();
             getpage(foodname).then(pageinfo=>{
@@ -158,8 +176,7 @@
                                 sentence1+='<td style="font-size: 13px; width: 50px;">'+item.carbohydrate+'</td>';
                                 sentence1+='<td style="font-size: 13px; width: 50px;">'+item.protein+'</td>';
                                 sentence1+='<td style="font-size: 13px; width: 50px;">'+item.fat+'</td>';
-                                sentence1+='<td style="font-size: 13px; width: 50px;">'+item.sugar+'</td>';
-                                sentence1+='<td style="font-size: 13px; width: 50px;">'+item.sodium+'</td>';
+                                sentence1+='<td style="font-size: 13px; width: 50px;"><input type="text" value="100" name="amount" style="width: 90%;">g</td>'
                                 sentence1+='</tr>';
                             })
                             sentence2+='<ol class="pagelist" id="pagebox" >';
@@ -219,8 +236,7 @@
                                 sentence1+='<td style="font-size: 13px; width: 50px;">'+item.carbohydrate+'</td>';
                                 sentence1+='<td style="font-size: 13px; width: 50px;">'+item.protein+'</td>';
                                 sentence1+='<td style="font-size: 13px; width: 50px;">'+item.fat+'</td>';
-                                sentence1+='<td style="font-size: 13px; width: 50px;">'+item.sugar+'</td>';
-                                sentence1+='<td style="font-size: 13px; width: 50px;">'+item.sodium+'</td>';
+                                sentence1+='<td style="font-size: 13px; width: 50px;"><input type="text" value="100" name="amount" style="width: 90%;">g</td>'
                                 sentence1+='</tr>';
                             })
                             sentence2+='<ol class="pagelist" id="pagebox">';
@@ -236,7 +252,7 @@
                             sentence2+='</ol>';
                             $('#ftable_content').html(sentence1);
                             $('#ft_pagelist').html(sentence2);
-                        });  
+                        });
                     },
                     error:function(){
                         alert('go page 오류');
@@ -249,7 +265,6 @@
             let foodname=$('#food_name').val();
 
             getdata2(0,foodname).then(rdata=>{
-                temporary=rdata;
                 $.ajax({
                     async:true,
                     url:'/diet/foodlist',
@@ -265,11 +280,6 @@
                         fcurrlist=rdata.results.food;
                         let templist=[];
                         $.each(fcurrlist,function(index){
-                            if(fcurrlist[index].servings.serving[0].sugar==undefined){
-                                fcurrlist[index].servings.serving[0].sugar=0;
-                            }else if(fcurrlist[index].servings.serving[0].sodium==undefined){
-                                fcurrlist[index].servings.serving[0].sodium=0;
-                            }
                             let item=fcurrlist[index];
                             sentence1+='<tr>';
                             sentence1+='<td style="width:30px"><input name="fcheck" type="checkbox" class="ftchk" style="width:30px" value='+index+'></td>';
@@ -279,8 +289,7 @@
                             sentence1+='<td style="font-size: 13px; width: 50px;">'+nut.carbohydrate+'</td>';
                             sentence1+='<td style="font-size: 13px; width: 50px;">'+nut.protein+'</td>';
                             sentence1+='<td style="font-size: 13px; width: 50px;">'+nut.fat+'</td>';
-                            sentence1+='<td style="font-size: 13px; width: 50px;">'+nut.sugar+'</td>';
-                            sentence1+='<td style="font-size: 13px; width: 50px;">'+nut.sodium+'</td>';
+                            sentence1+='<td style="font-size: 13px; width: 50px;"><input type="text" value="100" name="amount" style="width: 90%;">g</td>'
                             sentence1+='</tr>';
                             let tempdata={
                                 food_name:item.food_name,
@@ -288,8 +297,10 @@
                                 carbohydrate:nut.carbohydrate,
                                 protein:nut.protein,
                                 fat:nut.fat,
-                                sugar:nut.sugar,
-                                sodium:parseInt(nut.sodium)
+                                standard:nut.metric_serving_amount
+                            }
+                            if(tempdata.standard==null){
+                                tempdata.standard='50g'
                             }
                             templist.push(tempdata);
                         })
@@ -351,8 +362,7 @@
                             sentence1+='<td style="font-size: 13px; width: 50px;">'+nut.carbohydrate+'</td>';
                             sentence1+='<td style="font-size: 13px; width: 50px;">'+nut.protein+'</td>';
                             sentence1+='<td style="font-size: 13px; width: 50px;">'+nut.fat+'</td>';
-                            sentence1+='<td style="font-size: 13px; width: 50px;">'+nut.sugar+'</td>';
-                            sentence1+='<td style="font-size: 13px; width: 50px;">'+nut.sodium+'</td>';
+                            sentence1+='<td style="font-size: 13px; width: 50px;"><input type="text" value="100" name="amount" style="width: 90%;">g</td>'
                             sentence1+='</tr>';
                             let tempdata={
                                 food_name:item.food_name,
@@ -360,8 +370,10 @@
                                 carbohydrate:nut.carbohydrate,
                                 protein:nut.protein,
                                 fat:nut.fat,
-                                sugar:nut.sugar,
-                                sodium:parseInt(nut.sodium)
+                                standard:nut.metric_serving_amount
+                            }
+                            if(tempdata.standard==null){
+                                tempdata.standard='50g'
                             }
                             templist.push(tempdata);
                         })
@@ -378,7 +390,7 @@
                         }
                         sentence2+='</ol>';
                         $('#ftable_content').html(sentence1);
-                        $('#ft_pagelist').html(sentence2); 
+                        $('#ft_pagelist').html(sentence2);
                     },
                     error:function(){
                         alert('go page2 오류');
@@ -388,51 +400,60 @@
         }
 
         $('#ftinsert').click(()=>{
+            let sentence1='';
+            let meal=$('#mealtype').val();
             let templist=$('.ftchk');
-            $.each(templist,function(index){
+            let amountlist=$('input[name="amount"]');
+            $.each(templist,function(){
                 if($(this).is(":checked")==true){
                     if(fseleclist.length<20){
-                        fseleclist.push(fcurrlist[$(this).val()]);
-                        let tempjson=btoa(encodeURIComponent(JSON.stringify(fcurrlist[$(this).val()])));
-                        $('#sel_food').append('<input type="checkbox" name="selchk" value='+fcurrlist[$(this).val()].calories+'>')
-                        $('#sel_food').append(fcurrlist[$(this).val()].food_name+' '+`<input type="hidden" name="Foodlist" value='${tempjson}'>`);
-                        let scal=parseInt($('#sel_cal').text())+fcurrlist[$(this).val()].calories;
+                        let index=$(this).val();
+                        fcurrlist[index].amount=parseInt(amountlist[index].value);
+                        fcurrlist[index].mealtype=meal;
+                        let tcal=calctcal(fcurrlist[index].standard,fcurrlist[index].amount,fcurrlist[index].calories)
+                        fcurrlist[index].totalcal=tcal;
+                        fseleclist.push(fcurrlist[index]);
+                        let tempjson=btoa(encodeURIComponent(JSON.stringify(fcurrlist[index])));
+
+                        sentence1+=`<span onclick="del(this,${tcal})" style="font-size: 12px; border: 2px solid #10b981; background-color: #ecfdf5; border-radius: 6px; margin: 5px; cursor: pointer; display: inline-block;">
+                            ${fcurrlist[index].food_name}<input type="hidden" name="Foodlist" value='${tempjson}'>
+                            </span>`;
+
+                        if(meal=='breakfast'){
+                            $('#breakfast').append(sentence1);
+                        }else if(meal=='launch'){
+                            $('#launch').append(sentence1);
+                        }else if(meal=='dinner'){
+                            $('#dinner').append(sentence1);
+                        }else if(meal=='else'){
+                            $('#else').append(sentence1);
+                        }
+
+                        let scal=parseInt($('#sel_cal').text())+tcal;
                         $('#sel_cal').text(scal);
+                        sentence1='';
                     }
                 }
             })
             $('#ftable_content').html('');
             $('#ft_pagelist').html('');
-            $("#fword").text('');
+            $('#fword').text('');
+            $('#mealtype').val('else');
         })
 
-        function del(){
-            let chklist=document.getElementsByName('selchk');
-            let templist=JSON.parse(JSON.stringify(fseleclist));
-            for(let i=0; i<chklist.length; i++){
-                if(chklist[i].checked==true){
-                    let scal=parseInt($('#sel_cal').text())-chklist[i].value;
-                    $('#sel_cal').text(scal);
-                    for(let j=0; j<fseleclist.length; j++){
-                        if(fseleclist[j].food_name==templist[i].food_name){
-                            fseleclist.splice(j,1);
-                            console.log(j);
-                            j--;
-                        }
-                    }
-                }
-            }
-            $('#sel_food').text('');
-            for(let i=0; i<fseleclist.length; i++){
-                let tempjson=btoa(encodeURIComponent(JSON.stringify(fseleclist[i])));
-                $('#sel_food').append('<input type="checkbox" name="selchk" value="'+fseleclist[i].calories+'">')
-                $('#sel_food').append(fseleclist[i].food_name+' '+`<input type="hidden" name="Foodlist" value='${tempjson}'>`);
-            }
+        function del(e,tcal){
+            $(e).remove();
+            let scal=parseInt($('#sel_cal').text())-tcal;
+            $('#sel_cal').text(scal);
         }
 
         function save(){
-            if(document.getElementsByName('goal_type')[0].value=='none' || document.getElementsByName('plan_type')[0].value=='none'||document.getElementById('sel_food').innerText==''){
+            if(document.getElementsByName('goal_type')[0].value=='none' || document.getElementsByName('title')[0].value==''|| document.getElementsByName('explanation')[0].value==''){
                 alert('필수 항목을 채워주세요');
+                return;
+            }
+            if(document.getElementById('breakfast').innerHTML=='' &document.getElementById('launch').innerHTML==''& document.getElementById('dinner').innerHTML==''& document.getElementById('else').innerHTML==''){
+                 alert('식단 항목을 채워주세요');
                 return;
             }
             let formdata= new FormData();
@@ -450,7 +471,6 @@
                     title:document.getElementsByName('title')[0].value,
                     explanation:document.getElementsByName('explanation')[0].value,
                     goal_type:document.getElementsByName('goal_type')[0].value,
-                    plan_type:document.getElementsByName('plan_type')[0].value,
                     userid:document.getElementsByName('user_id')[0].value
                 },
                 foodlist:foodlist
@@ -463,7 +483,6 @@
             .then(res=>res.json())
             .then(data=>location.href=data.url)
             .catch(error=>console.log(error));
-            temporary=formdata;
         }
 
         async function getpage(foodname) {
@@ -503,8 +522,7 @@
                         carbohydrate:item.AMT_NUM6,
                         protein:item.AMT_NUM3,
                         fat:item.AMT_NUM4,
-                        sugar:item.AMT_NUM7,
-                        sodium:parseInt((item.AMT_NUM13).replace(/,/,""))
+                        standard:item.SERVING_SIZE
                     }
                     templist.push(tempdata);
                 })
@@ -513,31 +531,32 @@
                 console.log(error);
                 alert('get data 오류');
             }
-        } 
+        }
 
-    async function translateToEnglish(text) {
-        const response = await fetch(`http://192.168.0.63:3000/translate?text=${encodeURIComponent(text)}`);
-        const data = await response.json();
-        return data.translatedText;
-    }
+        async function getdata2(page,foodname){
+            let url='http://192.168.0.41:3000/getdata?foodname='+foodname+'&page='+page;
+            try{
+                const response= await fetch(url);
+                const data= await response.json();
+                const rdata=data.foods_search;
+                return rdata;
+            }catch (error) {
+                console.log(error);
+                alert('get page2 오류');
+            }
+        }
 
-    async function getdata2(page, foodname) {
-    // 한글이면 번역 처리
-    const isKorean = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(foodname);
-    if (isKorean) {
-        foodname = await translateToEnglish(foodname);
-        console.log("번역된 foodname:", foodname);
-    }
+        function calctcal(g,tg,cal){
+            let gram;
+            if(g.includes('.')){
+                gram=parseInt(g)
+            }else{
+                gram=parseInt(g.replace(/[^0-9]/g, ""));
+            }
+            let onecal=parseFloat(cal/gram);
+            let totalcal=parseInt(tg*onecal);
+            return totalcal;
+        }
 
-    const url = `http://192.168.0.41:3000/getdata?foodname=${encodeURIComponent(foodname)}&page=${page}`;
-    try {
-        const response = await fetch(url);
-        const data = await response.json();
-        return data.foods_search;
-    } catch (error) {
-        console.log(error);
-        alert('getdata2 오류');
-    }
-}
     </script>
 </section>

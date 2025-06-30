@@ -217,7 +217,7 @@ public class CalendarController {
                ;
 
                 dnn1.add(dietFood);
-                fcal.add(foodNutrition.getCalories());
+                fcal.add((double)foodNutrition.getCalories());
 
             }
 

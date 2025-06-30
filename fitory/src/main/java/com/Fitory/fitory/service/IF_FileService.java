@@ -12,4 +12,6 @@ public interface IF_FileService {
     List<Files> findfile(Integer pnum);
 
     List<Files> findfile2(Integer dnum);
+
+    void delete(int dnum);
 }
