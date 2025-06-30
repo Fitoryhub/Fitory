@@ -280,7 +280,7 @@
             <label for="password">새 비밀번호</label>
             <div class="password-wrapper">
                 <input type="password" id="password" name="password" placeholder="변경할 비밀번호 입력 (영문+숫자 8~16글자)" autocomplete="new-password" />
-                <button type="button" class="toggle-password" nclick="togglePasswordVisibility('password', this)">보기</button>
+                <button type="button" class="toggle-password" onclick="togglePasswordVisibility('password', this)">보기</button>
             </div>
 
             <label for="confirm">비밀번호 확인</label>
@@ -403,6 +403,13 @@
         alert("비밀번호가 일치하지 않습니다.")
       });
     }
+
+    document.getElementById('currentPassword').addEventListener('keydown', function(event) {
+      if (event.key === 'Enter') {
+        event.preventDefault(); // 이 입력창에서만 막힘
+        passChk(); // 비밀번호 확인만 실행
+      }
+    });
 
     function pass_null() {
         let pass =  document.getElementById('password').value;

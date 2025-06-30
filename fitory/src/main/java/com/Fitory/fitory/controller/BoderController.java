@@ -383,7 +383,7 @@ public class BoderController {
     @GetMapping("/boardmod")
     public String boardmod(Model model, @RequestParam("pnum") Integer pnum) {
 
-        Board board = new Board();
+        Board board = boardService.searchoneboard(pnum);
         board.setPnum(pnum);
         model.addAttribute("mod", true);
         model.addAttribute("board", board);

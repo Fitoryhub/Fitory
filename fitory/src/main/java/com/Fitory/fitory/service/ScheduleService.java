@@ -42,7 +42,7 @@ public class ScheduleService implements IF_ScheduleService {
     @Override
     public void del(DelscheduleDTO delschedule) {
 
-        Schedule s = new Schedule();
+
 
         String id = delschedule.getId();
 
@@ -51,6 +51,8 @@ public class ScheduleService implements IF_ScheduleService {
         LocalDate date1 = LocalDate.parse(date, DateTimeFormatter.ISO_LOCAL_DATE);
 
         String timeStr = delschedule.getTime();
+
+        timeStr += ":00";
 
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
 
