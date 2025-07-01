@@ -142,28 +142,29 @@
         }
 
         #board1 thead tr:first-child td button {
-            background-color: #2ecc71;
-            border: none;
-            padding: 3px 6px;
-            color: white;
+            background-color: transparent;  /* 배경 투명 */
+            color: #10b981;                 /* 초록색 텍스트 */
+            border: none;                  /* 테두리 제거 */
+            padding: 6px 0;
             font-weight: 600;
-            font-size: 0.75rem;
-            border-radius: 5px;
+            font-size: 0.85rem;
             cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            text-decoration: none;         /* 밑줄 제거 */
             width: 100%;
+            transition: color 0.3s ease;
+            box-shadow: none;
         }
 
         #board1 thead tr:first-child td button:hover {
-            background-color: #27ae60;
+            color: #059669;                /* 좀 더 진한 초록으로 호버 */
+            text-decoration: underline;   /* 호버 시 밑줄 */
             transform: translateY(-1px);
         }
 
         #board1 thead tr:first-child td button:active {
             transform: translateY(0);
-            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
         }
+
 
         #board1 thead tr:last-child {
             background-color: #27ae60;
@@ -222,7 +223,7 @@
         }
 
         .board-section {
-           
+
             width: 80%;
             text-align: center;
         }
@@ -456,7 +457,6 @@
         <a href="/boardlist">게시판</a>
         <a href="/diet/board" id="diet">식단</a>
         <a href="/exerciselist">운동정보</a>
-        <a href="#">건강정보</a>
         <a href="/mypage" id="myPage">마이페이지</a>
 
         <div class="user-info" th:if="${userInfo != null}">
