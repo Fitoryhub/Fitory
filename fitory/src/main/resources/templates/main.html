@@ -556,7 +556,7 @@
         <h2>맞춤 운동 등록</h2>
         <h3>목표에 맞는 루틴을 <br> 계획해드립니다.</h3>
     </a>
-    <a class="menu" href="/calendar">
+    <a class="menu" href="/calendar" id="calendar">
         <h2>일정 관리</h2>
         <h3>운동 및 식단을 쉽게 <br> 스케줄링하세요.</h3>
     </a>
@@ -607,6 +607,13 @@
     })
 
     document.getElementById("exercise").addEventListener("click", () => {
+        let userId = [[${userInfo}]];
+        if (userId == null) {
+            alert("로그인이 필요합니다.")
+        }
+    })
+
+    document.getElementById("calendar").addEventListener("click", () => {
         let userId = [[${userInfo}]];
         if (userId == null) {
             alert("로그인이 필요합니다.")

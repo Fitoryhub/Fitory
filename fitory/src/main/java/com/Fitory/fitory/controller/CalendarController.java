@@ -62,7 +62,7 @@ public class CalendarController {
     public String calendar(HttpSession session, Model model) {
         SessionUserDTO userInfo = (SessionUserDTO) session.getAttribute("userInfo");
         if (userInfo == null) {
-            return "redirect:/";
+            return "redirect:login";
         }
         session.setAttribute("userInfo", userInfo);
         User user = userRepository.findById(userInfo.getId())
