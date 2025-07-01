@@ -215,7 +215,7 @@
         }
 
         async function getname2(foodname,selectclasification){
-            let url='http://localhost:3000/getdata?foodname='+foodname;
+            let url='http://192.168.0.41:3000/getdata?foodname='+foodname;
             try{
                 const response= await fetch(url);
                 const data= await response.json();
