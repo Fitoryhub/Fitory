@@ -136,8 +136,8 @@ public class DietController {
 		dnservice.insert(did,flist);
 
 		String ProjectPath = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\image";
-		for (MultipartFile onefile : files) {
-			if(!onefile.isEmpty()){
+		if(files!=null){
+			for (MultipartFile onefile : files) {
 				UUID uuid=UUID.randomUUID();
 				String filename=uuid+"_"+onefile.getOriginalFilename();
 				File savfile=new File(ProjectPath,filename);
@@ -159,6 +159,7 @@ public class DietController {
 	@GetMapping("/diet/delete")
 	@ResponseBody
 	public String delete(@RequestParam(name = "diet_id") int did){
+		fileService.delete(did);
 		plikeService.deletdplike(did);
 		dfservice.delete(did);
 		fnservice.delete(did);
