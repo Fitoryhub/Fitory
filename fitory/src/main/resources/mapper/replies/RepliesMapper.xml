@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.Fitory.fitory.mapper.RepliesMapper">
+
+    <select id="replielistandlike" resultType="com.Fitory.fitory.dto.RepliesDTO">
+        SELECT
+            r.pnum,
+            r.rnum,
+            r.cnum,
+            r.id,
+            r.nickname,
+            r.rbody,
+            r.rdate,
+            r.rlikes,
+            CASE WHEN rl.id IS NOT NULL THEN TRUE ELSE FALSE END AS 'check'
+        FROM replies r
+            LEFT JOIN rlikes rl ON rl.rnum = r.rnum AND rl.id = #{uid}
+        WHERE r.pnum = #{num}
+        ORDER BY r.rdate ASC
+    </select>
+
+</mapper>

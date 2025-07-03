@@ -1,7 +1,9 @@
 package com.Fitory.fitory.service;
 
+import com.Fitory.fitory.dto.CommentDTO;
 import com.Fitory.fitory.entity.Clike;
 import com.Fitory.fitory.entity.Comment;
+import com.Fitory.fitory.mapper.CommentMapper;
 import com.Fitory.fitory.repository.CommentRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 @Service
 public class CommentService implements IF_CommentService{
+
+    @Autowired
+    private CommentMapper commentMapper;
 
     @Autowired
     private CommentRepository commentRepository;
@@ -61,8 +66,9 @@ public class CommentService implements IF_CommentService{
 
     //게시글 상세보기 했을시 글번호에 작성한 댓글 리스트를 가져오는 메서드
     @Override
-    public List<Comment> findcomment(Integer num) {
-         return commentRepository.findByPnumOrderByCnumAsc(num);
+    public List<CommentDTO> findcomment(Integer num , String uid) {
+
+        return commentMapper.commentlistandlike(num , uid);
     }
 }
 

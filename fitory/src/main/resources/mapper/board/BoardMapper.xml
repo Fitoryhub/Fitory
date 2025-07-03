@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.Fitory.fitory.mapper.BoardMapper">
+
+    <select id="detailboard" resultType="com.Fitory.fitory.dto.BoardDTO">
+        select b.id,
+               b.nickname,
+               b.pnum,
+               b.ptitle,
+               b.pdate,
+               b.pbody,
+               b.pcategory,
+               b.plook,
+               b.plike,
+               case when p.id is not null then true else false END as liked
+        From Board b
+                 LEFT JOIN plike p ON p.pnum = b.pnum AND p.id = #{uid}
+        where b.pnum = #{pnum}
+        order by b.pdate asc;
+    </select>
+
+</mapper>

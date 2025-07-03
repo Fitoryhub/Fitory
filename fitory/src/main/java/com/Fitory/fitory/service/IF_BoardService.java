@@ -1,5 +1,6 @@
 package com.Fitory.fitory.service;
 
+import com.Fitory.fitory.dto.BoardDTO;
 import com.Fitory.fitory.dto.PtitlePcategoryDTO;
 import com.Fitory.fitory.entity.Board;
 import org.springframework.data.domain.Page;
@@ -32,4 +33,6 @@ public interface IF_BoardService {
     List<Board> myboardlist(String uid);
 
     List<Board> top7(String category);
+
+    BoardDTO searchboardandlike(Integer pnum,String uid);
 }

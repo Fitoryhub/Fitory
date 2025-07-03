@@ -1,6 +1,8 @@
 package com.Fitory.fitory.service;
 
+import com.Fitory.fitory.dto.RepliesDTO;
 import com.Fitory.fitory.entity.Replies;
+import com.Fitory.fitory.mapper.RepliesMapper;
 import com.Fitory.fitory.repository.RepliesRepository;
 import com.Fitory.fitory.repository.RlikeRepository;
 import jakarta.transaction.Transactional;
@@ -15,16 +17,18 @@ public class ReplieService implements IF_ReplieService {
     private RepliesRepository repliesRepository;
     @Autowired
     private RlikeRepository rlikeRepository;
-
+    @Autowired
+    private RepliesMapper repliesMapper;
     // 글번호에 포함된 대댓글 리스트를 전부 불러오는 메서드 ( 댓글 번호에 맞게 뷰에서 배치한다)
     @Override
-    public List<Replies> findreplies(Integer num) {
-        return repliesRepository.findByPnum(num);
+    public List<RepliesDTO> findreplies(Integer num , String uid) {
+        return  repliesMapper.replielistandlike(uid ,num);
     }
 
     //대댓글 저장메서드 구현
     @Override
     public void repliessave(Replies replies) {
+        System.out.println(replies.getRbody());
         repliesRepository.save(replies);
     }
 

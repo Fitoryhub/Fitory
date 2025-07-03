@@ -1,7 +1,9 @@
 package com.Fitory.fitory.service;
 
+import com.Fitory.fitory.dto.BoardDTO;
 import com.Fitory.fitory.dto.PtitlePcategoryDTO;
 import com.Fitory.fitory.entity.Board;
+import com.Fitory.fitory.mapper.BoardMapper;
 import com.Fitory.fitory.repository.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,8 @@ public class BoardService implements IF_BoardService {
     private BoardRepository boardrepository;
     @Autowired
     private FileRepository filerepository;
+    @Autowired
+    private BoardMapper boardmapper;
 
     @Autowired
     private CommentRepository commentrepository;
@@ -120,6 +124,11 @@ public class BoardService implements IF_BoardService {
     @Override
     public List<Board> top7(String category) {
         return boardrepository.findTop7ByPcategoryOrderByPdateDesc(category);
+    }
+
+    @Override
+    public BoardDTO searchboardandlike(Integer pnum , String uid) {
+        return boardmapper.detailboard(uid,pnum);
     }
 
 

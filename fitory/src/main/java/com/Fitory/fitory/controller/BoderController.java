@@ -1,9 +1,6 @@
 package com.Fitory.fitory.controller;
 
-import com.Fitory.fitory.dto.CommentDTO;
-import com.Fitory.fitory.dto.PtitlePcategoryDTO;
-import com.Fitory.fitory.dto.RepliesDTO;
-import com.Fitory.fitory.dto.SessionUserDTO;
+import com.Fitory.fitory.dto.*;
 import com.Fitory.fitory.entity.*;
 import com.Fitory.fitory.service.*;
 import jakarta.servlet.http.HttpSession;
@@ -114,77 +111,19 @@ public class BoderController {
     //게시글 상세보기 메서드
     @GetMapping("/detailview")
     public String detailview(@RequestParam("pnum") Integer pnum, Model model, HttpSession session) {
-
-        boardService.updateplook(pnum);
-        Board board = boardService.searchoneboard(pnum);
         SessionUserDTO userdto = (SessionUserDTO) session.getAttribute("userInfo");
         String uid = userdto.getId();
-        Plike plike = plikeService.findplike(uid, pnum);
+        boardService.updateplook(pnum);
+        BoardDTO board = boardService.searchboardandlike(pnum , uid);
         List<Files> files = fileService.findfile(pnum);
-
-
-        Integer num = board.getPnum();
-        List<Comment> comments = commentService.findcomment(num);
-
-
-        List<CommentDTO> commentDTOS = new ArrayList<>();
-        for (Comment comment : comments) {
-            CommentDTO commentDTO = new CommentDTO();
-            commentDTO.setCnum(comment.getCnum());
-            commentDTO.setPnum(comment.getPnum());
-            commentDTO.setCbody(comment.getCbody());
-            commentDTO.setNickname(comment.getNickname());
-            commentDTO.setUid(comment.getUid());
-            commentDTO.setCdate(comment.getCdate());
-            commentDTO.setClike(comment.getClike());
-            commentDTOS.add(commentDTO);
-        }
-        List<Clike> clike = clikeService.findclike(num);
-
-
-        for (CommentDTO commentDTO : commentDTOS) {
-            for (Clike c : clike) {
-                if (c.getUid().equals(uid) && commentDTO.getCnum().equals(c.getCnum())) {
-                    commentDTO.setLiked(true);
-                }
-            }
-        }
-        List<Replies> replie = replieService.findreplies(num);
-
-
-        List<RepliesDTO> replies = new ArrayList<>();
-
-        for (Replies onereplie : replie) {
-            RepliesDTO repliesDTO = new RepliesDTO();
-            repliesDTO.setCnum(onereplie.getCnum());
-            repliesDTO.setPnum(onereplie.getPnum());
-            repliesDTO.setRlikes(onereplie.getRlikes());
-            repliesDTO.setRbody(onereplie.getRbody());
-            repliesDTO.setRdate(onereplie.getRdate());
-            repliesDTO.setNickname(onereplie.getNickname());
-            repliesDTO.setUid(onereplie.getUid());
-            repliesDTO.setRdate(onereplie.getRdate());
-            repliesDTO.setRnum(onereplie.getRnum());
-            replies.add(repliesDTO);
-        }
-
-        List<Rlikes> rlikes = rlikeService.findrlike(num);
-
-
-        for (RepliesDTO repliesDTO : replies) {
-            for (Rlikes rlike : rlikes) {
-                if (rlike.getUid().equals(uid) && rlike.getRnum().equals(repliesDTO.getRnum())) {
-                    repliesDTO.setCheck(true);
-                }
-            }
-        }
+        List<CommentDTO> commentlist = commentService.findcomment(pnum , uid);
+        List<RepliesDTO> replies = replieService.findreplies(pnum , uid);
 
         model.addAttribute("replies", replies);
-        model.addAttribute("commentlist", commentDTOS);
+        model.addAttribute("commentlist", commentlist);
         model.addAttribute("board", board);
         model.addAttribute("files", files);
-        model.addAttribute("plike", plike);
-        model.addAttribute("clike", clike);
+
 
 
         return "/detailview";
@@ -240,68 +179,21 @@ public class BoderController {
         String uid = user.getId();
         String nickname = user.getNickname();
 
-        return buildCommentResponse(comment.getPnum(), uid, nickname);
+        return buildCommentResponse(comment.getPnum(), uid, nickname );
     }
 
 
     private Map<String, Object> buildCommentResponse(Integer pnum, String uid, String loginNickname) {
+        List<CommentDTO> commentlist = commentService.findcomment(pnum , uid);
+        List<RepliesDTO> replies = replieService.findreplies(pnum , uid);
+
         Map<String, Object> response = new HashMap<>();
-
-        // 댓글 리스트 조회
-        List<Comment> comments = commentService.findcomment(pnum);
-        List<CommentDTO> commentDTOS = comments.stream().map(c -> {
-            CommentDTO dto = new CommentDTO();
-            dto.setCnum(c.getCnum());
-            dto.setPnum(c.getPnum());
-            dto.setCbody(c.getCbody());
-            dto.setNickname(c.getNickname());
-            dto.setUid(c.getUid());
-            dto.setCdate(c.getCdate());
-            dto.setClike(c.getClike());
-            return dto;
-        }).toList();
-
-        // 댓글 좋아요 상태
-        List<Clike> clikes = clikeService.findclike(pnum);
-        for (CommentDTO dto : commentDTOS) {
-            for (Clike c : clikes) {
-                if (c.getUid().equals(uid) && dto.getCnum().equals(c.getCnum())) {
-                    dto.setLiked(true);
-                }
-            }
-        }
-
-        // 대댓글 리스트
-        List<Replies> repliesList = replieService.findreplies(pnum);
-        List<RepliesDTO> replies = repliesList.stream().map(r -> {
-            RepliesDTO dto = new RepliesDTO();
-            dto.setRnum(r.getRnum());
-            dto.setCnum(r.getCnum());
-            dto.setPnum(r.getPnum());
-            dto.setRbody(r.getRbody());
-            dto.setNickname(r.getNickname());
-            dto.setUid(r.getUid());
-            dto.setRdate(r.getRdate());
-            dto.setRlikes(r.getRlikes());
-            return dto;
-        }).toList();
-
-        // 대댓글 좋아요 상태
-        List<Rlikes> rlikes = rlikeService.findrlike(pnum);
-        for (RepliesDTO dto : replies) {
-            for (Rlikes r : rlikes) {
-                if (r.getUid().equals(uid) && r.getRnum().equals(dto.getRnum())) {
-                    dto.setCheck(true);
-                }
-            }
-        }
-
-        // 응답 구성
-        response.put("comments", commentDTOS);
+        response.put("comments", commentlist);
         response.put("replies", replies);
         response.put("loginNickname", loginNickname);
         response.put("uid", uid);
         return response;
+
     }
 
 
@@ -338,6 +230,7 @@ public class BoderController {
     @PostMapping("/replies")
     @ResponseBody
     public Map<String, Object> replies(@ModelAttribute Replies replies , HttpSession session) {
+        System.out.println(replies.getRbody());
         replieService.repliessave(replies);
         SessionUserDTO user = (SessionUserDTO) session.getAttribute("userInfo");
         String uid = user.getId();

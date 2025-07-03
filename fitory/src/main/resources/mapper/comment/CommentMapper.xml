@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.Fitory.fitory.mapper.CommentMapper">
+
+    <select id="commentlistandlike" resultType="com.Fitory.fitory.dto.CommentDTO">
+        SELECT
+            c.id,
+            c.pnum,
+            c.cnum,
+            c.nickname,
+            c.cbody,
+            c.cdate,
+            c.clike,
+            CASE WHEN cl.id IS NOT NULL THEN TRUE ELSE FALSE END AS liked
+        FROM Comment c
+                 LEFT JOIN clike cl ON cl.cnum = c.cnum AND cl.id =#{uid}
+        WHERE c.pnum = #{num}
+        ORDER BY c.cdate asc;
+    </select>
+
+</mapper>

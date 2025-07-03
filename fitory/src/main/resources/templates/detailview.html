@@ -396,9 +396,9 @@
 
             <button class="like-button"
                     th:data-pnum="${board.pnum}"
-                    th:data-liked="${plike != null}"
+                    th:data-liked="${board.liked}"
                     th:data-uid="${session.userInfo.id}">
-                <span class="like-icon" th:text="${plike != null ? '❤️' : '🤍'}"></span>
+                <span class="like-icon" th:text="${board.liked ? '❤️' : '🤍'}"></span>
             </button>
             <span th:id="'like-count-'+${board.pnum}" th:text="${board.plike}"></span>
 

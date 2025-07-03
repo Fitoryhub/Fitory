@@ -1,80 +1,32 @@
 package com.Fitory.fitory.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDate;
 
-
+@Getter
+@Setter
 public class CommentDTO {
-    public Integer getCnum() {
-        return cnum;
-    }
-
-    public void setCnum(Integer cnum) {
-        this.cnum = cnum;
-    }
-
-    public String getNickname() {
-        return nickname;
-    }
-
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
-
-    public int getClike() {
-        return clike;
-    }
-
-    public void setClike(int clike) {
-        this.clike = clike;
-    }
-
-    public LocalDate getCdate() {
-        return cdate;
-    }
-
-    public void setCdate(LocalDate cdate) {
-        this.cdate = cdate;
-    }
-
-    public String getCbody() {
-        return cbody;
-    }
-
-    public void setCbody(String cbody) {
-        this.cbody = cbody;
-    }
-
-    public boolean isLiked() {
-        return liked;
-    }
-
-    public void setLiked(boolean liked) {
-        this.liked = liked;
-    }
-
-    public Integer getPnum() {
-        return pnum;
-    }
-
-    public void setPnum(Integer pnum) {
-        this.pnum = pnum;
-    }
-
-    public String getUid() {
-        return uid;
-    }
-
-    public void setUid(String uid) {
+    public CommentDTO(String uid,Integer pnum ,Integer cnum,String nickname,String cbody,LocalDate cdate,int clike
+            ,boolean liked ) {
         this.uid = uid;
-    }
+        this.cnum = cnum;
+        this.nickname = nickname;
+        this.cbody = cbody;
+        this.cdate = cdate;
+        this.liked = liked;
+        this.clike = clike;
 
+    }
+    private String uid;
+    private Integer pnum;
     private Integer cnum;
     private String nickname;
     private String cbody;
     private LocalDate cdate;
     private int clike;
     private boolean liked=false;
-    private Integer pnum;
-    private String uid;
+
 
 }
