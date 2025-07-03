@@ -7,11 +7,14 @@
 
     <main class="main-content">
         <div>
+            <div class="button-wrapper">
+                <button id="addScheduleBtn">식단 추가</button>
+                <button id="addExercise">운동 추가</button>
+            </div>
             <div class="header">
                 <button id="prevMonth">←</button>
                 <h2 id="monthYear"></h2>
                 <div class="header-right">
-                    <button id="addScheduleBtn">스케줄 추가</button>
                     <button id="nextMonth">→</button>
                 </div>
             </div>
@@ -130,9 +133,11 @@
         }
 
         .header {
+            position: relative; /* ⭐ 부모 기준으로 정렬 */
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding: 0 60px; /* 왼쪽 버튼 때문에 여유 확보 */
         }
 
         .header-right {
@@ -153,7 +158,13 @@
             cursor: pointer;
             padding: 5px 10px;
         }
-
+        #monthYear {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 20px;
+            margin: 0;
+        }
         .weekdays, .days {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
@@ -267,6 +278,20 @@
         #addScheduleBtn:hover {
             background-color: #0056b3;
         }
+         #addExercise {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        #addExercise:hover {
+            background-color: #0056b3;
+        }
 
         .modal {
             position: fixed;
@@ -327,9 +352,16 @@
             color: #666;
         }
         .today.holiday {
-    background: #cc0033 !important;  /* 원하는 공휴일+오늘 스타일 */
-    color: #fff !important;
-}
+            background: #cc0033 !important;  /* 원하는 공휴일+오늘 스타일 */
+            color: #fff !important;
+        }
+
+        .button-wrapper {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
     </style>
 
     <script>
@@ -503,6 +535,9 @@
    });
 
    // 일정 추가 버튼
+   $("#addExercise").on("click", function () {
+       window.open("/add_exercise", "스케줄 추가", "width=400,height=500,top=100,left=100");
+   });
    $("#addScheduleBtn").on("click", function () {
        window.open("/add_schedule", "스케줄 추가", "width=400,height=500,top=100,left=100");
    });

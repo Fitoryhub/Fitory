@@ -15,4 +15,6 @@ public interface IF_DIet_foodService {
 	List<Diet_food> findBy(int dietId);
 
 	Diet_food findByfoodname(String name);
+
+
 }

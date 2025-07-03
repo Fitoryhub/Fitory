@@ -1,10 +1,8 @@
 package com.Fitory.fitory.controller;
 
-import com.Fitory.fitory.dto.DietsaveDTO;
-import com.Fitory.fitory.dto.FoodlistDTO;
-import com.Fitory.fitory.dto.PageDTO;
-import com.Fitory.fitory.dto.SessionUserDTO;
+import com.Fitory.fitory.dto.*;
 import com.Fitory.fitory.entity.*;
+import com.Fitory.fitory.repository.DietRepository;
 import com.Fitory.fitory.service.*;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +26,7 @@ public class DietController {
 	private final Food_nutritionService fnservice;
 	private final PlikeService plikeService;
 	private final FileService fileService;
+	private final DietRepository dietRepository;
 
 
 	@GetMapping("/diet/board")
@@ -178,6 +177,63 @@ public class DietController {
 		return pvo;
 	}
 
+	@GetMapping("/mealDate")
+	@ResponseBody
+	public List<String> myscheduleDate(HttpSession session){
+		System.out.println("요청 했어용~~@!4");
+		SessionUserDTO udto = (SessionUserDTO) session.getAttribute("userInfo");
+
+		String id = udto.getId();
+		List<Diet> alldiet = dietRepository.findAllByUserid(id);
+
+		// LinkedHashSet → 순서 유지 + 중복 제거
+		Set<String> dateSet = new LinkedHashSet<>();
+
+		if (alldiet != null) {
+			for (Diet diet : alldiet) {
+				String a = diet.getCreated_at();
+				if (a != null && a.length() >= 10) {
+					String dateOnly = a.substring(0, 10);
+					dateSet.add(dateOnly);
+				}
+			}
+		}
+
+		return new ArrayList<>(dateSet); // Set → List로 변환해서 반환
+	}
+
+	@GetMapping("/mymeal")
+	@ResponseBody
+	public List<scheduleFoodDTO> myDite(@RequestParam("mealdate") String date, HttpSession session){
+		SessionUserDTO udto = (SessionUserDTO) session.getAttribute("userInfo");
+		String id = udto.getId();
+		List<Diet_food> foods = new ArrayList<>();
+		List<scheduleFoodDTO> sfDTO = new ArrayList<>();
+
+		List<Long> diet_id;
+
+		if (date.equals("all")) {
+			diet_id = dservice.findDietIdsByUserid(id);
+		} else {
+			diet_id = dservice.findbyUserIdandCreateday(id, date);
+		}
+
+		for (Long did : diet_id) {
+			foods.addAll(dfservice.findBy(Math.toIntExact(did)));
+		}
+
+		for (Diet_food food : foods) {
+			scheduleFoodDTO dto = new scheduleFoodDTO();
+			dto.setFood_name(food.getFoodname());
+			dto.setMealtype(food.getMealtype());
+			sfDTO.add(dto);
+		}
+		for(int i=0; i<sfDTO.size(); i++){
+			System.out.println(sfDTO.get(i).getFood_name()+"음식 이름"+i+"번쨰");
+			System.out.println(sfDTO.get(i).getMealtype()+"식단 종류"+i+"번쨰");
+		}
+		return sfDTO;
+	}
 
 }
 

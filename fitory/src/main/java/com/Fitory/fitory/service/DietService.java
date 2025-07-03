@@ -57,4 +57,14 @@ public class DietService implements IF_DietService{
 	public List<Diet> findbyuserId(String id) {
 		return dietrespo.findByUserid(id);
 	}
+
+	@Override
+	public List<Long> findbyUserIdandCreateday(String id, String date) {
+		return dietrespo.findDietid(id, date);
+	}
+
+	@Override
+	public List<Long> findDietIdsByUserid(String id) {
+		return dietrespo.findDietIdsByUserid(id);
+	}
 }

@@ -21,4 +21,13 @@ public interface DietRepository extends JpaRepository<Diet, Integer>{
 	public List<Diet> findpage(@Param("start") int start, @Param("end") int end);
 
 	List<Diet> findByUserid(String userid);
+	public List<Diet> findAllByUserid(String id);
+
+	@Query("select d.diet_id from Diet d where d.created_at like concat('%', :date, '%') and d.userid = :id")
+	List<Long> findDietid(@Param("id") String id, @Param("date") String date);
+
+
+
+	@Query("select d.diet_id from Diet d where d.userid = :userid")
+	List<Long> findDietIdsByUserid(@Param("userid") String userid);
 }

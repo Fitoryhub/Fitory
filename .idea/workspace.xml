@@ -5,7 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="17d0d747-fc21-46fb-a6cd-6ce23ecde4dc" name="변경" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fitory/src/main/java/com/Fitory/fitory/dto/scheduleFoodDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/fitory/src/main/resources/templates/add_exercise.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fitory/src/main/java/com/Fitory/fitory/controller/CalendarController.java" beforeDir="false" afterPath="$PROJECT_DIR$/fitory/src/main/java/com/Fitory/fitory/controller/CalendarController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fitory/src/main/java/com/Fitory/fitory/controller/DietController.java" beforeDir="false" afterPath="$PROJECT_DIR$/fitory/src/main/java/com/Fitory/fitory/controller/DietController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fitory/src/main/java/com/Fitory/fitory/repository/DietRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/fitory/src/main/java/com/Fitory/fitory/repository/DietRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fitory/src/main/java/com/Fitory/fitory/repository/Diet_foodRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/fitory/src/main/java/com/Fitory/fitory/repository/Diet_foodRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fitory/src/main/java/com/Fitory/fitory/service/DietService.java" beforeDir="false" afterPath="$PROJECT_DIR$/fitory/src/main/java/com/Fitory/fitory/service/DietService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fitory/src/main/java/com/Fitory/fitory/service/IF_DIet_foodService.java" beforeDir="false" afterPath="$PROJECT_DIR$/fitory/src/main/java/com/Fitory/fitory/service/IF_DIet_foodService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fitory/src/main/java/com/Fitory/fitory/service/IF_DietService.java" beforeDir="false" afterPath="$PROJECT_DIR$/fitory/src/main/java/com/Fitory/fitory/service/IF_DietService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fitory/src/main/resources/templates/add_schedule.html" beforeDir="false" afterPath="$PROJECT_DIR$/fitory/src/main/resources/templates/add_schedule.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fitory/src/main/resources/templates/calendar.html" beforeDir="false" afterPath="$PROJECT_DIR$/fitory/src/main/resources/templates/calendar.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,15 +47,15 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "LeeMinWoo98"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;LeeMinWoo98&quot;
   }
-}]]></component>
+}</component>
   <component name="GithubPullRequestsUISettings"><![CDATA[{
   "selectedUrlAndAccountId": {
-    "url": "https://github.com/Fitoryhub/Fitory.git",
+    "url": "https://github.com/Fitoryhub/Fitory",
     "accountId": "0dead48e-46a5-4ace-8565-e907ff2d2376"
   }
 }]]></component>

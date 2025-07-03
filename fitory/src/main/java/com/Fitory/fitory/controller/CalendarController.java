@@ -52,9 +52,14 @@ public class CalendarController {
     @Autowired
     private UserHealthServiceImpl userHealthService;
 
+    @GetMapping("/add_exercise")
+    public String addExercise() {
+        return "add_exercise"; // add_exercise.html 렌더링
+    }
+
     @GetMapping("/add_schedule")
     public String addSchedule() {
-        return "add_schedule"; // add_schedule.html 렌더링
+        return "add_schedule"; // add_exercise.html 렌더링
     }
 
     // 👇 뷰만 반환

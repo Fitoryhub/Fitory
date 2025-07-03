@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <title>운동 추가</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+        }
+
+        button {
+            margin-top: 15px;
+            padding: 10px 20px;
+        }
+    </style>
+</head>
+<body>
+<h2>스케줄 추가</h2>
+<form id="scheduleForm">
+
+    <input type="hidden" id="id" th:value="${session.userInfo.id}">
+    <input type="hidden" th:name="id" th:value="${session.userInfo.id}">
+    <label for="date">날짜</label>
+    <input type="date" id="date" name="date" required>
+
+    <label for="time">시간</label>
+    <input type="time" id="time" name="time" required>
+
+    <input type="hidden" name="type" value="exercise">
+
+    <label id="no" for="item">항목 선택</label>
+    <select id="item" name="item" required>
+
+    </select>
+
+    <button type="submit">저장</button>
+</form>
+
+<script>
+
+    $(document).ready(function () {
+            let id = $("#id").val();
+            const itemSelect = document.getElementById('item');
+
+            $.ajax({
+                url: "/myexercise",
+                method: "GET",
+                dataType: "json",
+                data: {
+                    userid:id
+                },
+                success: function (data) {
+
+                    if (data.list.length < 1) {
+                        $("#item").html('<option>등록한 항목이 없습니다</option>');
+                    } else {
+                        $('#item').empty();
+                        $.each(data.list, function (index, item) {
+                            $('#item').append('<option value="' + item.routine + '">' + item.routine + '</option>');
+                        });
+                    }
+                },
+                error: function () {
+                    alert("통신오류");
+                }
+            });
+
+        $("#scheduleForm").submit(function (e) {
+            e.preventDefault(); // 기본 전송 막기
+
+            $.ajax({
+                url: "/save_schedule", // 저장용 API 경로
+                method: "POST",
+                data: $(this).serialize(),
+                success: function () {
+                    if (window.opener && typeof window.opener.scheduleReload === "function") {
+                        window.opener.scheduleReload(); // 부모창 스케줄 다시 불러오기
+                    }
+                    window.close(); // 팝업 닫기
+                },
+                error: function () {
+                    alert("스케줄 저장 실패");
+                }
+            });
+        });
+
+    });
+
+</script>
+</body>
+</html>

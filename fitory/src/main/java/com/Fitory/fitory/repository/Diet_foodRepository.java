@@ -17,6 +17,7 @@ public interface Diet_foodRepository extends JpaRepository<Diet_food, Integer>{
 
     public void deleteAllByDietId(int did);
 
+
     List<Diet_food> findByDietId(int dietId);
     Diet_food findByFoodname(String name);
 }
