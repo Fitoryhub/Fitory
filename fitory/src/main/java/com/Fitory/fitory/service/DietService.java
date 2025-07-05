@@ -2,7 +2,9 @@ package com.Fitory.fitory.service;
 
 import com.Fitory.fitory.dto.PageDTO;
 import com.Fitory.fitory.entity.Diet;
+import com.Fitory.fitory.entity.Diet_food;
 import com.Fitory.fitory.repository.DietRepository;
+import com.Fitory.fitory.repository.Diet_foodRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 public class DietService implements IF_DietService{
+
+	private final Diet_foodRepository dietfoodRepository;
 
 	private final DietRepository dietrespo;
 	
@@ -66,5 +70,10 @@ public class DietService implements IF_DietService{
 	@Override
 	public List<Long> findDietIdsByUserid(String id) {
 		return dietrespo.findDietIdsByUserid(id);
+	}
+
+	@Override
+	public List<Diet_food> findonedaymeal(Long did) {
+		return dietfoodRepository.findByDietId(Math.toIntExact(did));
 	}
 }

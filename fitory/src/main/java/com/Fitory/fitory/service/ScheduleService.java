@@ -42,26 +42,28 @@ public class ScheduleService implements IF_ScheduleService {
     @Override
     public void del(DelscheduleDTO delschedule) {
 
+            String date = delschedule.getDate();
 
+            LocalDate date1 = LocalDate.parse(date, DateTimeFormatter.ISO_LOCAL_DATE);
 
-        String id = delschedule.getId();
+        if(delschedule.getType()!=null) {
+            scheduleRepository.deleteByDateAndType( date1,delschedule.getType());
+        }else {
+            String id = delschedule.getId();
 
-        String date = delschedule.getDate();
+            String timeStr = delschedule.getTime();
 
-        LocalDate date1 = LocalDate.parse(date, DateTimeFormatter.ISO_LOCAL_DATE);
+            timeStr += ":00";
 
-        String timeStr = delschedule.getTime();
+            DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
 
-        timeStr += ":00";
+            LocalTime time = LocalTime.parse(timeStr, timeFormatter);
 
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+            String name = delschedule.getName();
 
-        LocalTime time = LocalTime.parse(timeStr, timeFormatter);
+            scheduleRepository.deleteByUseridAndDateAndTimeAndItem(id, date1, time, name);
 
-        String name = delschedule.getName();
-
-        scheduleRepository.deleteByUseridAndDateAndTimeAndItem( id , date1, time, name);
-
+        }
     }
 
     @Override

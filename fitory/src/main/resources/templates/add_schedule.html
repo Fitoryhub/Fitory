@@ -36,17 +36,9 @@
     <input type="hidden" th:name="id" th:value="${session.userInfo.id}">
     <label for="date">날짜</label>
     <input type="date" id="date" name="date" required>
+    <input type="hidden" name="type" value="meal">
 
-    <label for="time">시간</label>
-    <input type="time" id="time" name="time" required>
-
-    <label for="type">식단을 등록한 날짜를 선택하세요</label>
-    <select id="type" name="type" required>
-        <option value="">----------</option>
-        <option value="all">전체</option>
-    </select>
-
-    <label id="no" for="item">항목 선택</label>
+    <label id="no" for="item">식단 선택</label>
     <select id="item" name="item" required>
 
     </select>
@@ -61,89 +53,52 @@
         let id = $("#id").val();
         const itemSelect = document.getElementById('item');
 
-
         $.ajax({
-            url: "/mealDate",
+            url: "/mymeal",
             method: "GET",
             dataType: "json",
+            data: {
+                id: id
+            },
             success: function (data) {
-                alert("성공~~!@#")
-                const $typeSelect = $("#type");   // 또는 다른 id로 변경
-               $typeSelect.empty()
-                   .append('<option value="">----------</option>')
-                   .append('<option value="all">전체</option>');
+                alert("성공");
 
-                $.each(data, function (_, dateStr) {
-                    $typeSelect.append(
-                        '<option value="' + dateStr + '">' + dateStr + '</option>'
-                    );
+                const choose = $("#item");
+                choose.empty();
+
+                $.each(data, function (did, foodList) {
+                    let breakfast = [];
+                    let lunch = [];
+                    let dinner = [];
+
+                    foodList.forEach(item => {
+                        switch (item.mealtype) {
+                            case "breakfast":
+                                breakfast.push(item.foodname);
+                                break;
+                            case "lunch":
+                                lunch.push(item.foodname);
+                                break;
+                            case "dinner":
+                                dinner.push(item.foodname);
+                                break;
+                        }
+                    });
+
+                    const displayText =
+                        "아침: " + breakfast.join(", ") + " | " +
+                        "점심: " + lunch.join(", ") + " | " +
+                        "저녁: " + dinner.join(", ");
+
+                    choose.append(`<option value="${displayText}">${displayText}</option>`);
                 });
             },
             error: function () {
-                alert("날짜 정보를 불러오는 데 실패했습니다.");
+                alert("식단정보를 가져오는데 실패.");
             }
         });
 
 
-
-          $("#type").change(function () {
-           let date = $("#type").val();
-            $.ajax({
-                 url: "/mymeal",
-                 method: "GET",
-                 dataType: "json",
-                 data: {
-                     mealdate : date
-                 },
-                success: function (data) {
-                    const $item = $("#item");
-                    $item.empty(); // 기존 옵션 비우기
-
-                    // mealtype 별로 묶기 위한 객체 생성
-                    const grouped = {
-                        '아침': [],
-                        '점심': [],
-                        '저녁': [],
-                    };
-
-                    data.forEach(item => {
-                        let type = "";
-
-                    if (item.mealtype === 'breakfast') {
-                        type = "아침";
-                    } else if (item.mealtype === 'launch') {
-                        type = "점심";
-                    } else if (item.mealtype === 'dinner') {
-                        type = "저녁";
-                    } else {
-                        type = "기타";
-                    }
-                        const name = item.food_name;
-                        if (grouped[type]) {
-                            grouped[type].push(name);
-                        } else {
-                            grouped[type] = [name]; // 기타 식사타입도 대비
-                        }
-                    });
-
-                    // 결과를 한 줄로 조합
-                    let displayText = "";
-                    for (const [type, foods] of Object.entries(grouped)) {
-                        if (foods.length > 0) {
-                            displayText += `${type}: ${foods.join(', ')} | `;
-                        }
-                    }
-
-                    displayText = displayText.slice(0, -3); // 마지막 ' | ' 제거
-
-                    // 셀렉트 박스에 추가
-                    $item.append('<option value="' + displayText + '">' + displayText + '</option>');
-                },
-                 error: function () {
-                     alert("통신오류");
-                 }
-             });
-          });
 
 
 

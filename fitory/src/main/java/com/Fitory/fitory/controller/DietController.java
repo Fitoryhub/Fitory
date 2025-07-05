@@ -20,220 +20,205 @@ import java.util.*;
 @Controller
 public class DietController {
 
-	private final DietService dservice;
-	private final Diet_foodService dfservice;
-	private final Diet_nutritionService dnservice;
-	private final Food_nutritionService fnservice;
-	private final PlikeService plikeService;
-	private final FileService fileService;
-	private final DietRepository dietRepository;
+    private final DietService dservice;
+    private final Diet_foodService dfservice;
+    private final Diet_nutritionService dnservice;
+    private final Food_nutritionService fnservice;
+    private final PlikeService plikeService;
+    private final FileService fileService;
+    private final DietRepository dietRepository;
 
 
-	@GetMapping("/diet/board")
-	public String board(HttpSession session, Model model) {
-		SessionUserDTO userInfo = (SessionUserDTO) session.getAttribute("userInfo");
-		model.addAttribute("userInfo", userInfo);
-		return "/diet/board";
-	}
+    @GetMapping("/diet/board")
+    public String board(HttpSession session, Model model) {
+        SessionUserDTO userInfo = (SessionUserDTO) session.getAttribute("userInfo");
+        model.addAttribute("userInfo", userInfo);
+        return "/diet/board";
+    }
 
-	@GetMapping("/dietdetail")
-	public String dietdetail(HttpSession session, Model model, @RequestParam(name="diet") int did){
-		SessionUserDTO userInfo = (SessionUserDTO) session.getAttribute("userInfo");
-		model.addAttribute("userInfo", userInfo);
+    @GetMapping("/dietdetail")
+    public String dietdetail(HttpSession session, Model model, @RequestParam(name = "diet") int did) {
+        SessionUserDTO userInfo = (SessionUserDTO) session.getAttribute("userInfo");
+        model.addAttribute("userInfo", userInfo);
 
-		Diet diet=dservice.getone(did);
-		diet.setDiet_view(diet.getDiet_view()+1);
-		dservice.updatview(diet);
-		model.addAttribute("diet",diet);
+        Diet diet = dservice.getone(did);
+        diet.setDiet_view(diet.getDiet_view() + 1);
+        dservice.updatview(diet);
+        model.addAttribute("diet", diet);
 
-		List<Diet_food> dflist=dfservice.getdflist(did);
-		model.addAttribute("dflist",dflist);
+        List<Diet_food> dflist = dfservice.getdflist(did);
+        model.addAttribute("dflist", dflist);
 
-		Diet_nutrition dnt=dnservice.getone(did);
-		model.addAttribute("dnutrition",dnt);
+        Diet_nutrition dnt = dnservice.getone(did);
+        model.addAttribute("dnutrition", dnt);
 
-		List<Food_nutrition> fnt=fnservice.getfnlist(did);
-		model.addAttribute("fnlist",fnt);
+        List<Food_nutrition> fnt = fnservice.getfnlist(did);
+        model.addAttribute("fnlist", fnt);
 
-		Plike dp=new Plike();
-		if(userInfo==null){
-			dp=null;
-		}else {
-			dp=plikeService.findplike2(userInfo.getId(), did);
-		}
-		model.addAttribute("dplike",dp);
+        Plike dp = new Plike();
+        if (userInfo == null) {
+            dp = null;
+        } else {
+            dp = plikeService.findplike2(userInfo.getId(), did);
+        }
+        model.addAttribute("dplike", dp);
 
-		List<Files> files=fileService.findfile2(did);
-		if(files.isEmpty()){
-			files=null;
-		}
-		model.addAttribute("files",files);
-		return "/diet/dietdetail";
-	}
-	@Transactional
-	@GetMapping("/dietlike")
-	@ResponseBody
-	public Map<String,Object> dietlike(@RequestParam(name = "did") int did,@RequestParam(name = "uid") String uid){
-		Plike dp= new Plike();
-		Map<String,Object> response= new HashMap<>();
-		if(plikeService.findplike2(uid,did)==null){
-			dp.setUid(uid);
-			dp.setDnum(did);
-			plikeService.saveplike(dp);
-			Diet diet=dservice.getone(did);
-			diet.setDiet_like(diet.getDiet_like()+1);
-			dservice.updatview(diet);
-			response.put("status","yes");
-			response.put("like",diet.getDiet_like());
-			return response;
-		}else{
-			Diet diet=dservice.getone(did);
-			diet.setDiet_like(diet.getDiet_like()-1);
-			dservice.updatview(diet);
-			dp=plikeService.findplike2(uid,did);
-			plikeService.deletdplike(dp);
-			response.put("status","no");
-			response.put("like",diet.getDiet_like());
-			return response;
-		}
-	}
+        List<Files> files = fileService.findfile2(did);
+        if (files.isEmpty()) {
+            files = null;
+        }
+        model.addAttribute("files", files);
+        return "/diet/dietdetail";
+    }
 
-	@GetMapping("/diet/page")
-	@ResponseBody
-	public Map<String,Object> gopage(@RequestParam(name = "page") int page){
-		Map<String,Object> board=dservice.serlist(page);
-		return board;
-	}
+    @Transactional
+    @GetMapping("/dietlike")
+    @ResponseBody
+    public Map<String, Object> dietlike(@RequestParam(name = "did") int did, @RequestParam(name = "uid") String uid) {
+        Plike dp = new Plike();
+        Map<String, Object> response = new HashMap<>();
+        if (plikeService.findplike2(uid, did) == null) {
+            dp.setUid(uid);
+            dp.setDnum(did);
+            plikeService.saveplike(dp);
+            Diet diet = dservice.getone(did);
+            diet.setDiet_like(diet.getDiet_like() + 1);
+            dservice.updatview(diet);
+            response.put("status", "yes");
+            response.put("like", diet.getDiet_like());
+            return response;
+        } else {
+            Diet diet = dservice.getone(did);
+            diet.setDiet_like(diet.getDiet_like() - 1);
+            dservice.updatview(diet);
+            dp = plikeService.findplike2(uid, did);
+            plikeService.deletdplike(dp);
+            response.put("status", "no");
+            response.put("like", diet.getDiet_like());
+            return response;
+        }
+    }
 
-
-	@GetMapping("/diet/resist")
-	public String resist(HttpSession session, Model model) {
-		if (session.getAttribute("userInfo") == null) {
-			return "redirect:/login";
-		}
-		SessionUserDTO userInfo = (SessionUserDTO) session.getAttribute("userInfo");
-		model.addAttribute("userInfo", userInfo);
-		return "/diet/resist";
-	}
-
-	@GetMapping("/diet/analyze")
-	public String analyze(HttpSession session, Model model) {
-		SessionUserDTO userInfo = (SessionUserDTO) session.getAttribute("userInfo");
-		model.addAttribute("userInfo", userInfo);
-		return "/diet/analyze";
-	}
-	@Transactional
-	@PostMapping("/diet/save")
-	@ResponseBody
-	public Map<String, String> save(@RequestPart DietsaveDTO dsv, @RequestPart(name = "files", required = false) MultipartFile[] files) throws Exception {
-		dservice.insert(dsv.getDiet());
-		List<FoodlistDTO> flist=dsv.getFoodlist();
-		int did=dservice.getid(dsv.getDiet().getTitle());
-		List<Diet_food> dflist=fnservice.insert(flist, did);
-		List<Integer> fnid=fnservice.getidlist(did);
-		dfservice.insert(did, fnid, dflist, flist);
-		dnservice.insert(did,flist);
-
-		String ProjectPath = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\image";
-		if(files!=null){
-			for (MultipartFile onefile : files) {
-				UUID uuid=UUID.randomUUID();
-				String filename=uuid+"_"+onefile.getOriginalFilename();
-				File savfile=new File(ProjectPath,filename);
-				onefile.transferTo(savfile);
-				Files file=new Files();
-				file.setDnum(did);
-				file.setFilename(filename);
-				fileService.filesave(file);
-			}
-		}
-
-		Map<String, String> response = new HashMap<>();
-		response.put("url", "/diet/board");
-		return response;
-	}
+    @GetMapping("/diet/page")
+    @ResponseBody
+    public Map<String, Object> gopage(@RequestParam(name = "page") int page) {
+        Map<String, Object> board = dservice.serlist(page);
+        return board;
+    }
 
 
-	@Transactional
-	@GetMapping("/diet/delete")
-	@ResponseBody
-	public String delete(@RequestParam(name = "diet_id") int did){
-		fileService.delete(did);
-		plikeService.deletdplike(did);
-		dfservice.delete(did);
-		fnservice.delete(did);
-		dnservice.delete(did);
-		dservice.delete(did);
-		return "/diet/board";
-	}
+    @GetMapping("/diet/resist")
+    public String resist(HttpSession session, Model model) {
+        if (session.getAttribute("userInfo") == null) {
+            return "redirect:/login";
+        }
+        SessionUserDTO userInfo = (SessionUserDTO) session.getAttribute("userInfo");
+        model.addAttribute("userInfo", userInfo);
+        return "/diet/resist";
+    }
 
-	@GetMapping("/diet/foodlist")
-	@ResponseBody
-	public PageDTO flist(@RequestParam(name="totalCount", required = false) int totalCount,
-						 @RequestParam(name="page") int currpage) {
-		PageDTO pvo=new PageDTO();
-		pvo.setPage(currpage);
-		pvo.setTotalCount(totalCount);
-		return pvo;
-	}
+    @GetMapping("/diet/analyze")
+    public String analyze(HttpSession session, Model model) {
+        SessionUserDTO userInfo = (SessionUserDTO) session.getAttribute("userInfo");
+        model.addAttribute("userInfo", userInfo);
+        return "/diet/analyze";
+    }
 
-	@GetMapping("/mealDate")
-	@ResponseBody
-	public List<String> myscheduleDate(HttpSession session){
-		System.out.println("요청 했어용~~@!4");
-		SessionUserDTO udto = (SessionUserDTO) session.getAttribute("userInfo");
+    @Transactional
+    @PostMapping("/diet/save")
+    @ResponseBody
+    public Map<String, String> save(@RequestPart DietsaveDTO dsv, @RequestPart(name = "files", required = false) MultipartFile[] files) throws Exception {
+        dservice.insert(dsv.getDiet());
+        List<FoodlistDTO> flist = dsv.getFoodlist();
+        int did = dservice.getid(dsv.getDiet().getTitle());
+        List<Diet_food> dflist = fnservice.insert(flist, did);
+        List<Integer> fnid = fnservice.getidlist(did);
+        dfservice.insert(did, fnid, dflist, flist);
+        dnservice.insert(did, flist);
 
-		String id = udto.getId();
-		List<Diet> alldiet = dietRepository.findAllByUserid(id);
+        String ProjectPath = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\image";
+        if (files != null) {
+            for (MultipartFile onefile : files) {
+                UUID uuid = UUID.randomUUID();
+                String filename = uuid + "_" + onefile.getOriginalFilename();
+                File savfile = new File(ProjectPath, filename);
+                onefile.transferTo(savfile);
+                Files file = new Files();
+                file.setDnum(did);
+                file.setFilename(filename);
+                fileService.filesave(file);
+            }
+        }
 
-		// LinkedHashSet → 순서 유지 + 중복 제거
-		Set<String> dateSet = new LinkedHashSet<>();
+        Map<String, String> response = new HashMap<>();
+        response.put("url", "/diet/board");
+        return response;
+    }
 
-		if (alldiet != null) {
-			for (Diet diet : alldiet) {
-				String a = diet.getCreated_at();
-				if (a != null && a.length() >= 10) {
-					String dateOnly = a.substring(0, 10);
-					dateSet.add(dateOnly);
-				}
-			}
-		}
 
-		return new ArrayList<>(dateSet); // Set → List로 변환해서 반환
-	}
+    @Transactional
+    @GetMapping("/diet/delete")
+    @ResponseBody
+    public String delete(@RequestParam(name = "diet_id") int did) {
+        fileService.delete(did);
+        plikeService.deletdplike(did);
+        dfservice.delete(did);
+        fnservice.delete(did);
+        dnservice.delete(did);
+        dservice.delete(did);
+        return "/diet/board";
+    }
 
-	@GetMapping("/mymeal")
-	@ResponseBody
-	public List<scheduleFoodDTO> myDite(@RequestParam("mealdate") String date, HttpSession session){
-		SessionUserDTO udto = (SessionUserDTO) session.getAttribute("userInfo");
-		String id = udto.getId();
-		List<Diet_food> foods = new ArrayList<>();
-		List<scheduleFoodDTO> sfDTO = new ArrayList<>();
+    @GetMapping("/diet/foodlist")
+    @ResponseBody
+    public PageDTO flist(@RequestParam(name = "totalCount", required = false) int totalCount,
+                         @RequestParam(name = "page") int currpage) {
+        PageDTO pvo = new PageDTO();
+        pvo.setPage(currpage);
+        pvo.setTotalCount(totalCount);
+        return pvo;
+    }
 
-		List<Long> diet_id;
+    @GetMapping("/mealDate")
+    @ResponseBody
+    public List<String> myscheduleDate(HttpSession session) {
+        System.out.println("요청 했어용~~@!4");
+        SessionUserDTO udto = (SessionUserDTO) session.getAttribute("userInfo");
 
-		if (date.equals("all")) {
-			diet_id = dservice.findDietIdsByUserid(id);
-		} else {
-			diet_id = dservice.findbyUserIdandCreateday(id, date);
-		}
+        String id = udto.getId();
+        List<Diet> alldiet = dietRepository.findAllByUserid(id);
 
-		for (Long did : diet_id) {
-			foods.addAll(dfservice.findBy(Math.toIntExact(did)));
-		}
+        // LinkedHashSet → 순서 유지 + 중복 제거
+        Set<String> dateSet = new LinkedHashSet<>();
 
-		for (Diet_food food : foods) {
-			scheduleFoodDTO dto = new scheduleFoodDTO();
-			dto.setFood_name(food.getFoodname());
-			dto.setMealtype(food.getMealtype());
-			sfDTO.add(dto);
-		}
-		for(int i=0; i<sfDTO.size(); i++){
-			System.out.println(sfDTO.get(i).getFood_name()+"음식 이름"+i+"번쨰");
-			System.out.println(sfDTO.get(i).getMealtype()+"식단 종류"+i+"번쨰");
-		}
-		return sfDTO;
-	}
+        if (alldiet != null) {
+            for (Diet diet : alldiet) {
+                String a = diet.getCreated_at();
+                if (a != null && a.length() >= 10) {
+                    String dateOnly = a.substring(0, 10);
+                    dateSet.add(dateOnly);
+                }
+            }
+        }
+
+        return new ArrayList<>(dateSet); // Set → List로 변환해서 반환
+    }
+
+    @GetMapping("/mymeal")
+    @ResponseBody
+    public Map<Long, List<Diet_food>> myDite(@RequestParam String id) {
+        List<Long> didlist = dservice.findDietIdsByUserid(id);
+
+        List<List<Diet_food>> allFoodList = new ArrayList<>();
+
+        Map<Long, List<Diet_food>> foodMap = new HashMap<>();
+
+        for (Long did : didlist) {
+            List<Diet_food> onedayfood = dservice.findonedaymeal(did);
+            foodMap.put(did, onedayfood);
+        }
+        return foodMap;
+    }
 
 }
 

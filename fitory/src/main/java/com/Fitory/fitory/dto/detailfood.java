@@ -9,12 +9,20 @@ import java.time.format.DateTimeFormatter;
 @Getter
 @Setter
 public class detailfood {
+    public detailfood(String name, String mealtype, double calories, double protein, double carbohydrate, double fat) {
+        this.name = name;
+        this.mealtype = mealtype;
+        this.calories = calories;
+        this.protein = protein;
+        this.carbohydrate = carbohydrate;
+        this.fat = fat;
+    }
 
     private double calories;
 
-
     private double protein;
 
+    private String mealtype;
 
     private double carbohydrate;
 
@@ -22,11 +30,5 @@ public class detailfood {
 
     private String name;
 
-    private String time;
 
-    public void setTime(LocalTime time) {
-
-        // 자동으로 문자열 포맷도 세팅
-        this.time = time.format(DateTimeFormatter.ofPattern("HH:mm"));
-    }
 }

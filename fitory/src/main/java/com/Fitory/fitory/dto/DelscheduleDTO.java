@@ -10,6 +10,6 @@ public class DelscheduleDTO {
     private String name;
     private String date;
     private String time;
-
+    private String type;
 
 }

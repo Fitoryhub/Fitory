@@ -1,6 +1,7 @@
 package com.Fitory.fitory.service;
 
 import com.Fitory.fitory.entity.Diet;
+import com.Fitory.fitory.entity.Diet_food;
 
 import java.util.List;
 import java.util.Map;
@@ -20,4 +21,6 @@ public interface IF_DietService {
 
 	List<Long> findbyUserIdandCreateday(String id, String date);
 	List<Long> findDietIdsByUserid(String id);
+
+    List<Diet_food> findonedaymeal(Long did);
 }

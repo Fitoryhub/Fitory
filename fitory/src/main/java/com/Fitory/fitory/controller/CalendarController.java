@@ -3,6 +3,7 @@ package com.Fitory.fitory.controller;
 
 import com.Fitory.fitory.dto.*;
 import com.Fitory.fitory.entity.*;
+import com.Fitory.fitory.mapper.DietMapper;
 import com.Fitory.fitory.repository.UserRepository;
 import com.Fitory.fitory.service.*;
 import jakarta.servlet.http.HttpSession;
@@ -25,6 +26,9 @@ import java.util.Map;
 
 @Controller
 public class CalendarController {
+
+    @Autowired
+    private DietMapper dietMapper;
 
     @Autowired
     private UserRepository userRepository;
@@ -79,10 +83,10 @@ public class CalendarController {
         int age = Year.now().getValue() - tempage;
 
         String targetW;
-        if(userHealthService.findInfo(userInfo.getId())==null){
+        if (userHealthService.findInfo(userInfo.getId()) == null) {
             targetW = null;
-        }else{
-            UserHealthInfoDTO userHealthInfoDTO =  userHealthService.findInfo(userInfo.getId());
+        } else {
+            UserHealthInfoDTO userHealthInfoDTO = userHealthService.findInfo(userInfo.getId());
             targetW = userHealthInfoDTO.getTargetWeight();
         }
 
@@ -132,7 +136,11 @@ public class CalendarController {
             ScheduleDTO scheduleDTO = new ScheduleDTO();
             scheduleDTO.day = schedule.getDate().getDayOfMonth();
             scheduleDTO.item = schedule.getItem();
-            scheduleDTO.time = Time.valueOf(schedule.getTime());
+            if (schedule.getTime() != null) {
+                scheduleDTO.time = Time.valueOf(schedule.getTime());
+            } else {
+                scheduleDTO.time = null;
+            }
             scheduleDTOList.add(scheduleDTO);
         }
 
@@ -146,7 +154,12 @@ public class CalendarController {
         Schedule schedule1 = new Schedule();
 
         LocalDate date = LocalDate.parse(schedule.getDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        LocalTime time = LocalTime.parse(schedule.getTime(), DateTimeFormatter.ofPattern("HH:mm"));
+        LocalTime time;
+        if (schedule.getTime() == null) {
+            time = null;
+        } else {
+            time = LocalTime.parse(schedule.getTime(), DateTimeFormatter.ofPattern("HH:mm"));
+        }
 
         schedule1.setDate(date);
         schedule1.setTime(time);
@@ -162,7 +175,7 @@ public class CalendarController {
     @PostMapping("/schedule/detail")
     @ResponseBody
     public Map<String, Object> sdetail(@ModelAttribute IdDate iddate) {
-        List<String> foodnames = new ArrayList<>(); // 음식 이름 저장 리스트
+
         List<Schedule> slist = scheduleService.finddetail(iddate); // 해당 ID와 날짜로 스케줄 가져옴
 
         if (slist.isEmpty()) {
@@ -170,9 +183,9 @@ public class CalendarController {
         }
 
         List<IdEname> elist = new ArrayList<>(); // 운동용 ID + 이름 객체
-        List<IdEname> dlist = new ArrayList<>(); // 식단용 ID + 이름 객체
+
         List<LocalTime> etimeList = new ArrayList<>(); // 운동 시간 저장 리스트
-        List<LocalTime> dtimeList = new ArrayList<>(); // 식사 시간 저장 리스트
+
 
         int a = 0; // 식단 개수 카운팅
 
@@ -186,75 +199,18 @@ public class CalendarController {
                 elist.add(idename);
                 etimeList.add(schedule.getTime());
             } else { // 식단일 경우
-                foodnames.add(schedule.getItem());
-                idename.setEname(schedule.getItem());
-                idename.setId(iddate.getId());
-                dlist.add(idename);
-                dtimeList.add(schedule.getTime());
                 a++;
             }
         }
 
         Map<String, Object> map = new HashMap<>();
-        List<detailfood> dflist = new ArrayList<>(); // 반환용 식단 상세 정보 리스트
+
 
         if (a > 0) { // 식단이 존재할 경우
-            List<Diet> dietList1 = dietService.findbyuserId(iddate.getId()); // 해당 유저의 전체 식단 조회
-            List did = new ArrayList(); // diet_id 저장용
 
-            for (Diet dl : dietList1) {
-                did.add(dl.getDiet_id()); // 식단 ID 저장
-            }
-
-            List<Diet_nutrition> dn = new ArrayList<>(); // 식단별 영양정보
-            for (int i = 0; i < did.size(); i++) {
-                dn.add(nutritionService.finddid(Integer.parseInt(did.get(i).toString())));
-            }
-
-            List<Diet_food> dnn1 = new ArrayList<>();
-                List<Double> fcal = new ArrayList();
-            for (String name : foodnames) {
-
-                Diet_food dietFood =diet_foodService.findByfoodname(name);
-
-               Food_nutrition foodNutrition= food_nutritionService.getid(dietFood.getFood_nutrition_id());
-
-               ;
-
-                dnn1.add(dietFood);
-                fcal.add((double)foodNutrition.getCalories());
-
-            }
-
-            List<Diet_nutrition> dnn = new ArrayList<>();
-
-
-            for (Diet_nutrition d : dn) {
-                for (Diet_food d2 : dnn1) {
-                    if (d.getDietid() == d2.getDietId()) {
-                        dnn.add(d); // ❗ 이로 인해 여러 음식에 같은 영양정보가 붙게 됨
-                    }
-                }
-            }
-
-
-            for (int i = 0; i < dnn.size(); i++) {
-                detailfood df = new detailfood();
-                df.setName(foodnames.get(i));
-                df.setTime(dtimeList.get(i));
-
-
-                df.setCalories(fcal.get(i));
-                df.setProtein(dnn.get(i).getProtein());
-                df.setCarbohydrate(dnn.get(i).getCarbohydrate());
-                df.setFat(dnn.get(i).getFat());
-
-                dflist.add(df);
-            }
-
-            map.put("dflist", dflist); // 식단 상세 정보 결과 반환
+            List<detailfood> dflist = dietMapper.findDietDetailsByUserIdAndDate(iddate.getId(), iddate.getDate());
+            map.put("dflist", dflist);
         }
-
         // 운동 루틴 처리
         List<ExerciseRoutine> exerciseRoutineList = new ArrayList<>();
         for (IdEname idename : elist) {
@@ -281,12 +237,12 @@ public class CalendarController {
     @PostMapping("/del/schedule")
     @ResponseBody
     public Map<String, Object> delschedule(@ModelAttribute DelscheduleDTO delschedule) {
+
         scheduleService.del(delschedule);
         IdDate iddate = new IdDate();
         iddate.setId(delschedule.getId());
         iddate.setDate(delschedule.getDate());
         return sdetail(iddate);
-
     }
 
     @GetMapping("/schedule/todayCal")

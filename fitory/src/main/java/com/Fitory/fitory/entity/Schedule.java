@@ -25,7 +25,7 @@ public class Schedule {
 
     private LocalDate date;
 
-
+    @Column(nullable = true)
     private LocalTime time;
 
     private String type;
