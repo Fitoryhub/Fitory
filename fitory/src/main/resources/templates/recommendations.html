@@ -1,0 +1,378 @@
+<section layout:decorate="~{common}"
+         layout:fragment="content"
+         xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+         xmlns:th="http://www.thymeleaf.org">
+
+  <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
+
+  <style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Noto Sans KR', sans-serif;
+    }
+
+    body {
+        min-width: 1200px;
+        background-color: #f9fafb;
+        color: #333;
+    }
+
+    #main {
+        width: 700px;
+        margin: 40px auto;
+        background-color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        padding: 30px 40px;
+    }
+
+    #main h2 {
+        color: #10b981;
+        font-weight: 700;
+        font-size: 28px;
+        margin-bottom: 25px;
+        text-align: center;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #065f46;
+        font-size: 16px;
+    }
+
+    input[readonly],
+    select {
+        width: 100%;
+        padding: 10px 14px;
+        font-size: 16px;
+        border: 1.8px solid #d1fae5;
+        border-radius: 8px;
+        color: #374151;
+        background-color: #f0fdf4;
+        box-sizing: border-box;
+    }
+
+    input[readonly] {
+        cursor: not-allowed;
+    }
+
+    select {
+        cursor: pointer;
+        transition: border-color 0.3s ease;
+    }
+
+    select:focus {
+        outline: none;
+        border-color: #10b981;
+        background-color: #e0f7ec;
+    }
+
+    .basic-info-row {
+        display: flex;
+        gap: 20px;
+    }
+
+    .basic-info-row > div {
+        flex: 1;
+    }
+
+    .btn-submit {
+        margin-top: 30px;
+        background-color: #10b981;
+        color: white;
+        font-weight: 700;
+        font-size: 18px;
+        padding: 12px 0;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        box-shadow: 0 4px 10px rgba(16, 185, 129, 0.4);
+    }
+
+    .btn-submit:hover {
+        background-color: #059669;
+    }
+
+    #loadingMessage {
+        display: none;
+        text-align: center;
+        color: #059669;
+        font-weight: 600;
+        margin-top: 20px;
+    }
+
+    #resultBox {
+        margin-top: 40px;
+    }
+
+    #resultBox h3 {
+        color: #10b981;
+        text-align: center;
+        margin-bottom: 15px;
+    }
+
+    #resultTable {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+        color: #374151;
+    }
+
+    #resultTable thead {
+        background-color: #10b981;
+        color: white;
+    }
+
+    #resultTable th, #resultTable td {
+        border: 1px solid #cbd5e1;
+        padding: 8px 12px;
+        text-align: center;
+    }
+
+    #resultTable tbody tr:nth-child(even) {
+        background-color: #f9fafb;
+    }
+
+    @media (max-width: 768px) {
+        body {
+            min-width: auto;
+            padding: 20px;
+        }
+
+        #main {
+            width: 100%;
+            padding: 20px;
+            margin: 20px auto;
+        }
+
+        select, input[type="number"] {
+            font-size: 14px;
+        }
+
+        label {
+            font-size: 14px;
+        }
+
+        .btn-submit {
+            font-size: 16px;
+            padding: 10px 0;
+        }
+
+        .basic-info-row {
+            flex-direction: column;
+            gap: 15px;
+        }
+    }
+  </style>
+
+  <body>
+  <div id="main">
+    <h2>식단 추천</h2>
+
+    <form id="dietForm">
+      <div class="basic-info-row">
+        <div>
+          <label for="currentWeight">현재 체중 (kg)</label>
+          <input type="number" id="currentWeight" name="currentWeight" th:value="${user.weight_kg}" readonly>
+        </div>
+        <div>
+          <label for="targetWeight">목표 체중 (kg)</label>
+          <input type="number" id="targetWeight" name="targetWeight" th:value="${userInfo.targetWeight}" readonly>
+        </div>
+      </div>
+
+      <div class="basic-info-row">
+        <div>
+          <label for="bmr">기초대사량 (kcal)</label>
+          <input type="number" id="bmr" name="bmr" th:value="${userInfo.bmr}" readonly>
+        </div>
+        <div>
+          <label for="rdi">권장칼로리 (kcal)</label>
+          <input type="number" id="rdi" name="rdi" th:value="${userInfo.rdi}" readonly>
+        </div>
+      </div>
+
+      <!-- 선택 항목들 -->
+      <div>
+        <label for="category">음식 유형을 선택해주세요</label>
+        <select id="category" name="category" required>
+          <option value="" disabled selected>선택하세요</option>
+          <option value="any">상관없음</option>
+          <option value="찜류">찜류</option>
+          <option value="찌개 및 전골류">찌개 및 전골류</option>
+          <option value="죽 및 스프류">죽 및 스프류</option>
+          <option value="밥류">밥류</option>
+          <option value="면 및 만두류">면 및 만두류</option>
+          <option value="국 및 탕류">국 및 탕류</option>
+          <option value="전·적 및 부침류">전·적 및 부침류</option>
+          <option value="볶음류">볶음류</option>
+          <option value="조림류">조림류</option>
+          <option value="나물·숙채류">나물·숙채류</option>
+          <option value="장아찌·절임류">장아찌·절임류</option>
+          <option value="음료 및 차류">음료 및 차류</option>
+          <option value="수·조·어·육류">수·조·어·육류</option>
+          <option value="장류, 양념류">장류, 양념류</option>
+          <option value="과일류">과일류</option>
+          <option value="제품류 및 빙과류">제품류 및 빙과류</option>
+          <option value="두류, 견과 및 종실류">두류, 견과 및 종실류</option>
+          <option value="곡류, 서류 제품">곡류, 서류 제품</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="sodium">나트륨 함량</label>
+        <select id="sodium" name="sodium" required>
+          <option value="" disabled selected>선택하세요</option>
+          <option value="low">나트륨 함량 낮음</option>
+          <option value="standard">표준 수준</option>
+          <option value="high">나트륨 함량 높음</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="protein">단백질 함량</label>
+        <select id="protein" name="protein" required>
+          <option value="" disabled selected>선택하세요</option>
+          <option value="low">단백질 함량 낮음</option>
+          <option value="standard">표준 수준</option>
+          <option value="high">단백질 함량 높음</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="sugar">당분 함량</label>
+        <select id="sugar" name="sugar" required>
+          <option value="" disabled selected>선택하세요</option>
+          <option value="low">당류 함량 낮음</option>
+          <option value="standard">표준 수준</option>
+          <option value="high">당류 함량 높음</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="restriction">식단 선택/제한 사항</label>
+        <select id="restriction" name="restriction">
+          <option value="" selected>없음</option>
+          <option value="no-vegetable">채소 제외</option>
+          <option value="no-meat">고기 제외</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="recommendCount">추천 음식 개수</label>
+        <select id="recommendCount" name="recommendCount" required>
+          <option value="5" selected>5개</option>
+          <option value="6">6개</option>
+          <option value="7">7개</option>
+          <option value="8">8개</option>
+          <option value="9">9개</option>
+          <option value="10">10개</option>
+        </select>
+      </div>
+
+      <button type="submit" class="btn-submit">추천 받기</button>
+    </form>
+
+    <!-- ✅ 로딩 메시지 -->
+    <div id="loadingMessage">추천 중입니다... 잠시만 기다려주세요 😊</div>
+
+    <!-- ✅ 결과 표시 영역 -->
+    <div id="resultBox" style="display:none;">
+      <h3>추천 식단 결과</h3>
+      <table id="resultTable" border="1" cellspacing="0" cellpadding="8">
+        <thead>
+        <tr>
+          <th>음식명</th>
+          <th>칼로리 (kcal)</th>
+          <th>탄수화물 (g)</th>
+          <th>단백질 (g)</th>
+          <th>지방 (g)</th>
+          <th>당류 (g)</th>
+          <th>나트륨 (mg)</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- 결과가 여기에 표시됩니다 -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('dietForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const formData = {
+        currentWeight: Number(document.getElementById('currentWeight').value),
+        targetWeight: Number(document.getElementById('targetWeight').value),
+        bmr: Number(document.getElementById('bmr').value),
+        rdi: Number(document.getElementById('rdi').value),
+        category: document.getElementById('category').value,
+        sodium: document.getElementById('sodium').value,
+        protein: document.getElementById('protein').value,
+        sugar: document.getElementById('sugar').value,
+        restriction: document.getElementById('restriction').value,
+        recommendCount: Number(document.getElementById('recommendCount').value)
+      };
+
+      const loadingMessage = document.getElementById('loadingMessage');
+      const resultBox = document.getElementById('resultBox');
+      const tbody = document.querySelector('#resultTable tbody');
+
+      loadingMessage.style.display = 'block';
+      resultBox.style.display = 'none';
+      tbody.innerHTML = '';
+
+      fetch('http://192.168.0.63:3000/recommendation', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      })
+      .then(response => {
+        if (!response.ok) throw new Error('서버 응답 오류');
+        return response.json();
+      })
+      .then(data => {
+        if (!data.recommendations || data.recommendations.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;">추천 결과가 없습니다.</td></tr>`;
+        } else {
+          data.recommendations.forEach(food => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>${food.name ?? '이름 없음'}</td>
+              <td>${food.calories?.toFixed(1) ?? '-'}</td>
+              <td>${food.carbohydrate?.toFixed(2) ?? '-'}</td>
+              <td>${food.protein?.toFixed(2) ?? '-'}</td>
+              <td>${food.fat?.toFixed(2) ?? '-'}</td>
+              <td>${food.sugar?.toFixed(2) ?? '-'}</td>
+              <td>${food.sodium?.toFixed(1) ?? '-'}</td>
+            `;
+            tbody.appendChild(tr);
+          });
+        }
+        loadingMessage.style.display = 'none';
+        resultBox.style.display = 'block';
+        alert("추천 결과를 확인하세요!");
+      })
+      .catch(error => {
+        console.error("에러 발생:", error);
+        alert("서버 요청 중 문제가 발생했습니다.");
+        loadingMessage.style.display = 'none';
+      });
+    });
+  </script>
+  </body>
+</section>

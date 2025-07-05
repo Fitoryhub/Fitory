@@ -214,7 +214,20 @@
             }
         }
 
+        async function translateToEnglish(text) {
+            const response = await fetch(`http://192.168.0.63:3000/translate?text=${encodeURIComponent(text)}`);
+            const data = await response.json();
+            return data.translatedText;
+        }
+
         async function getname2(foodname,selectclasification){
+            // 한글이면 번역 처리
+            const isKorean = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(foodname);
+            if (isKorean) {
+                foodname = await translateToEnglish(foodname);
+                console.log("번역된 foodname:", foodname);
+            }
+
             let url='http://192.168.0.41:3000/getdata?foodname='+foodname;
             try{
                 const response= await fetch(url);

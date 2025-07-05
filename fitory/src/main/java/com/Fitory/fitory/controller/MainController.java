@@ -1,9 +1,15 @@
 package com.Fitory.fitory.controller;
 
 import com.Fitory.fitory.dto.SessionUserDTO;
+import com.Fitory.fitory.dto.UserDTO;
+import com.Fitory.fitory.dto.UserHealthInfoDTO;
 import com.Fitory.fitory.entity.Board;
+import com.Fitory.fitory.entity.ExerciseRoutine;
+import com.Fitory.fitory.entity.User;
 import com.Fitory.fitory.service.BoardService;
+import com.Fitory.fitory.service.UserHealthServiceImpl;
 import com.Fitory.fitory.service.UserService;
+import com.Fitory.fitory.service.UserServiceImpl;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,10 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 public class MainController {
@@ -26,6 +29,11 @@ public class MainController {
     @Autowired
     BoardService boardService;
 
+    @Autowired
+    UserServiceImpl userServiceImpl;
+
+    @Autowired
+    UserHealthServiceImpl userhealthserviceimpl;
     // 메인 홈페이지
     @GetMapping("/")
     public String main(HttpSession session, Model model) {
@@ -36,6 +44,21 @@ public class MainController {
 
         model.addAttribute("boardList", boardList);
         return "main";
+    }
+
+    @GetMapping("/recommendations")
+    public String main12(HttpSession session, Model model) {
+        UserDTO udto = new UserDTO();
+        UserHealthInfoDTO hdto = new UserHealthInfoDTO();
+        SessionUserDTO userInfo = (SessionUserDTO) session.getAttribute("userInfo");
+        if (userInfo == null) {
+            return "redirect:/login"; // 로그인 안 된 상태일 경우
+        }
+        udto = userServiceImpl.userInfo(userInfo.getId());
+        model.addAttribute("user", udto);
+        hdto = userhealthserviceimpl.findInfo(userInfo.getId());
+        model.addAttribute("userInfo", hdto);
+        return "recommendations";
     }
 
     @GetMapping("/logOut")
