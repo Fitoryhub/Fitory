@@ -214,9 +214,14 @@ public class DietController {
         Map<Long, List<Diet_food>> foodMap = new HashMap<>();
 
         for (Long did : didlist) {
+
             List<Diet_food> onedayfood = dservice.findonedaymeal(did);
+            for (Diet_food food : onedayfood) {
+                food.setDietId(Math.toIntExact(did));
+            }
             foodMap.put(did, onedayfood);
         }
+
         return foodMap;
     }
 

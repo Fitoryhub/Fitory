@@ -17,7 +17,7 @@ public class Diet_food {
 	private int food_id;
 
 	@Column(name="diet_id", columnDefinition = "BIGINT")
-	private int dietId;
+	private int  dietId;
 
 	@Column(name="food_name", columnDefinition = "VARCHAR(100)")
 	private String foodname;

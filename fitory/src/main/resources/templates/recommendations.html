@@ -310,69 +310,69 @@
   </div>
 
   <script>
-    document.getElementById('dietForm').addEventListener('submit', function (e) {
-      e.preventDefault();
-
-      const formData = {
-        currentWeight: Number(document.getElementById('currentWeight').value),
-        targetWeight: Number(document.getElementById('targetWeight').value),
-        bmr: Number(document.getElementById('bmr').value),
-        rdi: Number(document.getElementById('rdi').value),
-        category: document.getElementById('category').value,
-        sodium: document.getElementById('sodium').value,
-        protein: document.getElementById('protein').value,
-        sugar: document.getElementById('sugar').value,
-        restriction: document.getElementById('restriction').value,
-        recommendCount: Number(document.getElementById('recommendCount').value)
-      };
-
-      const loadingMessage = document.getElementById('loadingMessage');
-      const resultBox = document.getElementById('resultBox');
-      const tbody = document.querySelector('#resultTable tbody');
-
-      loadingMessage.style.display = 'block';
-      resultBox.style.display = 'none';
-      tbody.innerHTML = '';
-
-      fetch('http://192.168.0.63:3000/recommendation', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData)
-      })
-      .then(response => {
-        if (!response.ok) throw new Error('서버 응답 오류');
-        return response.json();
-      })
-      .then(data => {
-        if (!data.recommendations || data.recommendations.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;">추천 결과가 없습니다.</td></tr>`;
-        } else {
-          data.recommendations.forEach(food => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-              <td>${food.name ?? '이름 없음'}</td>
-              <td>${food.calories?.toFixed(1) ?? '-'}</td>
-              <td>${food.carbohydrate?.toFixed(2) ?? '-'}</td>
-              <td>${food.protein?.toFixed(2) ?? '-'}</td>
-              <td>${food.fat?.toFixed(2) ?? '-'}</td>
-              <td>${food.sugar?.toFixed(2) ?? '-'}</td>
-              <td>${food.sodium?.toFixed(1) ?? '-'}</td>
-            `;
-            tbody.appendChild(tr);
-          });
-        }
-        loadingMessage.style.display = 'none';
-        resultBox.style.display = 'block';
-        alert("추천 결과를 확인하세요!");
-      })
-      .catch(error => {
-        console.error("에러 발생:", error);
-        alert("서버 요청 중 문제가 발생했습니다.");
-        loadingMessage.style.display = 'none';
-      });
-    });
+    // document.getElementById('dietForm').addEventListener('submit', function (e) {
+    //   e.preventDefault();
+    //
+    //   const formData = {
+    //     currentWeight: Number(document.getElementById('currentWeight').value),
+    //     targetWeight: Number(document.getElementById('targetWeight').value),
+    //     bmr: Number(document.getElementById('bmr').value),
+    //     rdi: Number(document.getElementById('rdi').value),
+    //     category: document.getElementById('category').value,
+    //     sodium: document.getElementById('sodium').value,
+    //     protein: document.getElementById('protein').value,
+    //     sugar: document.getElementById('sugar').value,
+    //     restriction: document.getElementById('restriction').value,
+    //     recommendCount: Number(document.getElementById('recommendCount').value)
+    //   };
+    //
+    //   const loadingMessage = document.getElementById('loadingMessage');
+    //   const resultBox = document.getElementById('resultBox');
+    //   const tbody = document.querySelector('#resultTable tbody');
+    //
+    //   loadingMessage.style.display = 'block';
+    //   resultBox.style.display = 'none';
+    //   tbody.innerHTML = '';
+    //
+    //   fetch('http://192.168.0.63:3000/recommendation', {
+    //     method: 'POST',
+    //     headers: {
+    //       'Content-Type': 'application/json'
+    //     },
+    //     body: JSON.stringify(formData)
+    //   })
+    //   .then(response => {
+    //     if (!response.ok) throw new Error('서버 응답 오류');
+    //     return response.json();
+    //   })
+    //   .then(data => {
+    //     if (!data.recommendations || data.recommendations.length === 0) {
+    //       tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;">추천 결과가 없습니다.</td></tr>`;
+    //     } else {
+    //       data.recommendations.forEach(food => {
+    //         const tr = document.createElement('tr');
+    //         tr.innerHTML = `
+    //           <td>${food.name ?? '이름 없음'}</td>
+    //           <td>${food.calories?.toFixed(1) ?? '-'}</td>
+    //           <td>${food.carbohydrate?.toFixed(2) ?? '-'}</td>
+    //           <td>${food.protein?.toFixed(2) ?? '-'}</td>
+    //           <td>${food.fat?.toFixed(2) ?? '-'}</td>
+    //           <td>${food.sugar?.toFixed(2) ?? '-'}</td>
+    //           <td>${food.sodium?.toFixed(1) ?? '-'}</td>
+    //         `;
+    //         tbody.appendChild(tr);
+    //       });
+    //     }
+    //     loadingMessage.style.display = 'none';
+    //     resultBox.style.display = 'block';
+    //     alert("추천 결과를 확인하세요!");
+    //   })
+    //   .catch(error => {
+    //     console.error("에러 발생:", error);
+    //     alert("서버 요청 중 문제가 발생했습니다.");
+    //     loadingMessage.style.display = 'none';
+    //   });
+    // });
   </script>
   </body>
 </section>

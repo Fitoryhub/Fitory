@@ -31,4 +31,7 @@ public class Schedule {
     private String type;
 
     private String item;
+
+    @Column(name = "diet_id")
+    private Integer dietid;
 }

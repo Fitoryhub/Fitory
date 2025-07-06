@@ -166,6 +166,9 @@ public class CalendarController {
         schedule1.setItem(schedule.getItem());
         schedule1.setUserid(schedule.getId());
         schedule1.setType(schedule.getType());
+        if(schedule1.getType().equals("meal")) {
+            schedule1.setDietid(schedule.getDietid());
+        }
 
         scheduleService.saveschedule(schedule1);
 
@@ -210,6 +213,10 @@ public class CalendarController {
 
             List<detailfood> dflist = dietMapper.findDietDetailsByUserIdAndDate(iddate.getId(), iddate.getDate());
             map.put("dflist", dflist);
+
+            for(detailfood df : dflist) {
+                df.getName();
+            }
         }
         // 운동 루틴 처리
         List<ExerciseRoutine> exerciseRoutineList = new ArrayList<>();
@@ -272,8 +279,11 @@ public class CalendarController {
         int[] df_id = new int[meals.size()];
         for (int i = 0; i < meals.size(); i++) {
             Diet_food df = diet_foodService.findByfoodname(meals.get(i));
+
             df_id[i] = df.getFood_nutrition_id();
+
         }
+
         List<ExerciseRoutine> elist = new ArrayList<>();
         int e_cal = 0;
         for (int i = 0; i < exercise.size(); i++) {

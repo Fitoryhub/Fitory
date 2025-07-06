@@ -4,21 +4,21 @@
 <mapper namespace="com.Fitory.fitory.mapper.DietMapper">
 
     <select id="findDietDetailsByUserIdAndDate" resultType="com.Fitory.fitory.dto.detailfood">
-
         SELECT
-            df.food_name AS name,
+            df.food_name,
             df.mealtype,
             fn.calories,
             fn.protein,
             fn.carbohydrate,
-            fn.fat
-        FROM diet d
+            fn.fat,
+            s.date
+        FROM schedule s
+                 JOIN diet d ON s.diet_id = d.diet_id
                  JOIN diet_food df ON d.diet_id = df.diet_id
                  JOIN food_nutrition fn ON df.food_nutrition_id = fn.food_nutrition_id
-                 JOIN schedule s ON d.user_id = s.id  -- 스케줄 테이블 추가
-        WHERE d.user_id = #{userid}
-          AND s.date = #{date}  -- 스케줄 날짜 기준
-          AND s.type = 'meal';  -- type이 'meal'인 식단만 조회
+        WHERE s.id = #{userid}
+          AND s.date = #{date}
+          AND s.type = 'meal'
     </select>
 
 </mapper>

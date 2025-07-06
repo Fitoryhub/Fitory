@@ -49,34 +49,31 @@
 <script>
 
     $(document).ready(function () {
-
         let id = $("#id").val();
-        const itemSelect = document.getElementById('item');
+        const $select = $("#item");
+        const $dietInput = $('<input type="hidden" name="dietid" id="dietid">');
+        $("#scheduleForm").append($dietInput); // 폼에 hidden input 추가
 
         $.ajax({
             url: "/mymeal",
             method: "GET",
             dataType: "json",
-            data: {
-                id: id
-            },
+            data: { id: id },
             success: function (data) {
                 alert("성공");
-
-                const choose = $("#item");
-                choose.empty();
+                $select.empty();
 
                 $.each(data, function (did, foodList) {
-                    let breakfast = [];
-                    let lunch = [];
-                    let dinner = [];
+                    let breakfast = [], lunch = [], dinner = [];
+                    let dietid = "";
 
                     foodList.forEach(item => {
+                        dietid = item.dietId;
                         switch (item.mealtype) {
                             case "breakfast":
                                 breakfast.push(item.foodname);
                                 break;
-                            case "lunch":
+                            case "launch":
                                 lunch.push(item.foodname);
                                 break;
                             case "dinner":
@@ -85,46 +82,51 @@
                         }
                     });
 
-                    const displayText =
+                    const label =
                         "아침: " + breakfast.join(", ") + " | " +
                         "점심: " + lunch.join(", ") + " | " +
                         "저녁: " + dinner.join(", ");
 
-                    choose.append(`<option value="${displayText}">${displayText}</option>`);
+                    $select.append(
+                        `<option data-dietid="${dietid}" value="${label}">${label}</option>`
+                    );
                 });
+
+                // 첫 번째 값의 dietid 설정
+                const firstDietid = $select.find("option:selected").data("dietid");
+                $dietInput.val(firstDietid);
             },
             error: function () {
                 alert("식단정보를 가져오는데 실패.");
             }
         });
 
+        // 식단 선택 변경 시 dietid 업데이트
+        $select.on("change", function () {
+            const selectedDietid = $(this).find("option:selected").data("dietid");
+            $dietInput.val(selectedDietid);
+        });
 
+        // 폼 전송
+        $("#scheduleForm").submit(function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: "/save_schedule",
+                method: "POST",
+                data: $(this).serialize(),
+                success: function () {
+                    if (window.opener && typeof window.opener.scheduleReload === "function") {
+                        window.opener.scheduleReload();
+                    }
+                    window.close();
+                },
+                error: function () {
+                    alert("스케줄 저장 실패");
+                }
+            });
+        });
+    });
 
-
-
-
-
-
-         $("#scheduleForm").submit(function (e) {
-             e.preventDefault(); // 기본 전송 막기
-
-             $.ajax({
-                 url: "/save_schedule", // 저장용 API 경로
-                 method: "POST",
-                 data: $(this).serialize(),
-                 success: function () {
-                     if (window.opener && typeof window.opener.scheduleReload === "function") {
-                         window.opener.scheduleReload(); // 부모창 스케줄 다시 불러오기
-                     }
-                     window.close(); // 팝업 닫기
-                 },
-                 error: function () {
-                     alert("스케줄 저장 실패");
-                 }
-             });
-         });
-
-     });
 
 </script>
 </body>

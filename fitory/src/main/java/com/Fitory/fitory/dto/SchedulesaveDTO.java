@@ -20,5 +20,6 @@ public class SchedulesaveDTO {
 
     private String item;
 
+    private int dietid;
 
 }
