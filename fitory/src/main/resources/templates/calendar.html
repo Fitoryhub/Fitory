@@ -77,7 +77,6 @@
             background-color: #f9f9f9;
         }
 
-
         header h1 {
             margin: 0;
             font-size: 24px;
@@ -132,11 +131,11 @@
         }
 
         .header {
-            position: relative; /* ⭐ 부모 기준으로 정렬 */
+            position: relative;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 60px; /* 왼쪽 버튼 때문에 여유 확보 */
+            padding: 0 60px;
         }
 
         .header-right {
@@ -174,7 +173,7 @@
 
         .days {
             display: grid;
-            grid-template-columns: repeat(7, 100px); /* 셀 너비 80px → 100px로 증가 */
+            grid-template-columns: repeat(7, 100px);
             gap: 6px;
         }
 
@@ -194,8 +193,8 @@
         }
 
         .day {
-            width: 100px; /* 고정 너비 */
-            height: 120px; /* 고정 높이 */
+            width: 100px;
+            height: 120px;
             background: #ffffff;
             border: 1px solid #e8ecef;
             border-radius: 4px;
@@ -238,16 +237,15 @@
             color: #cc0000 !important;
         }
 
-        /* 공휴일 이름은 줄바꿈 허용 */
         .holiday-name {
             font-size: 11px;
             font-weight: 600;
             color: #cc0000;
             text-align: center;
             margin-bottom: 4px;
-            white-space: normal; /* ✅ 줄바꿈 허용 */
+            white-space: normal;
             word-break: keep-all;
-            overflow: visible; /* ✅ 말줄임 제거 */
+            overflow: visible;
             line-height: 1.2;
         }
 
@@ -263,9 +261,9 @@
             color: #333;
             word-break: break-word;
             margin-bottom: 3px;
-            white-space: nowrap; /* ✅ 한 줄로 표시 */
+            white-space: nowrap;
             overflow: hidden;
-            text-overflow: ellipsis; /* ✅ 말줄임(...) 처리 */
+            text-overflow: ellipsis;
         }
 
         #addScheduleBtn {
@@ -298,6 +296,22 @@
             background-color: #0056b3;
         }
 
+        /* 식단 삭제 버튼 스타일 */
+        #deleteScheduleBtn {
+            padding: 5px 10px;
+            font-size: 12px;
+            background-color: #e53935;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #deleteScheduleBtn:hover {
+            background-color: #c62828;
+        }
+
         .modal {
             position: fixed;
             top: 0;
@@ -314,7 +328,7 @@
         }
 
         .modal-content {
-            width: 90%;
+            width: 100%;
             max-width: 600px;
             max-height: 80vh;
             background: #fff;
@@ -322,51 +336,89 @@
             padding: 20px;
             overflow-y: auto;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            position: relative;
+            transition: transform 0.3s ease-in-out;
         }
 
-        #schedule-details li {
-            margin: 8px 0;
-            text-align: left;
-            font-size: 14px;
-            line-height: 1.5;
+        .modal-content h2 {
+            font-size: 22px;
+            margin-bottom: 15px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        #schedule-details {
+            max-height: 60vh;
+            overflow-y: auto;
+            padding-right: 10px;
         }
 
         #schedule-details h3 {
-            text-align: left;
-            margin-top: 15px;
-            margin-bottom: 10px;
+            font-size: 16px;
+            margin-top: 20px;
             color: #333;
-            border-bottom: 1px solid #ccc;
-            padding-bottom: 5px;
+            font-weight: 600;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 8px;
         }
 
-        .schedule-entry {
+        #schedule-details li {
+            font-size: 14px;
+            line-height: 1.8;
+            margin-bottom: 12px;
+            color: #495057;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #schedule-details li button {
+            padding: 5px 10px;
+            font-size: 13px;
+            background-color: #e53935;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #schedule-details li button:hover {
+            background-color: #c62828;
+        }
+
+        #closeBtn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 22px;
+            color: #333;
+            cursor: pointer;
+            padding: 5px;
+            transition: color 0.2s ease-in-out;
+        }
+
+        #closeBtn:hover {
+            color: #e53935;
+        }
+
+        #closeBtn:focus {
+            outline: none;
+        }
+
+        .modal-content .schedule-entry {
             margin-bottom: 20px;
             padding: 10px;
             border-bottom: 1px solid #e0e0e0;
+            background-color: #f9f9f9;
         }
 
         .schedule-entry h4 {
-            margin-bottom: 6px;
             font-size: 16px;
+            margin-bottom: 8px;
             color: #222;
-        }
 
-        .nutrients {
-            font-size: 14px;
-            color: #666;
-        }
-
-        .today.holiday {
-            background: #cc0033 !important; /* 원하는 공휴일+오늘 스타일 */
-            color: #fff !important;
-        }
-
-        .button-wrapper {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            margin-bottom: 10px;
         }
     </style>
 
@@ -666,15 +718,21 @@
                     if (b === 0) {
                         $("#schedule-details").append('<h3>식단</h3>');
                     }
+                    var mealTypeInKorean = "";
+                    if (dfood.mealtype === "breakfast") {
+                        mealTypeInKorean = "아침";
+                    } else if (dfood.mealtype === "launch") {
+                        mealTypeInKorean = "점심";
+                    } else if (dfood.mealtype === "dinner") {
+                        mealTypeInKorean = "저녁";
+                    }
                     $("#schedule-details").append(
-                        "<li>" + dfood.mealtype +
+                        "<li>" + mealTypeInKorean +
                         "   식단명: " + dfood.name +
                         "   섭취칼로리: " + dfood.calories +
                         "kal   탄수화물: " + dfood.carbohydrate +
                         "g   단백질: " + dfood.protein +
                         "g   지방: " + dfood.fat + "g" +
-                        '" data-name="' + dfood.name +
-                        '" data-time="' + dfood.time +
                         "</li>"
                     );
                     b++;
@@ -682,7 +740,7 @@
                 });
                 if (b > 0) {
                     $("#schedule-details").append(
-                        '<button class="delete-meal"  data-type="meal" data-date="' + formattedDate + '">식단삭제</button>'
+                        '<button id="deleteScheduleBtn" class="delete-meal"  data-type="meal" data-date="' + formattedDate + '">식단삭제</button>'
                     );
 
 
