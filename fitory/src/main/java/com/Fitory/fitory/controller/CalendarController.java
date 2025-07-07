@@ -4,6 +4,9 @@ package com.Fitory.fitory.controller;
 import com.Fitory.fitory.dto.*;
 import com.Fitory.fitory.entity.*;
 import com.Fitory.fitory.mapper.DietMapper;
+import com.Fitory.fitory.repository.Diet_foodRepository;
+import com.Fitory.fitory.repository.Food_nutritionRepository;
+import com.Fitory.fitory.repository.ScheduleRepository;
 import com.Fitory.fitory.repository.UserRepository;
 import com.Fitory.fitory.service.*;
 import jakarta.servlet.http.HttpSession;
@@ -56,6 +59,15 @@ public class CalendarController {
     @Autowired
     private UserHealthServiceImpl userHealthService;
 
+    @Autowired
+    private Diet_foodRepository dfRepo;
+
+    @Autowired
+    private ScheduleRepository scheduleRepository;
+
+    @Autowired
+    private Food_nutritionRepository fRepo;
+
     @GetMapping("/add_exercise")
     public String addExercise() {
         return "add_exercise"; // add_exercise.html 렌더링
@@ -81,6 +93,8 @@ public class CalendarController {
         int h = Integer.parseInt(user.getHeight());
         int tempage = Integer.parseInt(user.getBirth().substring(0, 4));
         int age = Year.now().getValue() - tempage;
+
+
 
         String targetW;
         if (userHealthService.findInfo(userInfo.getId()) == null) {
@@ -260,46 +274,45 @@ public class CalendarController {
 
         //오늘 날짜 구해서
         LocalDate today = LocalDate.now();
-        List<Schedule> ss = scheduleService.todayCal(id, today);
-        List<String> meals = new ArrayList<>();
-        List<String> exercise = new ArrayList<>();
-        //오늘 식단의 음식 이름 가져오기
-        for (int i = 0; i < ss.size(); i++) {
-            if (ss.get(i).getType().equals("meal")) {
-                //음식 명
-                meals.add(ss.get(i).getItem());
-            } else {
-                //운동 명
-                exercise.add(ss.get(i).getItem());
+        int diet_id = 0;
+        List<Diet_food> food_id = new ArrayList<>();
+
+        List<Schedule> sss = scheduleRepository.getschedule(id, today);
+        List<String> exercisename = new ArrayList<>();
+        for(int i=0; i<sss.size(); i++){
+            if(sss.get(i).getDietid()!=null){
+                diet_id = sss.get(i).getDietid();
+            }else {
+                exercisename.add(sss.get(i).getItem());
             }
-
         }
 
-        //음식 이름으로 food_id 구하기
-        int[] df_id = new int[meals.size()];
-        for (int i = 0; i < meals.size(); i++) {
-            Diet_food df = diet_foodService.findByfoodname(meals.get(i));
-
-            df_id[i] = df.getFood_nutrition_id();
-
+        List<Integer> food_nutrition_id = new ArrayList<>();
+        for(int i=0; i<food_id.size(); i++){
+            food_nutrition_id.add(food_id.get(i).getFood_nutrition_id());
         }
 
+
+        int foodcal = 0;
+        List<Food_nutrition> ff = fRepo.findBydietId(diet_id);
+        for (Food_nutrition foodNutrition : ff) {
+            foodcal += foodNutrition.getCalories();
+        }
+
+        int e_cal=0;
         List<ExerciseRoutine> elist = new ArrayList<>();
-        int e_cal = 0;
-        for (int i = 0; i < exercise.size(); i++) {
-            elist.add(exerciseRoutineService.todaysexercise(id, exercise.get(i)));
+        for(int i=0; i<exercisename.size(); i++){
+            elist.add(exerciseRoutineService.todaysexercise(id, exercisename.get(i)));
         }
-        for (int i = 0; i < elist.size(); i++) {
+
+        for(int i=0; i<elist.size(); i++){
             e_cal += elist.get(i).getCalorie();
         }
 
-        // food_id로 해당하는 칼로리 모두 더하기
-        int calories = 0;
-        for (int j : df_id) {
-            calories += food_nutritionService.getCal(j);
-        }
+
+        System.out.println(e_cal+"운동 칼로리!@%@%15");
         Map<String, Integer> calList = new HashMap<>();
-        calList.put("foodcal", calories);
+        calList.put("foodcal", foodcal);
         calList.put("exercisecal", e_cal);
 
         return calList;

@@ -42,9 +42,9 @@ public class ScheduleService implements IF_ScheduleService {
     @Override
     public void del(DelscheduleDTO delschedule) {
 
-            String date = delschedule.getDate();
+        String date = delschedule.getDate();
 
-            LocalDate date1 = LocalDate.parse(date, DateTimeFormatter.ISO_LOCAL_DATE);
+        LocalDate date1 = LocalDate.parse(date, DateTimeFormatter.ISO_LOCAL_DATE);
 
         if(delschedule.getType()!=null) {
             scheduleRepository.deleteByDateAndType( date1,delschedule.getType());
@@ -67,8 +67,8 @@ public class ScheduleService implements IF_ScheduleService {
     }
 
     @Override
-    public List<Schedule> todayCal(String id, LocalDate date) {
-        return scheduleRepository.todayCal(id, date);
+    public List<Integer> diet_id (String id, LocalDate date) {
+        return scheduleRepository.diet_id(id, date);
     }
 
 

@@ -31,9 +31,13 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Integer> {
             @Param("time") LocalTime time,
             @Param("item") String item);
 
-    @Query("select s from Schedule s where s.userid=:userid and s.date=:date")
-    List<Schedule> todayCal(@Param("userid") String userid,
+    @Query("select dietid from Schedule s where s.userid=:userid and s.date=:date")
+    List<Integer> diet_id(@Param("userid") String userid,
                           @Param("date") LocalDate date);
+
+    @Query("select s from Schedule s where s.userid=:userid and s.date=:date")
+    List<Schedule> getschedule(@Param("userid") String userid,
+                               @Param("date") LocalDate date);
 
     void deleteByDateAndType(LocalDate date, String type);
 }

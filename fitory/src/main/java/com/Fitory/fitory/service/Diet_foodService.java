@@ -11,7 +11,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 public class Diet_foodService implements IF_DIet_foodService{
-	
+
 	private final Diet_foodRepository dfrepo;
 
 	public void insert(int did, List<Integer> fnid, List<Diet_food> dflist, List<FoodlistDTO> flist) {

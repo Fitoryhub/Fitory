@@ -12,9 +12,9 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 public class Diet_nutritionService implements IF_Diet_nutritionService{
-	
+
 	private final Diet_nutritionRepository dnrepo;
-	
+
 	public void insert(int did, List<FoodlistDTO> flist) {
 		Diet_nutrition dn=new Diet_nutrition();
 		int tcal=0, tpro=0, tcarbo=0, tfat=0;
@@ -35,7 +35,7 @@ public class Diet_nutritionService implements IF_Diet_nutritionService{
 
 	public Diet_nutrition getone(int did){
 		Optional<Diet_nutrition> temp=dnrepo.findById(did);
-        return temp.orElse(null);
+		return temp.orElse(null);
 	}
 
 	public void delete(int did) {

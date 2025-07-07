@@ -13,7 +13,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 public class Food_nutritionService implements IF_Food_nutritionService{
-	
+
 	private final Food_nutritionRepository fnrepo;
 
 
@@ -40,9 +40,9 @@ public class Food_nutritionService implements IF_Food_nutritionService{
 	public List<Food_nutrition> getfnlist(int did){
 		return fnrepo.findAllBydietId(did);
 	}
-	
+
 	public List<Integer> getidlist(int id) {
-		return fnrepo.findBydietId(id);
+		return fnrepo.findBydietId_fid(id);
 	}
 
 	public void delete(int did) {
@@ -56,8 +56,8 @@ public class Food_nutritionService implements IF_Food_nutritionService{
 
 	@Override
 	public Food_nutrition getid(int foodNutritionId) {
-      return fnrepo.findByFoodnutritionid(foodNutritionId);
-    }
+		return fnrepo.findByFoodnutritionid(foodNutritionId);
+	}
 
 
 

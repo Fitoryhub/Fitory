@@ -16,5 +16,5 @@ public interface IF_ScheduleService {
 
     void del(DelscheduleDTO delschedule);
 
-    List<Schedule> todayCal(String id, LocalDate date);
+    List<Integer> diet_id (String id, LocalDate date);
 }
