@@ -40,7 +40,6 @@ public class CalendarController {
 
     private final String API_URL = "https://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getRestDeInfo";
     private final String SERVICE_KEY = "0sU7LdhuRgHBWZiz3kXvAm1vlbK9QAv9SjIqtR2+++VxXbrXsrdS3IE6jpqX3DSZKXzYHxQAx/HnCCAZ3+vRfw==";
-
     // 🔑
 
     @Autowired
@@ -333,34 +332,48 @@ public class CalendarController {
 
         return calList;
     }
+
     @GetMapping("/api/holidays")
     @ResponseBody
     public Map<String, Object> getHolidays(String year, String month) throws IOException {
         String key = "holiday:" + year + "-" + month;
-        String cached = redisTemplate.opsForValue().get(key);
-
         ObjectMapper mapper = new ObjectMapper();
 
+        // 캐시가 존재하면 바로 반환
+        String cached = redisTemplate.opsForValue().get(key);
         if (cached != null) {
             System.out.println("레디스에서 반환");
             return mapper.readValue(cached, new TypeReference<Map<String, Object>>() {});
         }
 
-        String url = API_URL + "?serviceKey=" + URLEncoder.encode(SERVICE_KEY, "UTF-8")
-                + "&solYear=" + year
-                + "&solMonth=" + month
-                + "&_type=json";
+        // 🔐 동시 요청 제어: 같은 key에 대해 한 번만 API 호출
+        synchronized (key.intern()) {
+            // 누군가 먼저 캐시했을 수도 있으니 한 번 더 확인
+            cached = redisTemplate.opsForValue().get(key);
+            if (cached != null) {
+                System.out.println("레디스에서 반환 (동기화 후)");
+                return mapper.readValue(cached, new TypeReference<Map<String, Object>>() {});
+            }
 
-        HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
-        conn.setRequestMethod("GET");
+            // 외부 API 호출
+            String url = API_URL + "?serviceKey=" + URLEncoder.encode(SERVICE_KEY, "UTF-8")
+                    + "&solYear=" + year
+                    + "&solMonth=" + month
+                    + "&_type=json";
 
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8))) {
-            String result = reader.lines().collect(Collectors.joining());
+            HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+            conn.setRequestMethod("GET");
 
-            // Redis에 6시간 저장
-            redisTemplate.opsForValue().set(key, result, Duration.ofHours(6));
+            try (BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8))) {
 
-            return mapper.readValue(result, new TypeReference<Map<String, Object>>() {});
+                String result = reader.lines().collect(Collectors.joining());
+
+                // 캐시에 저장 (6시간 유효)
+                redisTemplate.opsForValue().set(key, result, Duration.ofHours(6));
+
+                return mapper.readValue(result, new TypeReference<Map<String, Object>>() {});
+            }
         }
     }
 }
