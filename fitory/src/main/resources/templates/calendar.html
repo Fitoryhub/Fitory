@@ -426,34 +426,24 @@
 
         function fetchHolidays(year, month, callback) {
             $.ajax({
-                url: "https://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getRestDeInfo",
+                url: "/api/holidays",
                 method: "GET",
-                dataType: "text",
+                dataType: "json", // 서버에서 JSON을 보내므로 json으로 명시
                 data: {
-                    serviceKey: "0sU7LdhuRgHBWZiz3kXvAm1vlbK9QAv9SjIqtR2+++VxXbrXsrdS3IE6jpqX3DSZKXzYHxQAx/HnCCAZ3+vRfw==",
-                    solYear: year,
-                    solMonth: month < 10 ? "0" + month : month,
-                    _type: "json"  // _type=json 이면 보통 JSON 형태 응답 기대
+                    year: year,
+                    month: month < 10 ? "0" + month : month
                 },
                 success: function (data) {
-                    console.log("원본 응답:", data);
-                    try {
-                        const json = JSON.parse(data);
-                        if (json.response && json.response.body && json.response.body.items) {
-                            callback(null, json.response.body.items.item || []);
-                        } else {
-                            callback(null, []);
-                        }
-                    } catch (e) {
-                        console.error("JSON 파싱 실패:", e);
-                        // 혹시 XML 오류 메시지라면 XML 파싱 시도도 가능
-                        const xml = $.parseXML(data);
-                        // xml 내용 확인 후 적절한 처리 필요
-                        callback(e, null);
+                    if (data.response && data.response.body && data.response.body.items) {
+                        var items = data.response.body.items.item || [];
+                        if (!Array.isArray(items)) items = [items];
+                        callback(null, items);
+                    } else {
+                        callback(null, []);
                     }
                 },
                 error: function (xhr, status, error) {
-                    console.error("AJAX 에러:", error);
+                    console.error("서버 오류:", error);
                     callback(error, null);
                 }
             });

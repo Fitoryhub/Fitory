@@ -9,26 +9,42 @@ import com.Fitory.fitory.repository.Food_nutritionRepository;
 import com.Fitory.fitory.repository.ScheduleRepository;
 import com.Fitory.fitory.repository.UserRepository;
 import com.Fitory.fitory.service.*;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.sql.Time;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.Year;
-import java.time.YearMonth;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 public class CalendarController {
+
+    private final String API_URL = "https://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getRestDeInfo";
+    private final String SERVICE_KEY = "0sU7LdhuRgHBWZiz3kXvAm1vlbK9QAv9SjIqtR2+++VxXbrXsrdS3IE6jpqX3DSZKXzYHxQAx/HnCCAZ3+vRfw==";
+
+    // 🔑
+
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
 
     @Autowired
     private DietMapper dietMapper;
@@ -317,5 +333,34 @@ public class CalendarController {
 
         return calList;
     }
+    @GetMapping("/api/holidays")
+    @ResponseBody
+    public Map<String, Object> getHolidays(String year, String month) throws IOException {
+        String key = "holiday:" + year + "-" + month;
+        String cached = redisTemplate.opsForValue().get(key);
 
+        ObjectMapper mapper = new ObjectMapper();
+
+        if (cached != null) {
+            System.out.println("레디스에서 반환");
+            return mapper.readValue(cached, new TypeReference<Map<String, Object>>() {});
+        }
+
+        String url = API_URL + "?serviceKey=" + URLEncoder.encode(SERVICE_KEY, "UTF-8")
+                + "&solYear=" + year
+                + "&solMonth=" + month
+                + "&_type=json";
+
+        HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+        conn.setRequestMethod("GET");
+
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8))) {
+            String result = reader.lines().collect(Collectors.joining());
+
+            // Redis에 6시간 저장
+            redisTemplate.opsForValue().set(key, result, Duration.ofHours(6));
+
+            return mapper.readValue(result, new TypeReference<Map<String, Object>>() {});
+        }
+    }
 }

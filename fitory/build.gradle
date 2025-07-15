@@ -29,6 +29,11 @@ ext {
 
 dependencies {
 
+	// Redis 의존성 추가 ✅
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.4'
+
 	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.4'
 
 	// Spring Boot Starters
