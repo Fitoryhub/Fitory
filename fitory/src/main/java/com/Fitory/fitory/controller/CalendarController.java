@@ -334,24 +334,31 @@ public class CalendarController {
     }
 
     @GetMapping("/api/holidays")
-    @ResponseBody
-    public Map<String, Object> getHolidays(String year, String month) throws IOException {
-        String key = "holiday:" + year + "-" + month;
-        ObjectMapper mapper = new ObjectMapper();
+@ResponseBody
+public Map<String, Object> getHolidays(String year, String month) throws IOException {
+    String dataKey = "holiday:" + year + "-" + month;
+    ObjectMapper mapper = new ObjectMapper();
 
-        // 캐시가 존재하면 바로 반환
-        String cached = redisTemplate.opsForValue().get(key);
-        if (cached != null) {
-            System.out.println("레디스에서 반환");
-            return mapper.readValue(cached, new TypeReference<Map<String, Object>>() {});
-        }
+    // 1. 캐시가 존재하면 바로 반환 (첫 번째 확인)
+    String cached = redisTemplate.opsForValue().get(dataKey);
+    if (cached != null) {
+        System.out.println("레디스에서 반환");
+        return mapper.readValue(cached, new TypeReference<Map<String, Object>>() {});
+    }
 
-        // 🔐 동시 요청 제어: 같은 key에 대해 한 번만 API 호출
-        synchronized (key.intern()) {
-            // 누군가 먼저 캐시했을 수도 있으니 한 번 더 확인
-            cached = redisTemplate.opsForValue().get(key);
+    // 2. 분산 락 시도
+    String lockKey = "lock:" + dataKey;
+    boolean isLockSet = redisTemplate.opsForValue()
+            .setIfAbsent(lockKey, "1", Duration.ofSeconds(10)); // 락 유효 시간 10초
+
+    if (isLockSet) {
+        // 🔐 락 획득 성공: 오직 한 스레드/서버만 실행
+        try {
+            System.out.println("락 획득 성공! 외부 API 호출 시작");
+            
+            // 한 번 더 캐시 확인 (아주 드물게 다른 서버가 락 해제 직후 캐시했을 수도 있으므로)
+            cached = redisTemplate.opsForValue().get(dataKey);
             if (cached != null) {
-                System.out.println("레디스에서 반환 (동기화 후)");
                 return mapper.readValue(cached, new TypeReference<Map<String, Object>>() {});
             }
 
@@ -360,20 +367,42 @@ public class CalendarController {
                     + "&solYear=" + year
                     + "&solMonth=" + month
                     + "&_type=json";
-
+            
             HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
             conn.setRequestMethod("GET");
-
+            
             try (BufferedReader reader = new BufferedReader(
                     new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8))) {
-
                 String result = reader.lines().collect(Collectors.joining());
-
+                
                 // 캐시에 저장 (6시간 유효)
-                redisTemplate.opsForValue().set(key, result, Duration.ofHours(6));
-
+                redisTemplate.opsForValue().set(dataKey, result, Duration.ofHours(6));
+                
                 return mapper.readValue(result, new TypeReference<Map<String, Object>>() {});
             }
+        } finally {
+            // 작업 완료 후 락 해제
+            System.out.println("작업 완료! 락 해제");
+            redisTemplate.delete(lockKey); 
+        }
+    } else {
+        // ❌ 락 획득 실패: 짧은 대기 후 재시도
+        System.out.println("락 획득 실패! 짧게 대기 후 캐시 재확인");
+        try {
+            Thread.sleep(300); // 첫 번째 스레드가 작업할 시간을 줍니다.
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        
+        // 락 획득 스레드가 캐시를 채웠을 가능성이 높으므로 다시 확인
+        cached = redisTemplate.opsForValue().get(dataKey);
+        if (cached != null) {
+            return mapper.readValue(cached, new TypeReference<Map<String, Object>>() {});
+        } else {
+            // 드물게 아직 캐시가 없는 경우, 재시도하거나 null 반환 등의 처리
+            // (여기서는 일단 재요청하는 것으로 처리)
+            return getHolidays(year, month);
         }
     }
+}
 }
