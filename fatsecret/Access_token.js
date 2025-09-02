@@ -1,6 +1,6 @@
 var request = require("request");
 clientID = '59be412169d845c1a8e581bdeb5c3715';
-clientSecret = '45c02ba264d849db9d002927086ca5ec';
+clientSecret = 'cee8f198a208493886d7ccd4059d70bf';
 
 function getTK(){
    return new Promise((resoleve,reject)=>{
