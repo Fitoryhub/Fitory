@@ -1,7 +1,19 @@
-spring.jpa.show-sql=true
+# 🔮 프로젝트 소개
+## **Fitory: 운동, 식단, 일정을 통합 관리하는 스마트 건강관리 플랫폼**
+Fitory는 현대인의 운동 부족과 불균형한 식습관으로 인한 건강 관리 문제를 해결하기 위해 기획된 웹 서비스입니다. 공공데이터 포털의 API를 활용해 체계적이고 지속적인 건강 관리가 가능한 플랫폼을 제공합니다.
+
+---
+## **✅ 주요 기능**
+### **1. 개인 맞춤형 건강 서비스**
+- 사용자에게 식단 추천, 영양분 분석, 맞춤 운동 등록, 일정 관리 기능 등을 제공
+- 마이페이지, 식단 분석, 운동 기록 등 로그인 여부 확인 후 이용 가능
+
+### **2. 커뮤니티 게시판**
+- 운동 꿀 팁, 운동질문, 오늘의 식단 등 다양한 게시판 제공
+- 게시글 조회, 좋아요, 상세보기 기능
+
+### **3.식단 사진 슬라이더**
+- 사용자들이 올린 '오늘의 식단' 이미지를 메인 페이지에 전시
 
 
-spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MariaDBDialect
-
-
-spring.jpa.hibernate.naming.physical-strategy=org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+  
